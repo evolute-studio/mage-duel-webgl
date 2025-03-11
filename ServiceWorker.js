@@ -1,10 +1,14 @@
-const cacheName = "EvoluteStudio-com.evolute.mageduel-1.1.3";
+const cacheName = "EvoluteStudio-com.evolute.mageduel-1.1.4";
 const contentToCache = [
-    "Build/mageduel-webgl-1.1.3.loader.js",
-    "Build/mageduel-webgl-1.1.3.framework.js",
-    "Build/mageduel-webgl-1.1.3.data",
-    "Build/mageduel-webgl-1.1.3.wasm",
+    "./",
+    "index.html",
+    "manifest.json",
+    "Build/mageduel-webgl-1.1.4.loader.js",
+    "Build/mageduel-webgl-1.1.4.framework.js",
+    "Build/mageduel-webgl-1.1.4.data",
+    "Build/mageduel-webgl-1.1.4.wasm",
     "TemplateData/style.css",
+    "TemplateData/icons/icon-144x144.png",
     "offline.html"
 ];
 
@@ -21,8 +25,22 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
+    // Перевіряємо, чи URL використовує підтримувану схему
+    if (!e.request.url.startsWith('http')) {
+        return;
+    }
+
     e.respondWith((async function () {
         try {
+            const normalizedUrl = new URL(e.request.url);
+            // Перевіряємо, чи запит на manifest.webmanifest
+            if (normalizedUrl.pathname.endsWith('manifest.webmanifest')) {
+                const manifestResponse = await caches.match('manifest.json');
+                if (manifestResponse) {
+                    return manifestResponse;
+                }
+            }
+
             let response = await caches.match(e.request);
             console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
             
@@ -32,6 +50,12 @@ self.addEventListener('fetch', function (e) {
 
             try {
                 response = await fetch(e.request);
+                
+                // Перевіряємо, чи відповідь валідна
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
+                }
+
                 const cache = await caches.open(cacheName);
                 console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
                 cache.put(e.request, response.clone());
