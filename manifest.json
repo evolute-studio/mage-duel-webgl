@@ -1,6 +1,6 @@
 {
-    "name": "com.evolute.mageduel",
-    "short_name": "com.evolute.mageduel",
+    "name": "Evolute Kingdom: Mage Duel",
+    "short_name": "Evolute Kingdom: Mage Duel",
     "start_url": "./",
     "scope": "./",
     "display": "fullscreen",
