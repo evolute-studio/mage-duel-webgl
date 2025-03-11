@@ -1,0 +1,16 @@
+{
+    "name": "com.evolute.mageduel",
+    "short_name": "com.evolute.mageduel",
+    "start_url": "./",
+    "scope": "./",
+    "display": "fullscreen",
+    "background_color": "#231F20",
+    "theme_color": "#000",
+    "description": "",
+    "icons": [{
+      "src": "TemplateData/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }]
+} 
