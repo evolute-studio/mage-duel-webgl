@@ -1,12 +1,12 @@
-const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.12";
+const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.13";
 const contentToCache = [
     "./",
     "index.html",
     "manifest.json",
-    "Build/mageduel-webgl-1.1.12.loader.js",
-    "Build/mageduel-webgl-1.1.12.framework.js",
-    "Build/mageduel-webgl-1.1.12.data",
-    "Build/mageduel-webgl-1.1.12.wasm",
+    "Build/mageduel-webgl-1.1.13.loader.js",
+    "Build/mageduel-webgl-1.1.13.framework.js",
+    "Build/mageduel-webgl-1.1.13.data",
+    "Build/mageduel-webgl-1.1.13.wasm",
     "TemplateData/style.css",
     "TemplateData/icons/icon-144x144.png",
     "offline.html"
