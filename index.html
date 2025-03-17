@@ -4,9 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Evolute Kingdom: Mage Duel</title>
+    <meta name="app-version" content="EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.46">
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.json">
+    <!-- #if SHOW_DIAGNOSTICS -->
+    <link rel="stylesheet" href="TemplateData/diagnostics.css">
+    <script src="TemplateData/diagnostics.js"></script>
+    <!-- #endif -->
     <style>
         body {
             margin: 0;
@@ -57,12 +62,12 @@
             100% { transform: rotate(90deg); }
         }
     </style>
-    <!-- Завантажуємо модульні скрипти -->
-    <script src="TemplateData/scripts/orientation-manager.js"></script>
-    <script src="TemplateData/scripts/service-worker-manager.js"></script>
-    <script src="TemplateData/scripts/wasm-loader.js"></script>
-    <script src="TemplateData/scripts/unity-loader.js"></script>
-    <script src="TemplateData/scripts/main.js"></script>
+    <script>
+        // Блокуємо автоматичну реєстрацію Service Worker
+        window.blockServiceWorkerRegistration = true;
+    </script>
+    <script src="TemplateData/versionManager.js"></script>
+    <script src="TemplateData/orientation.js"></script>
 </head>
 <body>
 <div id="unity-container" class="unity-desktop">
@@ -77,6 +82,9 @@
     <div id="unity-footer">
         <div id="unity-webgl-logo"></div>
         <div id="unity-fullscreen-button"></div>
+        <!-- #if SHOW_DIAGNOSTICS -->
+        <img id="diagnostics-icon" src="TemplateData/webmemd-icon.png">
+        <!-- #endif -->
         <div id="unity-build-title">Evolute Kingdom: Mage Duel</div>
     </div>
 </div>
@@ -91,5 +99,114 @@
         Please rotate your device to landscape mode for the best experience.
     </div>
 </div>
+
+<div id="dev-tools" style="position: fixed; bottom: 10px; left: 10px; z-index: 9999; display: none;">
+    <button id="force-update-btn" style="padding: 5px; background: #ff5722; color: white; border: none; border-radius: 4px; margin-right: 5px;">
+        Force Update
+    </button>
+    <button id="clear-storage-btn" style="padding: 5px; background: #2196f3; color: white; border: none; border-radius: 4px; margin-right: 5px;">
+        Clear Storage
+    </button>
+    <button id="show-version-btn" style="padding: 5px; background: #4caf50; color: white; border: none; border-radius: 4px; margin-right: 5px;">
+        Show Version
+    </button>
+    <button id="activate-sw-btn" style="padding: 5px; background: #9c27b0; color: white; border: none; border-radius: 4px; margin-right: 5px;">
+        Activate SW
+    </button>
+    <button id="reregister-sw-btn" style="padding: 5px; background: #e91e63; color: white; border: none; border-radius: 4px;">
+        Reregister SW
+    </button>
+    <button id="update-meta-btn" style="padding: 5px; background: #009688; color: white; border: none; border-radius: 4px; margin-right: 5px;">
+        Update from Meta
+    </button>
+</div>
+
+<script src="TemplateData/unityLoader.js"></script>
+<script>
+    // Показуємо інструменти розробника при натисканні Ctrl+Shift+D
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+            const devTools = document.getElementById('dev-tools');
+            devTools.style.display = devTools.style.display === 'none' ? 'block' : 'none';
+        }
+    });
+    
+    // Обробник для кнопки примусового оновлення
+    document.getElementById('force-update-btn').addEventListener('click', function() {
+        window.location.href = window.location.pathname + '?force-update=true';
+    });
+    
+    // Обробник для кнопки очищення сховища
+    document.getElementById('clear-storage-btn').addEventListener('click', function() {
+        localStorage.clear();
+        sessionStorage.clear();
+        alert('Local storage and session storage cleared. Reloading page...');
+        window.location.reload();
+    });
+    
+    // Обробник для кнопки показу версії
+    document.getElementById('show-version-btn').addEventListener('click', function() {
+        const metaVersion = document.querySelector('meta[name="app-version"]')?.content || 'Not found';
+        const storedVersion = localStorage.getItem('app_version') || 'Not found';
+        alert(`Meta version: ${metaVersion}\nStored version: ${storedVersion}`);
+    });
+    
+    // Обробник для кнопки активації Service Worker
+    document.getElementById('activate-sw-btn').addEventListener('click', function() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration().then(function(reg) {
+                if (reg && reg.waiting) {
+                    // Встановлюємо обробник для події controllerchange
+                    let refreshing = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        if (!refreshing) {
+                            refreshing = true;
+                            alert('Service Worker activated! Reloading page...');
+                            window.location.reload();
+                        }
+                    });
+                    
+                    // Відправляємо повідомлення для активації
+                    reg.waiting.postMessage({ action: 'skipWaiting' });
+                } else {
+                    alert('No waiting Service Worker found');
+                }
+            });
+        } else {
+            alert('Service Worker API not supported');
+        }
+    });
+    
+    // Обробник для кнопки перереєстрації Service Worker
+    document.getElementById('reregister-sw-btn').addEventListener('click', function() {
+        if ('serviceWorker' in navigator) {
+            if (confirm('This will unregister all Service Workers and register a new one. Continue?')) {
+                // Викликаємо функцію з versionManager.js
+                forceReregisterServiceWorker().then(success => {
+                    if (success) {
+                        alert('Service Worker successfully re-registered. Reloading page...');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to re-register Service Worker.');
+                    }
+                });
+            }
+        } else {
+            alert('Service Worker API not supported');
+        }
+    });
+    
+    // Обробник для кнопки оновлення з мета-тегу
+    document.getElementById('update-meta-btn').addEventListener('click', function() {
+        const metaVersion = document.querySelector('meta[name="app-version"]')?.content;
+        if (metaVersion) {
+            localStorage.setItem('app_version', metaVersion);
+            alert(`Version updated to: ${metaVersion}. Reloading page...`);
+            window.location.reload();
+        } else {
+            alert('Meta version tag not found!');
+        }
+    });
+</script>
 </body>
 </html>
