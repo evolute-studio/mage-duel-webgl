@@ -1,16 +1,16 @@
 // #if USE_DATA_CACHING
-const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.46";
+const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.48";
 const contentToCache = [
     "./",
     "index.html",
     "manifest.json",
-    "Build/mageduel-webgl-1.1.46.loader.js",
-    "Build/mageduel-webgl-1.1.46.framework.js",
+    "Build/mageduel-webgl-1.1.48.loader.js",
+    "Build/mageduel-webgl-1.1.48.framework.js",
 // #if USE_THREADS
     "Build/",
 // #endif
-    "Build/mageduel-webgl-1.1.46.data",
-    "Build/mageduel-webgl-1.1.46.wasm",
+    "Build/mageduel-webgl-1.1.48.data",
+    "Build/mageduel-webgl-1.1.48.wasm",
     "TemplateData/style.css",
     "TemplateData/icons/icon-144x144.png",
     "offline.html"

@@ -1,7 +1,7 @@
 // Version Manager for handling Service Worker and cache updates
 
 // Current application version
-const currentAppVersion = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.46";
+const currentAppVersion = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.48";
 
 // Key for storing version in localStorage
 const VERSION_STORAGE_KEY = 'app_version';
@@ -210,6 +210,23 @@ window.addEventListener('load', function() {
 // Додаємо функцію для ініціалізації, яка буде викликатися перед усіма іншими
 (function initVersionManager() {
     console.log('[Version Manager] Initializing Version Manager (priority)...');
+    
+    // Перевіряємо версію для повного очищення даних
+    const storedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
+    if (storedVersion) {
+        const versionParts = storedVersion.split('-');
+        if (versionParts.length >= 3) {
+            const semVer = versionParts[2];
+            console.log(`[Version Manager] Checking stored version ${semVer} for legacy cleanup...`);
+            
+            // Перевіряємо, чи версія нижче 1.1.46
+            if (needsLegacyCleanup(semVer)) {
+                console.log('[Version Manager] Legacy version detected, performing full cleanup...');
+                performFullCleanup();
+                return; // Зупиняємо подальше виконання
+            }
+        }
+    }
     
     // Перевіряємо, чи є параметр force-update в URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -521,4 +538,116 @@ function compareVersions(v1, v2) {
     }
     
     return 0;
-} 
+}
+
+// Функція для перевірки, чи потрібне повне очищення
+function needsLegacyCleanup(version) {
+    // Розбиваємо версію на компоненти
+    const parts = version.split('.').map(Number);
+    
+    // Перевіряємо, чи версія нижче 1.1.46
+    if (parts.length >= 3) {
+        if (parts[0] < 1) return true;
+        if (parts[0] === 1 && parts[1] < 1) return true;
+        if (parts[0] === 1 && parts[1] === 1 && parts[2] < 46) return true;
+    }
+    
+    return false;
+}
+
+// Функція для повного очищення даних сайту
+async function performFullCleanup() {
+    console.log('[Version Manager] Starting full site data cleanup...');
+    
+    try {
+        // 1. Видаляємо всі Service Worker
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+                await registration.unregister();
+                console.log('[Version Manager] Unregistered Service Worker during legacy cleanup');
+            }
+        }
+        
+        // 2. Очищуємо всі кеші
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+                await caches.delete(cacheName);
+                console.log(`[Version Manager] Deleted cache: ${cacheName} during legacy cleanup`);
+            }
+        }
+        
+        // 3. Очищуємо localStorage
+        localStorage.clear();
+        console.log('[Version Manager] Cleared localStorage during legacy cleanup');
+        
+        // 4. Очищуємо sessionStorage
+        sessionStorage.clear();
+        console.log('[Version Manager] Cleared sessionStorage during legacy cleanup');
+        
+        // 5. Очищуємо IndexedDB, якщо API доступний
+        if ('indexedDB' in window && 'databases' in indexedDB) {
+            try {
+                const databases = await indexedDB.databases();
+                for (const db of databases) {
+                    await indexedDB.deleteDatabase(db.name);
+                    console.log(`[Version Manager] Deleted IndexedDB database: ${db.name} during legacy cleanup`);
+                }
+            } catch (idbError) {
+                console.error('[Version Manager] Error cleaning IndexedDB:', idbError);
+                
+                // Альтернативний спосіб для старіших браузерів
+                const dbNames = ['unity-cache', 'unity-webgl-cache', 'unity-player-prefs'];
+                for (const dbName of dbNames) {
+                    try {
+                        indexedDB.deleteDatabase(dbName);
+                        console.log(`[Version Manager] Deleted potential IndexedDB database: ${dbName}`);
+                    } catch (e) {
+                        console.log(`[Version Manager] Error deleting database ${dbName}:`, e);
+                    }
+                }
+            }
+        }
+        
+        // 6. Додаємо параметр до URL для запобігання кешування
+        const cleanupParam = `cleanup=${Date.now()}`;
+        const url = new URL(window.location.href);
+        url.searchParams.set('cleanup', Date.now().toString());
+        
+        // 7. Перезавантажуємо сторінку з параметром очищення
+        console.log('[Version Manager] Full cleanup completed, reloading page...');
+        window.location.href = url.toString();
+    } catch (error) {
+        console.error('[Version Manager] Error during legacy cleanup:', error);
+        
+        // Якщо сталася помилка, все одно перезавантажуємо сторінку
+        const url = new URL(window.location.href);
+        url.searchParams.set('cleanup', Date.now().toString());
+        window.location.href = url.toString();
+    }
+}
+
+// Додаємо обробник для параметра cleanup в URL
+function handleCleanupParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('cleanup')) {
+        console.log('[Version Manager] Cleanup parameter detected, removing it...');
+        
+        // Видаляємо параметр з URL
+        urlParams.delete('cleanup');
+        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+        window.history.replaceState({}, document.title, newUrl);
+        
+        // Показуємо повідомлення про успішне очищення
+        console.log('[Version Manager] Site data has been successfully cleaned up');
+        
+        // Можна додати візуальне повідомлення для користувача
+        setTimeout(() => {
+            alert('Додаток було оновлено до нової версії. Всі локальні дані було очищено для забезпечення коректної роботи.');
+        }, 1000);
+    }
+}
+
+// Викликаємо обробник параметра cleanup при завантаженні
+window.addEventListener('load', handleCleanupParam); 
