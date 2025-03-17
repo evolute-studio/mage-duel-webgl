@@ -1,12 +1,12 @@
-const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.9";
+const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.12";
 const contentToCache = [
     "./",
     "index.html",
     "manifest.json",
-    "Build/mageduel-webgl-1.1.9.loader.js",
-    "Build/mageduel-webgl-1.1.9.framework.js",
-    "Build/mageduel-webgl-1.1.9.data",
-    "Build/mageduel-webgl-1.1.9.wasm",
+    "Build/mageduel-webgl-1.1.12.loader.js",
+    "Build/mageduel-webgl-1.1.12.framework.js",
+    "Build/mageduel-webgl-1.1.12.data",
+    "Build/mageduel-webgl-1.1.12.wasm",
     "TemplateData/style.css",
     "TemplateData/icons/icon-144x144.png",
     "offline.html"
@@ -24,6 +24,21 @@ self.addEventListener('install', function (e) {
     })());
 });
 
+self.addEventListener('activate', function(e) {
+    console.log('[Service Worker] Activate');
+    
+    e.waitUntil((async function() {
+        // Видаляємо всі старі кеші
+        const keyList = await caches.keys();
+        return Promise.all(keyList.map(function(key) {
+            if (key !== cacheName) {
+                console.log('[Service Worker] Removing old cache', key);
+                return caches.delete(key);
+            }
+        }));
+    })());
+});
+
 self.addEventListener('fetch', function (e) {
     // Перевіряємо, чи URL використовує підтримувану схему
     if (!e.request.url.startsWith('http')) {
@@ -33,45 +48,51 @@ self.addEventListener('fetch', function (e) {
     e.respondWith((async function () {
         try {
             const normalizedUrl = new URL(e.request.url);
-            // Перевіряємо, чи запит на manifest.webmanifest
-            if (normalizedUrl.pathname.endsWith('manifest.webmanifest')) {
-                const manifestResponse = await caches.match('manifest.json');
-                if (manifestResponse) {
-                    return manifestResponse;
+            
+            // Завжди отримуємо свіжу версію основних файлів
+            if (e.request.url.includes('Build/') || 
+                e.request.url.endsWith('index.html') ||
+                e.request.url.endsWith('manifest.json')) {
+                try {
+                    const response = await fetch(e.request);
+                    const cache = await caches.open(cacheName);
+                    console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
+                    cache.put(e.request, response.clone());
+                    return response;
+                } catch (error) {
+                    const cachedResponse = await caches.match(e.request);
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    throw error;
                 }
             }
 
+            // Для інших ресурсів спочатку перевіряємо кеш
             let response = await caches.match(e.request);
-            console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-            
             if (response) {
                 return response;
             }
 
-            try {
-                response = await fetch(e.request);
-                
-                // Перевіряємо, чи відповідь валідна
-                if (!response || response.status !== 200 || response.type !== 'basic') {
-                    return response;
-                }
-
-                const cache = await caches.open(cacheName);
-                console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
-                cache.put(e.request, response.clone());
+            // Якщо ресурс не знайдено в кеші, завантажуємо його
+            response = await fetch(e.request);
+            if (!response || response.status !== 200 || response.type !== 'basic') {
                 return response;
-            } catch (error) {
-                // Якщо запит не вдався (офлайн), показуємо офлайн сторінку для навігаційних запитів
-                if (e.request.mode === 'navigate') {
-                    const offlineResponse = await caches.match(OFFLINE_URL);
-                    if (offlineResponse) {
-                        return offlineResponse;
-                    }
-                }
-                throw error;
             }
+
+            const cache = await caches.open(cacheName);
+            console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
+            cache.put(e.request, response.clone());
+            return response;
+
         } catch (error) {
             console.log('[Service Worker] Error:', error);
+            if (e.request.mode === 'navigate') {
+                const offlineResponse = await caches.match(OFFLINE_URL);
+                if (offlineResponse) {
+                    return offlineResponse;
+                }
+            }
             return new Response('Offline page not found', {
                 status: 404,
                 statusText: 'Not Found'
