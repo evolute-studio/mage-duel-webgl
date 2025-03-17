@@ -30,15 +30,15 @@ function initUnity() {
     }
 
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.46.loader.js";
+    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.48.loader.js";
     var config = {
-        dataUrl: buildUrl + "/mageduel-webgl-1.1.46.data",
-        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.46.framework.js",
+        dataUrl: buildUrl + "/mageduel-webgl-1.1.48.data",
+        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.48.framework.js",
         // #if USE_THREADS
         workerUrl: buildUrl + "/",
         // #endif
         // #if USE_WASM
-        codeUrl: buildUrl + "/mageduel-webgl-1.1.46.wasm",
+        codeUrl: buildUrl + "/mageduel-webgl-1.1.48.wasm",
         // #endif
         // #if MEMORY_FILENAME
         memoryUrl: buildUrl + "/",
@@ -49,7 +49,7 @@ function initUnity() {
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EvoluteStudio",
         productName: "Evolute Kingdom: Mage Duel",
-        productVersion: "1.1.46",
+        productVersion: "1.1.48",
         showBanner: unityShowBanner,
     };
 
