@@ -1,4 +1,4 @@
-const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.14";
+const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.20";
 // Додаємо версію до імені кешу для кращого контролю
 const cacheVersion = '1.0.0';
 const fullCacheName = `${cacheName}-${cacheVersion}`;
@@ -7,10 +7,10 @@ const contentToCache = [
     "./",
     "index.html",
     "manifest.json",
-    "Build/mageduel-webgl-1.1.14.loader.js",
-    "Build/mageduel-webgl-1.1.14.framework.js",
-    "Build/mageduel-webgl-1.1.14.data",
-    "Build/mageduel-webgl-1.1.14.wasm",
+    "Build/mageduel-webgl-1.1.20.loader.js",
+    "Build/mageduel-webgl-1.1.20.framework.js",
+    "Build/mageduel-webgl-1.1.20.data",
+    "Build/mageduel-webgl-1.1.20.wasm",
     "TemplateData/style.css",
     "TemplateData/icons/icon-144x144.png",
     "offline.html"
@@ -25,9 +25,35 @@ self.addEventListener('install', function (e) {
     self.skipWaiting();
     
     e.waitUntil((async function () {
-      const cache = await caches.open(fullCacheName);
-      console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
+        try {
+            const cache = await caches.open(fullCacheName);
+            console.log('[Service Worker] Caching all: app shell and content');
+            
+            // Перевіряємо доступність кожного файлу перед кешуванням
+            const failedUrls = [];
+            for (const url of contentToCache) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        failedUrls.push(url);
+                    } else {
+                        await cache.put(url, response);
+                    }
+                } catch (error) {
+                    failedUrls.push(url);
+                    console.error(`Failed to cache ${url}:`, error);
+                }
+            }
+
+            if (failedUrls.length > 0) {
+                console.error('Failed to cache following files:', failedUrls);
+                // Якщо критичні файли не вдалося закешувати, відміняємо встановлення
+                throw new Error('Failed to cache critical files');
+            }
+        } catch (error) {
+            console.error('Installation failed:', error);
+            throw error;
+        }
     })());
 });
 
