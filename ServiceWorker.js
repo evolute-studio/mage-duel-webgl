@@ -1,12 +1,16 @@
-const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.13";
+const cacheName = "EvoluteStudio-Evolute Kingdom: Mage Duel-1.1.14";
+// Додаємо версію до імені кешу для кращого контролю
+const cacheVersion = '1.0.0';
+const fullCacheName = `${cacheName}-${cacheVersion}`;
+
 const contentToCache = [
     "./",
     "index.html",
     "manifest.json",
-    "Build/mageduel-webgl-1.1.13.loader.js",
-    "Build/mageduel-webgl-1.1.13.framework.js",
-    "Build/mageduel-webgl-1.1.13.data",
-    "Build/mageduel-webgl-1.1.13.wasm",
+    "Build/mageduel-webgl-1.1.14.loader.js",
+    "Build/mageduel-webgl-1.1.14.framework.js",
+    "Build/mageduel-webgl-1.1.14.data",
+    "Build/mageduel-webgl-1.1.14.wasm",
     "TemplateData/style.css",
     "TemplateData/icons/icon-144x144.png",
     "offline.html"
@@ -17,8 +21,11 @@ const OFFLINE_URL = 'offline.html';
 self.addEventListener('install', function (e) {
     console.log('[Service Worker] Install');
     
+    // Примусово активуємо новий Service Worker
+    self.skipWaiting();
+    
     e.waitUntil((async function () {
-      const cache = await caches.open(cacheName);
+      const cache = await caches.open(fullCacheName);
       console.log('[Service Worker] Caching all: app shell and content');
       await cache.addAll(contentToCache);
     })());
@@ -27,16 +34,21 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function(e) {
     console.log('[Service Worker] Activate');
     
-    e.waitUntil((async function() {
-        // Видаляємо всі старі кеші
-        const keyList = await caches.keys();
-        return Promise.all(keyList.map(function(key) {
-            if (key !== cacheName) {
-                console.log('[Service Worker] Removing old cache', key);
-                return caches.delete(key);
-            }
-        }));
-    })());
+    // Примусово перехоплюємо керування всіма клієнтами
+    e.waitUntil(
+        Promise.all([
+            self.clients.claim(),
+            // Видаляємо всі старі кеші
+            caches.keys().then(function(keyList) {
+                return Promise.all(keyList.map(function(key) {
+                    if (key !== fullCacheName) {
+                        console.log('[Service Worker] Removing old cache', key);
+                        return caches.delete(key);
+                    }
+                }));
+            })
+        ])
+    );
 });
 
 self.addEventListener('fetch', function (e) {
@@ -55,7 +67,7 @@ self.addEventListener('fetch', function (e) {
                 e.request.url.endsWith('manifest.json')) {
                 try {
                     const response = await fetch(e.request);
-                    const cache = await caches.open(cacheName);
+                    const cache = await caches.open(fullCacheName);
                     console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
                     cache.put(e.request, response.clone());
                     return response;
@@ -80,7 +92,7 @@ self.addEventListener('fetch', function (e) {
                 return response;
             }
 
-            const cache = await caches.open(cacheName);
+            const cache = await caches.open(fullCacheName);
             console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
             cache.put(e.request, response.clone());
             return response;

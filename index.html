@@ -153,7 +153,26 @@
 <script>
     window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("ServiceWorker.js");
+            // Функція для видалення всіх Service Workers
+            async function unregisterOldWorkers() {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for(let registration of registrations) {
+                    await registration.unregister();
+                }
+            }
+
+            // Спочатку видаляємо всі старі Service Workers
+            unregisterOldWorkers().then(() => {
+                // Потім реєструємо новий
+                navigator.serviceWorker.register("ServiceWorker.js").then(function(registration) {
+                    // Перевіряємо наявність оновлень кожні 60 хвилин
+                    setInterval(() => {
+                        registration.update();
+                    }, 60 * 60 * 1000);
+                }).catch(function(error) {
+                    console.log('Service worker registration failed:', error);
+                });
+            });
         }
     });
 
@@ -189,15 +208,15 @@
     }
 
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.13.loader.js";
+    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.14.loader.js";
     var config = {
-        dataUrl: buildUrl + "/mageduel-webgl-1.1.13.data",
-        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.13.framework.js",
-        codeUrl: buildUrl + "/mageduel-webgl-1.1.13.wasm",
+        dataUrl: buildUrl + "/mageduel-webgl-1.1.14.data",
+        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.14.framework.js",
+        codeUrl: buildUrl + "/mageduel-webgl-1.1.14.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EvoluteStudio",
         productName: "Evolute Kingdom: Mage Duel",
-        productVersion: "1.1.13",
+        productVersion: "1.1.14",
         showBanner: unityShowBanner,
     };
 
