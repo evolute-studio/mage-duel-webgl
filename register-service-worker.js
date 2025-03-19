@@ -1,73 +1,88 @@
-// Реєстрація та автооновлення ServiceWorker
-function registerServiceWorker() {
+// Реєстрація та автооновлення ServiceWorker з примусовою активацією
+(function() {
+    // Перевіряємо підтримку Service Worker
     if ('serviceWorker' in navigator) {
-        // Прослуховуємо повідомлення від сервіс-воркера
-        navigator.serviceWorker.addEventListener('message', event => {
+        // Прослуховуємо повідомлення від Service Worker
+        navigator.serviceWorker.addEventListener('message', function(event) {
             console.log('Отримано повідомлення від ServiceWorker:', event.data);
-            if (event.data && event.data.type === 'NEW_VERSION_ACTIVATED' && event.data.reload) {
-                console.log('Перезавантажуємо сторінку для застосування нової версії ServiceWorker');
+            // Якщо отримано команду перезавантаження
+            if (event.data && event.data.type === 'RELOAD_PAGE') {
+                console.log('Перезавантажуємо сторінку за командою ServiceWorker');
                 window.location.reload();
             }
         });
 
-        // Прослуховуємо зміну контролюючого сервіс-воркера
+        // Змінна для відстеження процесу оновлення
         let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
+
+        // Прослуховуємо зміну контролера
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+            console.log('Контролер ServiceWorker змінився');
             if (!refreshing) {
-                console.log('Новий ServiceWorker прийняв контроль, оновлюємо сторінку');
                 refreshing = true;
+                console.log('Перезавантажуємо сторінку після зміни контролера');
                 window.location.reload();
             }
         });
 
-        // Реєструємо сервіс-воркер з опцією негайного оновлення
-        navigator.serviceWorker.register('/ServiceWorker.js', {
-            updateViaCache: 'none' // Завжди перевіряти наявність оновлення
-        })
-            .then(registration => {
-                console.log('ServiceWorker зареєстровано успішно:', registration.scope);
+        // Функція для реєстрації та примусового оновлення
+        function registerAndUpdate() {
+            console.log('Початок реєстрації ServiceWorker');
 
-                // Періодичне оновлення сервіс-воркера
-                setInterval(() => {
-                    registration.update().then(() => {
-                        console.log('Перевірка оновлень ServiceWorker виконана');
-                    });
-                }, 60000); // Перевіряємо оновлення щохвилини
+            // Реєструємо Service Worker, вимикаючи кешування
+            navigator.serviceWorker.register('/ServiceWorker.js', {
+                updateViaCache: 'none',
+                scope: '/'
+            }).then(function(registration) {
+                console.log('ServiceWorker зареєстровано:', registration.scope);
 
-                // Негайна перевірка оновлень
-                registration.update();
+                // Перевіряємо наявність оновлень
+                registration.update().then(function() {
+                    console.log('Перевірка оновлень завершена');
+                }).catch(function(error) {
+                    console.error('Помилка перевірки оновлень:', error);
+                });
 
-                // Відстежуємо появу нової версії
-                registration.addEventListener('updatefound', () => {
-                    // Отримуємо новий сервіс-воркер
+                // Відстежуємо оновлення
+                registration.addEventListener('updatefound', function() {
+                    console.log('Знайдено нову версію ServiceWorker');
                     const newWorker = registration.installing;
 
-                    console.log('Виявлено оновлення ServiceWorker');
+                    newWorker.addEventListener('statechange', function() {
+                        console.log('Стан нового ServiceWorker:', newWorker.state);
 
-                    // Відстежуємо стан нового сервіс-воркера
-                    newWorker.addEventListener('statechange', () => {
-                        console.log('Стан нового ServiceWorker змінився на:', newWorker.state);
-
+                        // Якщо новий воркер встановлений, але ще не активований
                         if (newWorker.state === 'installed') {
+                            console.log('Новий ServiceWorker встановлено, намагаємося активувати');
+
+                            // Перевіряємо, чи є активний контролер
                             if (navigator.serviceWorker.controller) {
-                                console.log('Новий ServiceWorker встановлено, активуємо негайно');
-                                // Відправляємо команду на негайну активацію
+                                // Примусова активація
                                 newWorker.postMessage({ type: 'SKIP_WAITING' });
                             }
                         }
                     });
                 });
-            })
-            .catch(error => {
+
+                // Встановлюємо регулярну перевірку оновлень (кожні 30 секунд)
+                setInterval(function() {
+                    registration.update().then(function() {
+                        console.log('Регулярна перевірка оновлень завершена');
+                    });
+                }, 30000);
+
+            }).catch(function(error) {
                 console.error('Помилка реєстрації ServiceWorker:', error);
             });
+        }
+
+        // Викликаємо реєстрацію негайно
+        registerAndUpdate();
+
+        // Також намагаємося оновити існуючий Service Worker, якщо він є
+        if (navigator.serviceWorker.controller) {
+            console.log('Існуючий ServiceWorker знайдено, намагаємося оновити');
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+        }
     }
-}
-
-// Запускаємо реєстрацію при повному завантаженні сторінки
-window.addEventListener('load', () => {
-    registerServiceWorker();
-});
-
-// Також запускаємо реєстрацію відразу
-registerServiceWorker();
+})();
