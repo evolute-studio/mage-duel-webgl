@@ -1,25 +1,25 @@
-// ServiceWorker.js - з примусовою активацією
-console.log('ServiceWorker завантажено');
-console.log('Test service worker update 5'); // Змініть число для відстеження оновлень
+// Serviceworker.js - with forced activation
+console.log('Serviceworker has been downloaded');
+console.log('Test service worker update 5'); // Change the number to track updates
 
 // Примусово пропускаємо чергу очікування під час встановлення
 self.addEventListener('install', event => {
-    console.log('ServiceWorker: встановлення нової версії');
-    // Форсуємо встановлення без очікування
+    console.log('Serviceworker: Setting a new version');
+    // Forge up installation without expectation
     event.waitUntil(self.skipWaiting());
 });
 
-// При активації примусово захоплюємо контроль
+// When activated forcibly capture control
 self.addEventListener('activate', event => {
-    console.log('ServiceWorker: активація нової версії');
+    console.log('ServiceWorker: Activation of the new version ');
 
-    // Примусово захоплюємо контроль над клієнтами
+    // Forcibly capture customer control
     event.waitUntil(
         clients.claim().then(() => {
-            // Перезавантажуємо всі вікна безпосередньо
+            // Reload all windows directly
             return self.clients.matchAll().then(clients => {
                 clients.forEach(client => {
-                    // Перезавантажуємо сторінку прямо з Service Worker
+                    // Reboot the page straight from Service Worker
                     client.navigate(client.url);
                 });
             });
@@ -27,17 +27,17 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Мінімальний обробник fetch
+// Fetch minimum handler
 self.addEventListener('fetch', event => {
-    // Нічого не робимо з запитами - просто пропускаємо їх
-    // Повертаємо запит як є, без кешування
+    // We do nothing with requests - just miss them
+    // We return the request as is, without cache
     return;
 });
 
-// Обробник повідомлень для додаткового контролю
+// Message handler for additional control
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
-        console.log('ServiceWorker отримав команду SKIP_WAITING');
+        console.log('Serviceworker has received the Skip_waiting command');
         self.skipWaiting();
     }
 });
