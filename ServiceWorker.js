@@ -1,6 +1,6 @@
 // ServiceWorker.js - з примусовою активацією
 console.log('ServiceWorker завантажено');
-console.log('Test service worker update 4'); // Змініть число для відстеження оновлень
+console.log('Test service worker update 5'); // Змініть число для відстеження оновлень
 
 // Примусово пропускаємо чергу очікування під час встановлення
 self.addEventListener('install', event => {
@@ -16,13 +16,11 @@ self.addEventListener('activate', event => {
     // Примусово захоплюємо контроль над клієнтами
     event.waitUntil(
         clients.claim().then(() => {
-            // Відправляємо повідомлення про необхідність перезавантаження
+            // Перезавантажуємо всі вікна безпосередньо
             return self.clients.matchAll().then(clients => {
                 clients.forEach(client => {
-                    client.postMessage({
-                        type: 'RELOAD_PAGE',
-                        timestamp: new Date().getTime()
-                    });
+                    // Перезавантажуємо сторінку прямо з Service Worker
+                    client.navigate(client.url);
                 });
             });
         })
