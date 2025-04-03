@@ -4,18 +4,32 @@
       "source": "/(.*)",
       "headers": [
         {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' cdp.cloud.unity3d.com collect.analytics.unity3d.com; connect-src 'self' cdp.cloud.unity3d.com collect.analytics.unity3d.com; script-src 'self' 'unsafe-eval' 'unsafe-inline' cdp.cloud.unity3d.com collect.analytics.unity3d.com;"
+        },
+        {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,OPTIONS"
+          "value": "GET, POST, OPTIONS"
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "X-Requested-With,content-type"
+          "value": "accept, content-type, x-continuous-request, x-data-block-id, x-data-retry-count, x-data-size-info, x-dispacher-states, x-event-count, x-expired-session-dropped, x-highest-priority-events, x-request-ts"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "x-continuous-request, x-data-block-id, x-data-retry-count, x-data-size-info, x-dispacher-states, x-event-count, x-expired-session-dropped, x-highest-priority-events, x-request-ts"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/unity-analytics/:path*",
+      "destination": "https://cdp.cloud.unity3d.com/:path*"
     }
   ]
 }
