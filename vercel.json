@@ -1,69 +1,57 @@
 {
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/Build/(.*\\.unityweb)",
       "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
-        { "key": "Cross-Origin-Embedder-Policy", "value": "require-corp" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+        {
+          "key": "Content-Encoding",
+          "value": "gzip"
+        }
       ]
     },
     {
-      "source": "/Build/(.*)\\.wasm",
+      "source": "/Build/(.*\\.wasm\\.unityweb)",
       "headers": [
-        { "key": "Content-Type", "value": "application/wasm" },
-        { "key": "Content-Encoding", "value": "identity" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        }
       ]
     },
     {
-      "source": "/Build/(.*)\\.data",
+      "source": "/Build/(.*\\.gz)",
       "headers": [
-        { "key": "Content-Type", "value": "application/octet-stream" },
-        { "key": "Content-Encoding", "value": "identity" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Content-Encoding",
+          "value": "gzip"
+        }
       ]
     },
     {
-      "source": "/Build/(.*)\\.framework.js",
+      "source": "/Build/(.*\\.wasm\\.gz)",
       "headers": [
-        { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        }
       ]
     },
     {
-      "source": "/Build/(.*)\\.wasm.gz",
+      "source": "/Build/(.*\\.br)",
       "headers": [
-        { "key": "Content-Type", "value": "application/wasm" },
-        { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Content-Encoding",
+          "value": "br"
+        }
       ]
     },
     {
-      "source": "/Build/(.*)\\.framework.js.gz",
+      "source": "/Build/(.*\\.wasm\\.br)",
       "headers": [
-        { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/Build/(.*)\\.js.gz",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/Build/(.*)\\.data.gz",
-      "headers": [
-        { "key": "Content-Type", "value": "application/gzip" },
-        { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        }
       ]
     }
   ]
