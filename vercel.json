@@ -44,7 +44,7 @@
     {
       "source": "/Build/(.*)\\.wasm.gz",
       "headers": [
-        { "key": "Content-Type", "value": "application/wasm" },
+        { "key": "Content-Type", "value": "application/gzip" },
         { "key": "Content-Encoding", "value": "gzip" }
       ]
     },
@@ -53,7 +53,10 @@
       "headers": [
         { "key": "Content-Type", "value": "application/gzip" },
         { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
@@ -61,7 +64,10 @@
       "headers": [
         { "key": "Content-Type", "value": "application/gzip" },
         { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
@@ -69,7 +75,10 @@
       "headers": [
         { "key": "Content-Type", "value": "application/gzip" },
         { "key": "Content-Encoding", "value": "gzip" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     }
   ]
