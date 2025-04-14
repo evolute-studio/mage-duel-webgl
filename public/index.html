@@ -6,6 +6,7 @@
     <title>Evolute Kingdom: Mage Duel</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    
     <style>
         body {
             margin: 0;
@@ -55,8 +56,70 @@
             100% { transform: rotate(90deg); }
         }
     </style>
-    <script src="TemplateData/orientation.js"></script>
-    <script src="TemplateData/env-config.js"></script>
+    <script>
+        // Function to check if the device is in portrait mode and if aspect ratio is below minimum
+        function checkOrientation() {
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                const aspectRatio = window.innerWidth / window.innerHeight;
+                const portraitOverlay = document.getElementById('portrait-overlay');
+                const unityContainer = document.getElementById('unity-container');
+                const loadingBar = document.getElementById('unity-loading-bar');
+
+                // Check if device is in portrait orientation or aspect ratio is less than 1.46
+                if (window.innerHeight > window.innerWidth || aspectRatio < 1.46) {
+                    portraitOverlay.style.display = 'flex';
+                    // Hide the Unity container and loading bar to prevent game from loading behind overlay
+                    unityContainer.style.display = 'none';
+                    loadingBar.style.display = 'none';
+
+                    // If game instance exists, pause the game
+                    if (window.gameInstance) {
+                        try {
+                            window.gameInstance.SendMessage('GameManager', 'PauseGame');
+                        } catch (e) {
+                            console.log('Could not pause game');
+                        }
+                    }
+
+                    // Stop loading the Unity instance if we're in portrait mode
+                    if (!window.gameInstance && window.stopUnityLoading) {
+                        window.stopUnityLoading = true;
+                    }
+                } else {
+                    portraitOverlay.style.display = 'none';
+                    // Show the Unity container
+                    unityContainer.style.display = 'block';
+
+                    // If game loading was stopped and we still don't have a game instance, reload the page
+                    if (window.stopUnityLoading && !window.gameInstance) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    // If game instance exists, resume the game
+                    if (window.gameInstance) {
+                        try {
+                            window.gameInstance.SendMessage('GameManager', 'ResumeGame');
+                        } catch (e) {
+                            console.log('Could not resume game');
+                        }
+                    }
+                }
+            }
+        }
+
+        // Check orientation when page loads and whenever window is resized
+        window.addEventListener('load', checkOrientation);
+        window.addEventListener('resize', checkOrientation);
+
+        // Reload the page when orientation changes
+        window.addEventListener('orientationchange', function() {
+            // Small delay to allow orientation to fully change before reloading
+            setTimeout(function() {
+                window.location.reload();
+            }, 100);
+        });
+    </script>
 </head>
 <body>
 <div id="unity-container" class="unity-desktop">
@@ -86,15 +149,129 @@
     </div>
 </div>
 
-<script src="TemplateData/unity-loader.js"></script>
+<script src="/register-service-worker.js"></script>
 <script>
+
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var warningBanner = document.querySelector("#unity-warning");
+
+    // Shows a temporary message banner/ribbon for a few seconds, or
+    // a permanent error message on top of the canvas if type=='error'.
+    // If type=='warning', a yellow highlight color is used.
+    // Modify or remove this function to customize the visually presented
+    // way that non-critical warnings and error messages are presented to the
+    // user.
+    function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+            warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+            if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+            setTimeout(function() {
+                warningBanner.removeChild(div);
+                updateBannerVisibility();
+            }, 5000);
+        }
+        updateBannerVisibility();
+    }
+
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.121t.loader.js";
+    var config = {
+        dataUrl: buildUrl + "/mageduel-webgl-1.1.121t.data",
+        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.121t.framework.js",
+        codeUrl: buildUrl + "/mageduel-webgl-1.1.121t.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "EvoluteStudio",
+    productName: "Evolute Kingdom: Mage Duel",
+    productVersion: "1.1.121t",
+    showBanner: unityShowBanner,
+    };
+
+    // By default, Unity keeps WebGL canvas render target size matched with
+    // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+    // Set this to false if you want to decouple this synchronization from
+    // happening inside the engine, and you would instead like to size up
+    // the canvas DOM size and WebGL render target sizes yourself.
+    // config.matchWebGLToCanvasSize = false;
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+
+
+    } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+        canvas.style.width = "1880px";
+        canvas.style.height = "930px";
+    }
+
+    loadingBar.style.display = "block";
+
     var dojoScript = document.createElement("script");
     dojoScript.src = "TemplateData/dojo.js/dojo_c.js";
     dojoScript.onload = async () => {
         await wasm_bindgen();
-        window.initializeUnity();
     };
     document.body.appendChild(dojoScript);
+
+    // var starknetScript = document.createElement("script");
+    // starknetScript.src = "TemplateData/starknet-5.24.3.js";
+    // document.body.appendChild(starknetScript);
+
+    var gameInstance = null;
+    // Initialize flag to potentially stop Unity loading
+    window.stopUnityLoading = false;
+
+    // Check orientation before loading Unity
+    checkOrientation();
+
+    // Only load Unity if we're not in portrait mode/incorrect aspect ratio
+    if (!window.stopUnityLoading) {
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            // Check one more time before creating Unity instance
+            if (!window.stopUnityLoading) {
+                createUnityInstance(canvas, config, (progress) => {
+                    progressBarFull.style.width = 100 * progress + "%";
+                }).then((unityInstance) => {
+                    gameInstance = unityInstance;
+                    window.gameInstance = unityInstance; // Make it accessible globally
+                    loadingBar.style.display = "none";
+                    // Check orientation once the game is loaded
+                    checkOrientation();
+                    fullscreenButton.onclick = () => {
+                        unityInstance.SetFullscreen(1);
+                    };
+                }).catch((message) => {
+                    alert(message);
+                });
+            }
+        };
+    }
+
+    document.body.appendChild(script);
+
 </script>
 </body>
 </html>
