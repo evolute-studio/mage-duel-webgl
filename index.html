@@ -261,15 +261,15 @@
     }
 
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.134t.loader.js";
+    var loaderUrl = buildUrl + "/mageduel-webgl-1.1.135t.loader.js";
     var config = {
-        dataUrl: buildUrl + "/mageduel-webgl-1.1.134t.data.gz?v=" + Date.now(),
-        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.134t.framework.js?v=" + Date.now(),
-        codeUrl: buildUrl + "/mageduel-webgl-1.1.134t.wasm.gz?v=" + Date.now(),
+        dataUrl: buildUrl + "/mageduel-webgl-1.1.135t.data.br",
+        frameworkUrl: buildUrl + "/mageduel-webgl-1.1.135t.framework.js.br",
+        codeUrl: buildUrl + "/mageduel-webgl-1.1.135t.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EvoluteStudio",
     productName: "Evolute Kingdom: Mage Duel",
-    productVersion: "1.1.134t",
+    productVersion: "1.1.135t",
     showBanner: unityShowBanner,
     };
 
@@ -341,23 +341,7 @@
                     //     unityInstance.SetFullscreen(1);
                     // };
                 }).catch((message) => {
-                    console.error("Unity WebGL error:", message);
-
-                    // Add timestamp to force browser to reload assets
-                    const cacheBuster = Date.now();
-                    const separator = config.dataUrl.includes('?') ? '&' : '?';
-
-                    // Update URLs with cache buster
-                    config.dataUrl = config.dataUrl + separator + 'v=' + cacheBuster;
-                    config.frameworkUrl = config.frameworkUrl + separator + 'v=' + cacheBuster;
-                    config.codeUrl = config.codeUrl + separator + 'v=' + cacheBuster;
-
-                    console.log("Retrying with fresh WebAssembly files...");
-
-                    // Reload after short delay
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                    alert(message);
                 });
             }
         };
