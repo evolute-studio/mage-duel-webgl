@@ -4,10 +4,13 @@ import { Analytics } from "@vercel/analytics/react"
 import { track } from '@vercel/analytics';
 import Head from 'next/head';
 import { useEffect } from "react";
+import { logEvent } from '../lib/axiom';
+import '../lib/error-handler';
 
 export default function Home() {
   useEffect(() => {
     track("page_view");
+    logEvent('page_loaded', { page: 'home' });
   }, [])
   return (
     <>
