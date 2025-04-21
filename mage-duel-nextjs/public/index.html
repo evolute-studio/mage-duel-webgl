@@ -249,27 +249,27 @@
         var div = document.createElement('div');
         div.innerHTML = msg;
         warningBanner.appendChild(div);
-        // if (type == 'error') div.style = 'background: red; padding: 10px;';
-        // else {
-        //     if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-        //     setTimeout(function() {
-        //         warningBanner.removeChild(div);
-        //         updateBannerVisibility();
-        //     }, 5000);
-        // }
-        //updateBannerVisibility();
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+            if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+            setTimeout(function() {
+                warningBanner.removeChild(div);
+                updateBannerVisibility();
+            }, 5000);
+        }
+        updateBannerVisibility();
     }
 
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/mageduel-webgl-1.2.9t.loader.js";
+    var loaderUrl = buildUrl + "/mageduel-webgl-1.2.10r.loader.js";
     var config = {
-        dataUrl: buildUrl + "/mageduel-webgl-1.2.9t.data.br",
-        frameworkUrl: buildUrl + "/mageduel-webgl-1.2.9t.framework.js.br",
-        codeUrl: buildUrl + "/mageduel-webgl-1.2.9t.wasm.br",
+        dataUrl: buildUrl + "/mageduel-webgl-1.2.10r.data.br",
+        frameworkUrl: buildUrl + "/mageduel-webgl-1.2.10r.framework.js.br",
+        codeUrl: buildUrl + "/mageduel-webgl-1.2.10r.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EvoluteStudio",
     productName: "Evolute Kingdom: Mage Duel",
-    productVersion: "1.2.9t",
+    productVersion: "1.2.10r",
     showBanner: unityShowBanner,
     };
 
