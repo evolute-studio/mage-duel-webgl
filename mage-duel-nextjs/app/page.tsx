@@ -7,9 +7,6 @@ import '../lib/error-handler';
 import { GameLoaded } from '../lib/events';
 import { initScreenTimeTracking, stopScreenTimeTracking } from '../lib/events';
 
-// 1 minute
-const screenTimeInterval = 1000 * 60;
-
 export default function Home() {
   useEffect(() => {
     GameLoaded();
