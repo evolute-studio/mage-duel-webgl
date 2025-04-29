@@ -29,12 +29,14 @@ body {
   position: absolute;
   overflow: hidden;
   background-color: #000000;
+  z-index: -1;
 }
 
 #unity-canvas {
   width: 100% !important;
   height: 100% !important;
   background-color: #000000;
+  z-index: -1;
 }
 
 #unity-loading-bar {
