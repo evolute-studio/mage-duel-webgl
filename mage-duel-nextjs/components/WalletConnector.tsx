@@ -1,0 +1,52 @@
+'use client';
+
+import { useAccount, useConnect, useDisconnect } from '@starknet-react/core'
+import { useEffect, useState, useCallback } from 'react'
+import ControllerConnector from '@cartridge/connector/controller'
+
+export function ConnectWallet() {
+  const { connect, connectors } = useConnect()
+  const { disconnect } = useDisconnect()
+  const { address } = useAccount()
+  const controller = connectors[0] as ControllerConnector
+  const [username, setUsername] = useState<string>()
+  const [isRetrying, setIsRetrying] = useState(false)
+
+  useEffect(() => {
+    if (!address) return
+    controller.username()?.then((n) => setUsername(n))
+  }, [address, controller])
+
+  const handleConnect = useCallback(async () => {
+    try {
+      await connect({ connector: controller })
+    } catch (error: any) {
+      if (error?.message?.includes('WebAuthn') && !isRetrying) {
+        setIsRetrying(true)
+        // Retry connection after a short delay
+        setTimeout(() => {
+          connect({ connector: controller })
+          setIsRetrying(false)
+        }, 100)
+      }
+    }
+  }, [connect, controller, isRetrying])
+
+  return (
+    <div className="wallet-connect" style={{ position: 'absolute', top: '10px', right: '10px' }}>
+      {address && (
+        <>
+          <p>Wallet Address: {address}</p>
+          {username && <p>Username: {username}</p>}
+        </>
+      )}
+      {address ? (
+        <button onClick={() => disconnect()}>Disconnect Wallet</button>
+      ) : (
+        <button onClick={handleConnect} disabled={isRetrying}>
+          {isRetrying ? 'Retrying...' : 'Connect Wallet'}
+        </button>
+      )}
+    </div>
+  )
+} 

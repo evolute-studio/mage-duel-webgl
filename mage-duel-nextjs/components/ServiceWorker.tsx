@@ -24,5 +24,5 @@ export default function ServiceWorker() {
         loadServiceWorker();
     }, []);
 
-    return null; // Компонент не рендерить нічого в DOM
+    return null; 
 }

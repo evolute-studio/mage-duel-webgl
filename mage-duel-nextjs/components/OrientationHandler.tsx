@@ -16,13 +16,11 @@ export default function OrientationHandler() {
                 setIsPortrait(window.innerHeight > window.innerWidth || aspectRatio < 1.46);
                 if (!portraitOverlay || !unityContainer || !loadingBar) return;
 
-                // Перевіряємо, чи пристрій у портретному режимі або співвідношення сторін менше 1.46
                 if (window.innerHeight > window.innerWidth || aspectRatio < 1.46) {
                     portraitOverlay.style.display = 'flex';
                     unityContainer.style.display = 'none';
                     loadingBar.style.display = 'none';
 
-                    // Якщо гра вже запущена, ставимо її на паузу
                     if (window.gameInstance) {
                         try {
                             window.gameInstance.SendMessage('GameManager', 'PauseGame');
@@ -31,7 +29,6 @@ export default function OrientationHandler() {
                         }
                     }
 
-                    // Зупиняємо завантаження Unity, якщо воно ще не почалося
                     if (!window.gameInstance) {
                         window.stopUnityLoading = true;
                     }
@@ -40,13 +37,11 @@ export default function OrientationHandler() {
                     unityContainer.style.display = 'block';
                     loadingBar.style.display = 'block';
 
-                    // Якщо завантаження було зупинено і гра ще не запущена, перезавантажуємо сторінку
                     if (window.stopUnityLoading && !window.gameInstance) {
                         window.location.reload();
                         return;
                     }
 
-                    // Якщо гра вже запущена, відновлюємо її
                     if (window.gameInstance) {
                         try {
                             window.gameInstance.SendMessage('GameManager', 'ResumeGame');
@@ -58,11 +53,9 @@ export default function OrientationHandler() {
             }
         };
 
-        // Перевіряємо орієнтацію при завантаженні сторінки та при зміні розміру вікна
         window.addEventListener('load', checkOrientation);
         window.addEventListener('resize', checkOrientation);
 
-        // Викликаємо перевірку одразу
         checkOrientation();
 
         return () => {

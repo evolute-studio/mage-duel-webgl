@@ -44,9 +44,9 @@ export default function UnityPlayer() {
                 }
             };
 
-            // Налаштування для мобільних пристроїв
+        
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                // Додаємо мета-тег viewport
+            
                 const meta = document.createElement('meta');
                 meta.name = 'viewport';
                 meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
@@ -60,10 +60,9 @@ export default function UnityPlayer() {
                     canvasRef.current.className = "unity-mobile";
                 }
 
-                // Опціонально: знижуємо роздільну здатність для кращої продуктивності
-                // config.devicePixelRatio = 1;
+                
             } else {
-                // Налаштування для десктопів
+                
                 if (canvasRef.current) {
                     canvasRef.current.style.width = "1880px";
                     canvasRef.current.style.height = "930px";
@@ -77,7 +76,7 @@ export default function UnityPlayer() {
                 console.log("Dojo loaded successfully");
             };
     
-            // Завантажити UnityLoader
+           
             await new Promise<void>((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = loaderUrl;
@@ -87,12 +86,12 @@ export default function UnityPlayer() {
                 document.body.appendChild(dojoScript);
             });
     
-            // Запустити Unity білд
+            
             (window as UnityWindow).createUnityInstance(canvasRef.current, config, (progress: number) => {
                 console.log(`Loading progress: ${progress * 100}%`);
             }).then((unityInstance: UnityInstance) => {
                 console.log("Unity loaded successfully");
-                window.gameInstance = unityInstance; // Зберігаємо інстанс глобально
+                window.gameInstance = unityInstance; 
             }).catch((message: string) => {
                 console.error("Failed to load Unity:", message);
             });
