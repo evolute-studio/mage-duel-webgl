@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
   try {
     // Store original console methods
     const originalConsoleError = console.error.bind(console);
-    const originalConsoleWarn = console.warn.bind(console);
+    //const originalConsoleWarn = console.warn.bind(console);
 
     // Override console.error
     console.error = function(...args: ConsoleArg[]) {
@@ -52,29 +52,29 @@ if (typeof window !== 'undefined') {
     };
 
     // Override console.warn
-    console.warn = function(...args: ConsoleArg[]) {
-      try {
-        // Call original console.warn
-        originalConsoleWarn(...args);
+    // console.warn = function(...args: ConsoleArg[]) {
+    //   try {
+    //     // Call original console.warn
+    //     originalConsoleWarn(...args);
 
-        // Send to Axiom
-        const warningMessage = args
-          .map(arg => String(arg))
-          .join(' ');
+    //     // Send to Axiom
+    //     const warningMessage = args
+    //       .map(arg => String(arg))
+    //       .join(' ');
 
-        // Enhanced warning logging
-        logError(new Error(warningMessage), {
-          source: 'console.warn',
-          severity: 'warning',
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          args: JSON.stringify(args.map(String)),
-        });
-      } catch (error) {
-        console.error('Error in console.warn:', error);
-      }
-    };
+    //     // Enhanced warning logging
+    //     logError(new Error(warningMessage), {
+    //       source: 'console.warn',
+    //       severity: 'warning',
+    //       url: window.location.href,
+    //       userAgent: navigator.userAgent,
+    //       timestamp: new Date().toISOString(),
+    //       args: JSON.stringify(args.map(String)),
+    //     });
+    //   } catch (error) {
+    //     console.error('Error in console.warn:', error);
+    //   }
+    // };
 
     // Function to capture unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
