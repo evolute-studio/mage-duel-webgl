@@ -20,8 +20,8 @@ export function ConnectWallet() {
   const handleConnect = useCallback(async () => {
     try {
       await connect({ connector: controller })
-    } catch (error: any) {
-      if (error?.message?.includes('WebAuthn') && !isRetrying) {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes('WebAuthn') && !isRetrying) {
         setIsRetrying(true)
         // Retry connection after a short delay
         setTimeout(() => {

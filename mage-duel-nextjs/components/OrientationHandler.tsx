@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function OrientationHandler() {
     const portraitOverlayRef = useRef<HTMLDivElement>(null);
-    const unityContainerRef = useRef<HTMLDivElement>(null);
-    const loadingBarRef = useRef<HTMLDivElement>(null);
     const [isPortrait, setIsPortrait] = useState(false);
 
     useEffect(() => {
