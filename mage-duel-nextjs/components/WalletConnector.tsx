@@ -14,12 +14,16 @@ export function ConnectWallet() {
 
   useEffect(() => {
     if (!address) return
-    controller.username()?.then((n) => setUsername(n))
+    controller.username()?.then((n) => {
+      setUsername(n)
+      setControllerInstance(controller)
+    })
   }, [address, controller])
 
   const handleConnect = useCallback(async () => {
     try {
       await connect({ connector: controller })
+      setControllerInstance(controller)
     } catch (error: any) {
       if (error?.message?.includes('WebAuthn') && !isRetrying) {
         setIsRetrying(true)
@@ -50,3 +54,20 @@ export function ConnectWallet() {
     </div>
   )
 } 
+
+// get username from controller
+let controllerInstance: ControllerConnector | null = null;
+
+export function setControllerInstance(controller: ControllerConnector) {
+  controllerInstance = controller;
+}
+
+const getUsername = async () => {
+  if (!controllerInstance) {
+    throw new Error('Controller not initialized');
+  }
+  const username = await controllerInstance.username();
+  return username;
+}
+
+(window as any).getUsername = getUsername;
