@@ -7,8 +7,9 @@ declare global {
         // Controller
         controllerInstance: any;
         username: string;
+        account: any;
         unityConnector: UnityConnector;
-
+        handleConnect: () => Promise<void>;
     }
 }
 
