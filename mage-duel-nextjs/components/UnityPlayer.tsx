@@ -1,4 +1,7 @@
-import { useEffect, useRef } from 'react'
+'use client'
+
+import UnityConnector from '@/lib/unity-connector';
+import { useEffect, useRef, useState } from 'react'
 interface UnityInstance {
     SendMessage: (objectName: string, methodName: string, ...args: unknown[]) => void;
 }
@@ -14,31 +17,36 @@ interface UnityConfig {
     showBanner: (msg: string, type: string) => void;
 }
 
-interface UnityWindow extends Window {
+export interface UnityWindow extends Window {
     gameInstance: UnityInstance;
     createUnityInstance: (
         canvas: HTMLCanvasElement | null,
         config: UnityConfig,
         onProgress?: (progress: number) => void
     ) => Promise<UnityInstance>;
+    unityConnector: UnityConnector;
 }
 
 export default function UnityPlayer() {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const projectId = "mageduel-webgl"
+    const version = "1.2.13t"
+    const compression = ".br"
+    const is_compressed = false
 
     useEffect(() => {
         const loadUnity = async () => {
             const buildUrl = "Build";
-            const loaderUrl = buildUrl + "/mageduel-webgl-1.2.10r.loader.js";
+            const loaderUrl = buildUrl + `/${projectId}-${version}.loader.js`;
             const config: UnityConfig = {
-                dataUrl: buildUrl + "/mageduel-webgl-1.2.10r.data.br",
-                frameworkUrl: buildUrl + "/mageduel-webgl-1.2.10r.framework.js.br",
-                codeUrl: buildUrl + "/mageduel-webgl-1.2.10r.wasm.br",
+                dataUrl: buildUrl + `/${projectId}-${version}.data${is_compressed ? compression : ""}`,
+                frameworkUrl: buildUrl + `/${projectId}-${version}.framework.js${is_compressed ? compression : ""}`,
+                codeUrl: buildUrl + `/${projectId}-${version}.wasm${is_compressed ? compression : ""}`,
                 streamingAssetsUrl: "StreamingAssets",
                 companyName: "EvoluteStudio",
                 productName: "Evolute Kingdom: Mage Duel",
-                productVersion: "1.2.10r",
+                productVersion: version,
                 showBanner: (msg: string, type: string) => {
                     console.log(`Unity Banner: ${msg} (${type})`);
                 }
@@ -95,10 +103,11 @@ export default function UnityPlayer() {
             }).catch((message: string) => {
                 console.error("Failed to load Unity:", message);
             });
+            (window as UnityWindow).unityConnector = new UnityConnector();
         };
     
         loadUnity();
-    }, []);
+    }, [is_compressed]);
     
     return (
         <>

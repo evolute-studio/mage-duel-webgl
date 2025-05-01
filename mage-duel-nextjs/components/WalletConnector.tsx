@@ -3,6 +3,14 @@
 import { useAccount, useConnect, useDisconnect } from '@starknet-react/core'
 import { useEffect, useState, useCallback } from 'react'
 import ControllerConnector from '@cartridge/connector/controller'
+import UnityConnector from '@/lib/unity-connector'
+import { UnityWindow } from './UnityPlayer';
+
+
+export interface ControllerWindow extends Window {
+  controllerInstance: ControllerConnector;
+  username: string;
+}
 
 export function ConnectWallet() {
   const { connect, connectors } = useConnect()
@@ -11,18 +19,22 @@ export function ConnectWallet() {
   const controller = connectors[0] as ControllerConnector
   const [username, setUsername] = useState<string>()
   const [isRetrying, setIsRetrying] = useState(false)
+  
 
   useEffect(() => {
     if (!address) return
     controller.username()?.then((n) => {
-      setUsername(n)
-      setControllerInstance(controller)
+      setUsername(n);
+      setControllerInstance(controller);
+      (window as ControllerWindow).username = n;
+      (window as UnityWindow).unityConnector.OnUsernameReceived(n);
     })
   }, [address, controller])
 
   const handleConnect = useCallback(async () => {
     try {
       await connect({ connector: controller })
+      setControllerInstance(controller)
     } catch (error: unknown) {
       if (error instanceof Error && error.message.includes('WebAuthn') && !isRetrying) {
         setIsRetrying(true)
@@ -54,19 +66,6 @@ export function ConnectWallet() {
   )
 } 
 
-// get username from controller
-let controllerInstance: ControllerConnector | null = null;
-
 export function setControllerInstance(controller: ControllerConnector) {
-  controllerInstance = controller;
+  (window as ControllerWindow).controllerInstance = controller;
 }
-
-const getUsername = async () => {
-  if (!controllerInstance) {
-    throw new Error('Controller not initialized');
-  }
-  const username = await controllerInstance.username();
-  return username;
-}
-
-(window as any).getUsername = getUsername;
