@@ -28,13 +28,14 @@ export function ConnectWallet() {
       setControllerInstance(controller);
       (window as ControllerWindow).username = n;
       (window as UnityWindow).unityConnector.OnUsernameReceived(n);
+      (window as UnityWindow).unityConnector.OnControllerLogin();
     })
   }, [address, controller])
 
   const handleConnect = useCallback(async () => {
     try {
-      await connect({ connector: controller })
-      setControllerInstance(controller)
+      await connect({ connector: controller });
+      setControllerInstance(controller);
     } catch (error: unknown) {
       if (error instanceof Error && error.message.includes('WebAuthn') && !isRetrying) {
         setIsRetrying(true)

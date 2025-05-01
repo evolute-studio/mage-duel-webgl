@@ -13,6 +13,7 @@ export default class UnityConnector {
         if (!controllerInstance) {
             throw new Error('Controller not initialized');
         }
+        this.OnUsernameReceived(win.username);
         return win.username;
     }
 
@@ -24,7 +25,6 @@ export default class UnityConnector {
             throw new Error('Handle connect not initialized');
         }
         await handleConnect();
-        this.OnControllerLogin();
     }
 
     public CheckControllerLoggedIn = () => {
@@ -36,7 +36,7 @@ export default class UnityConnector {
         }
         console.log("Controller logged in");
         this.OnControllerLogin();
-        this.OnUsernameReceived(win.username);
+        //this.OnUsernameReceived(win.username);
     }
 
     public OnUsernameReceived = (username: string) => {
