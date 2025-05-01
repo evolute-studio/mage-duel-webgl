@@ -13,10 +13,8 @@ import { SessionPolicies } from "@cartridge/presets";
 import { shortString, num } from 'starknet';
 
 // ETH contract address
-const EVOLUTE_DUEL_GAME_ADDRESS =
-  '0x039344460b0d9917c58185b47ce77848a6b9d5f0b26639f9faad2cdcb9451239'
-const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS =
-  '0x0693f1a1bba2704e2694b2402dbc5de4e4dcaf03aabbf4d2bad3e47c6a3de4dd'
+const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || ''
+const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || ''
 
 // Define session policies
 const policies: SessionPolicies = {
@@ -103,13 +101,13 @@ const policies: SessionPolicies = {
   }
 }
 
-const slotChain = getSlotChain(shortString.encodeShortString("WP_EVOLUTE_DUEL"));
+const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PUBLIC_SLOT_PROJECT || ''));
 
 const connector = new ControllerConnector({
   policies,
   defaultChainId: num.toHex(slotChain.id),
   chains: [
-    { ...slotChain, rpcUrl: 'https://api.cartridge.gg/x/evolute-duel/katana'},
+    { ...slotChain, rpcUrl: process.env.NEXT_PUBLIC_RPC || ''},
   ]
 })
 
@@ -118,9 +116,9 @@ const provider = jsonRpcProvider({
   rpc: (chain: Chain) => {
     switch (chain) {
       case slotChain:
-        return { nodeUrl: 'https://api.cartridge.gg/x/evolute-duel/katana' }
+        return { nodeUrl: process.env.NEXT_PUBLIC_RPC || '' }
       default:
-        return { nodeUrl: 'https://api.cartridge.gg/x/evolute-duel/katana' }
+        return { nodeUrl: process.env.NEXT_PUBLIC_RPC || '' }
     }
   },
 })

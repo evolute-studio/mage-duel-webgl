@@ -4,18 +4,19 @@ import { useAccount, useConnect, useDisconnect } from '@starknet-react/core'
 import { useEffect, useState, useCallback } from 'react'
 import ControllerConnector from '@cartridge/connector/controller'
 import { UnityWindow } from './UnityPlayer';
-
+import { AccountInterface } from 'starknet';
 
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector;
   username: string;
+  account: AccountInterface;
   handleConnect: () => Promise<void>;
 }
 
 export function ConnectWallet() {
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
-  const { address } = useAccount()
+  const { address, account } = useAccount()
   const controller = connectors[0] as ControllerConnector
   const [username, setUsername] = useState<string>()
   const [isRetrying, setIsRetrying] = useState(false)
@@ -27,8 +28,12 @@ export function ConnectWallet() {
       setUsername(n);
       setControllerInstance(controller);
       (window as ControllerWindow).username = n;
+      if (account) {
+        (window as ControllerWindow).account = account;
+      }
       (window as UnityWindow).unityConnector.OnUsernameReceived(n);
       (window as UnityWindow).unityConnector.OnControllerLogin();
+
     })
   }, [address, controller])
 
