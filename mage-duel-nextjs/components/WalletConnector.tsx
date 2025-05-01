@@ -3,13 +3,13 @@
 import { useAccount, useConnect, useDisconnect } from '@starknet-react/core'
 import { useEffect, useState, useCallback } from 'react'
 import ControllerConnector from '@cartridge/connector/controller'
-import UnityConnector from '@/lib/unity-connector'
 import { UnityWindow } from './UnityPlayer';
 
 
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector;
   username: string;
+  handleConnect: () => Promise<void>;
 }
 
 export function ConnectWallet() {
@@ -46,6 +46,11 @@ export function ConnectWallet() {
       }
     }
   }, [connect, controller, isRetrying])
+  
+
+  useEffect(() => {
+    (window as ControllerWindow).handleConnect = handleConnect;
+  }, [handleConnect]);
 
   return (
     <div className="wallet-connect" style={{ position: 'absolute', top: '10px', right: '10px' }}>
@@ -62,6 +67,7 @@ export function ConnectWallet() {
           {isRetrying ? 'Retrying...' : 'Connect Wallet'}
         </button>
       )}
+
     </div>
   )
 } 
