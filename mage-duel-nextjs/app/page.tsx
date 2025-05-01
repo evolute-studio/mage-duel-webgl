@@ -10,6 +10,7 @@ import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import OrientationHandler from "@/components/OrientationHandler";
 import { ConnectWallet } from "@/components/WalletConnector";
+import { StarknetProvider } from "@/components/StarknetProvider";
 
 export default function Home() {
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <StarknetProvider>
         <Analytics />
         <Head>
           <title>Evolute Kingdom: Mage Duel</title>
@@ -32,6 +33,6 @@ export default function Home() {
         <ServiceWorker />
         <UnityPlayer />
         <ConnectWallet /> 
-    </>
+    </StarknetProvider>
   );
 } 
