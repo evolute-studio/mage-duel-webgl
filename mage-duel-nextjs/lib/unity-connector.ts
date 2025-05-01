@@ -2,10 +2,31 @@
 
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
-
+import { change_username } from "./transactions";
+import { Transaction } from "./transactions";
 const unityReciver = "WrapperTester";
 
 export default class UnityConnector {
+
+    // !!!---- Transactions ----!!!
+    public ExecuteTransaction = async (tx: Transaction) => {
+        const win = window as ControllerWindow;
+        const account = win.account;
+        if (!account) {
+            throw new Error('Account not initialized');
+        }
+        const tx_hash = await account.execute(tx);
+        console.log(tx_hash);
+        return tx_hash;
+    }
+
+    // -- Player profile actions --
+    public ChangeUsername = async (newUsername: string) => {
+        const tx = change_username(newUsername);
+        return this.ExecuteTransaction(tx);
+    }
+
+    // !!!---- Unity Calls ----!!!
 
     public GetUsername = (): string => {
         const win = window as ControllerWindow;
@@ -38,6 +59,8 @@ export default class UnityConnector {
         this.OnControllerLogin();
         //this.OnUsernameReceived(win.username);
     }
+
+    // !!!---- Unity events ----!!!
 
     public OnUsernameReceived = (username: string) => {
         const win = window as UnityWindow;
