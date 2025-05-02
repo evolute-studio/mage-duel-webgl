@@ -9,7 +9,7 @@ declare global {
         username: string;
         account: any;
         unityConnector: UnityConnector;
-        handleConnect: () => Promise<void>;
+        handleConnect: () => Promise<boolean>;
     }
 }
 
