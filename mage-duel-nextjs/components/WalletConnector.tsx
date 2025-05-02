@@ -10,7 +10,7 @@ export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector;
   username: string;
   account: AccountInterface;
-  handleConnect: () => Promise<void>;
+  handleConnect: () => Promise<boolean>;
 }
 
 export function ConnectWallet() {
@@ -35,23 +35,28 @@ export function ConnectWallet() {
       (window as UnityWindow).unityConnector.OnControllerLogin();
 
     })
-  }, [address, controller])
+  }, [address, account, controller])
 
   const handleConnect = useCallback(async () => {
+    if (address || account) {
+      console.log('Controller already connected');
+      return true;
+    }
     try {
       await connect({ connector: controller });
       setControllerInstance(controller);
+      return true;
     } catch (error: unknown) {
       if (error instanceof Error && error.message.includes('WebAuthn') && !isRetrying) {
         setIsRetrying(true)
-        // Retry connection after a short delay
         setTimeout(() => {
           connect({ connector: controller })
           setIsRetrying(false)
         }, 100)
       }
     }
-  }, [connect, controller, isRetrying])
+    return false;
+  }, [connect, controller, isRetrying, address, account])
   
 
   useEffect(() => {

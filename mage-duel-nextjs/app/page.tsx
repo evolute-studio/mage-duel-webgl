@@ -31,8 +31,8 @@ export default function Home() {
         </Head>
         <OrientationHandler />
         <ServiceWorker />
-        <UnityPlayer />
         <ConnectWallet /> 
+        <UnityPlayer />
     </StarknetProvider>
   );
 } 
