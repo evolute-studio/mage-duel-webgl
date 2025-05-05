@@ -10,7 +10,7 @@ import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import OrientationHandler from "@/components/OrientationHandler";
 import { ConnectWallet } from "@/components/WalletConnector";
-import StarknetProvider from "@/components/StarknetProvider";
+import { StarknetProvider } from "@/components/StarknetProvider";
 
 export default function Home() {
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function Home() {
         </Head>
         <OrientationHandler />
         <ServiceWorker />
-        <ConnectWallet />
+        <ConnectWallet /> 
         <UnityPlayer />
     </StarknetProvider>
   );
