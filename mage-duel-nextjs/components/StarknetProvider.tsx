@@ -13,8 +13,8 @@ import { SessionPolicies } from "@cartridge/presets";
 import { shortString, num } from 'starknet';
 
 // ETH contract address
-const EVOLUTE_DUEL_GAME_ADDRESS = process.env.GAME_ADDRESS || ''
-const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.PLAYER_PROFILE_ADDRESS || ''
+const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || ''
+const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || ''
 
 // Define session policies
 const policies: SessionPolicies = {
@@ -101,35 +101,29 @@ const policies: SessionPolicies = {
   }
 }
 
+const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PUBLIC_SLOT_PROJECT || ''));
 
-const slotChain = typeof window !== 'undefined' 
-  ? getSlotChain(shortString.encodeShortString(process.env.SLOT_PROJECT || ''))
-  : null;
-
-const connector = slotChain ? new ControllerConnector({
+const connector = new ControllerConnector({
   policies,
-  defaultChainId: num.toHex(slotChain.id) || '',
+  defaultChainId: num.toHex(slotChain.id),
   chains: [
-    { ...slotChain, rpcUrl: process.env.RPC || ''},
+    { ...slotChain, rpcUrl: process.env.NEXT_PUBLIC_RPC || ''},
   ]
-}) : null;
+})
 
 // Configure RPC provider
 const provider = jsonRpcProvider({
   rpc: (chain: Chain) => {
     switch (chain) {
       case slotChain:
-        return { nodeUrl: process.env.RPC || '' }
+        return { nodeUrl: process.env.NEXT_PUBLIC_RPC || '' }
       default:
-        return { nodeUrl: process.env.RPC || '' }
+        return { nodeUrl: process.env.NEXT_PUBLIC_RPC || '' }
     }
   },
 })
 
-export default function StarknetProvider({ children }: { children: React.ReactNode }) {
-  if (!slotChain || !connector) {
-    return null;
-  }
+export function StarknetProvider({ children }: { children: React.ReactNode }) {
   return (
     <StarknetConfig
       autoConnect
