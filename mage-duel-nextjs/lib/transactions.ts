@@ -1,3 +1,7 @@
+import { BigNumberish } from "starknet";
+
+import { CairoOption } from "starknet";
+
 const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || '';
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || '';
 
@@ -47,7 +51,7 @@ export const join_game = (hostPlayer: string) => {
   } as Transaction;
 }
 
-export const make_move = (jokerTile: string, rotation: string, col: string, row: string) => {
+export const make_move = (jokerTile: CairoOption<string>, rotation: string, col: string, row: string) => {
   return {
       contractAddress: EVOLUTE_DUEL_GAME_ADDRESS,
       entrypoint: "make_move",
