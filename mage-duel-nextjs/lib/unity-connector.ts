@@ -9,14 +9,18 @@ const unityReciver = "WrapperTester";
 export default class UnityConnector {
 
     // !!!---- Transactions ----!!!
-    public ExecuteTransaction = async (tx: Transaction) => {
+    public ExecuteTransaction = async (tx: Transaction | string) => {
+        //console.log('Executing transaction:', tx.toString());
+        const transaction = typeof tx === 'string' ? JSON.parse(tx) as Transaction : tx;
+        //console.log('Executing transaction:', transaction);
         const win = window as ControllerWindow;
         const account = win.account;
         if (!account) {
             throw new Error('Account not initialized');
         }
-        const tx_hash = await account.execute(tx);
-        console.log(tx_hash);
+        //console.log('Tx:', transaction.contractAddress, transaction.entrypoint, transaction.calldata);
+        const tx_hash = await account.execute(transaction);
+        console.log('Transaction hash:', tx_hash);
         return tx_hash;
     }
 
@@ -24,6 +28,14 @@ export default class UnityConnector {
         const win = window as UnityWindow;
         const gameInstance = win.gameInstance;
         gameInstance.SendMessage(unityReciver, event, data);
+    }
+
+    public GetConnectionData = ()  => {
+        return {
+            rpcUrl: process.env.NEXT_PUBLIC_RPC,
+            gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
+            playerProfileActionsAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+        }
     }
 
     // -- Game actions --
@@ -153,8 +165,15 @@ export default class UnityConnector {
     }
 
     public OnControllerLogin = () => {
+        const winСontroller = window as ControllerWindow;
+        const winUnity = window as UnityWindow;
+        const gameInstance = winUnity.gameInstance;
         console.log("Controller logged in");
-        this.SendEvent("OnControllerLogin", "");
+        const data = JSON.stringify({
+            username: winСontroller.username,
+            address: winСontroller.account.address
+        });
+        gameInstance.SendMessage(unityReciver, "OnControllerLogin", data);
     }
 
     public OnControllerNotLoggedIn = () => {
