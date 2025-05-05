@@ -2,7 +2,6 @@
 
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
-import { active_skin, balance, become_bot, cancel_game, change_skin, change_username, create_game, create_game_from_snapshot, create_snapshot, finish_game, join_game, make_move, skip_move, username } from "./transactions";
 import { Transaction } from "./transactions";
 const unityReciver = "WrapperTester";
 

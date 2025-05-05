@@ -1,7 +1,7 @@
 'use client'
 
 import UnityConnector from '@/lib/unity-connector';
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef} from 'react'
 interface UnityInstance {
     SendMessage: (objectName: string, methodName: string, ...args: unknown[]) => void;
 }
