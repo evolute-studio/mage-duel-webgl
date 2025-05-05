@@ -38,80 +38,6 @@ export default class UnityConnector {
         }
     }
 
-    // -- Game actions --
-    public CreateGame = async () => {
-        const tx = create_game();
-        return this.ExecuteTransaction(tx);
-    }
-
-    public CreateGameFromSnapshot = async (snapshotId: string) => {
-        const tx = create_game_from_snapshot(snapshotId);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public CreateSnapshot = async (boardId: string, moveNumber: string) => {
-        const tx = create_snapshot(boardId, moveNumber);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public FinishGame = async (boardId: string) => {
-        const tx = finish_game(boardId);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public JoinGame = async (hostPlayer: string) => {
-        const tx = join_game(hostPlayer);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public MakeMove = async (jokerTile: string, rotation: string, col: string, row: string) => {
-        const tx = make_move(jokerTile, rotation, col, row);
-        return this.ExecuteTransaction(tx);
-    }
-    
-    public SkipMove = async () => {
-        const tx = skip_move();
-        return this.ExecuteTransaction(tx);
-    }
-
-    public CancelGame = async () => {
-        const tx = cancel_game();
-        return this.ExecuteTransaction(tx);
-    }
-    
-    
-    // -- Player profile actions --
-
-    public ActiveSkin = async () => {
-        const tx = active_skin();
-        return this.ExecuteTransaction(tx);
-    }
-
-    public Balance = async () => {
-        const tx = balance();
-        return this.ExecuteTransaction(tx);
-    }
-
-    public BecomeBot = async () => {
-        const tx = become_bot();
-        return this.ExecuteTransaction(tx);
-    }
-
-    public ChangeSkin = async (skinId: string) => {
-        const tx = change_skin(skinId);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public ChangeUsername = async (newUsername: string) => {
-        const tx = change_username(newUsername);
-        return this.ExecuteTransaction(tx);
-    }
-
-    public Username = async () => {
-        const tx = username();
-        return this.ExecuteTransaction(tx);
-    }
-
     // !!!---- Unity Calls ----!!!
 
     public GetUsername = (): string => {
@@ -120,7 +46,7 @@ export default class UnityConnector {
         if (!controllerInstance) {
             throw new Error('Controller not initialized');
         }
-        this.OnUsernameReceived(win.username);
+        
         return win.username;
     }
 
@@ -159,10 +85,6 @@ export default class UnityConnector {
     }
 
     // !!!---- Unity events ----!!!
-
-    public OnUsernameReceived = (username: string) => {
-        this.SendEvent("OnUsernameReceived", username);
-    }
 
     public OnControllerLogin = () => {
         const winСontroller = window as ControllerWindow;
