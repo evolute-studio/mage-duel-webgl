@@ -27,12 +27,13 @@ export function ConnectWallet() {
     controller.username()?.then((n) => {
       setUsername(n);
       setControllerInstance(controller);
-      (window as ControllerWindow).username = n;
-      if (account) {
-        (window as ControllerWindow).account = account;
+      if (typeof window !== 'undefined') {
+        (window as ControllerWindow).username = n;
+        if (account) {
+          (window as ControllerWindow).account = account;
+        }
+        (window as UnityWindow).unityConnector.OnControllerLogin();
       }
-      (window as UnityWindow).unityConnector.OnControllerLogin();
-
     })
   }, [address, account, controller])
 
@@ -59,7 +60,9 @@ export function ConnectWallet() {
   
 
   useEffect(() => {
-    (window as ControllerWindow).handleConnect = handleConnect;
+    if (typeof window !== 'undefined') {
+      (window as ControllerWindow).handleConnect = handleConnect;
+    }
   }, [handleConnect]);
 
   return (
@@ -83,5 +86,7 @@ export function ConnectWallet() {
 } 
 
 export function setControllerInstance(controller: ControllerConnector) {
-  (window as ControllerWindow).controllerInstance = controller;
+  if (typeof window !== 'undefined') {
+    (window as ControllerWindow).controllerInstance = controller;
+  }
 }
