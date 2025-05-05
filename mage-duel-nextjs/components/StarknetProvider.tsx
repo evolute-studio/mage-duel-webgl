@@ -1,0 +1,144 @@
+'use client';
+
+import React from 'react';
+import { Chain } from "@starknet-react/chains";
+import { getSlotChain } from "@/utils/slot";
+import {
+  StarknetConfig,
+  jsonRpcProvider,
+  starkscan,
+} from "@starknet-react/core";
+import ControllerConnector from "@cartridge/connector/controller";
+import { SessionPolicies } from "@cartridge/presets";
+import { shortString, num } from 'starknet';
+
+// ETH contract address
+const EVOLUTE_DUEL_GAME_ADDRESS = process.env.GAME_ADDRESS || ''
+const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.PLAYER_PROFILE_ADDRESS || ''
+
+// Define session policies
+const policies: SessionPolicies = {
+  contracts: {
+    [EVOLUTE_DUEL_GAME_ADDRESS]: {
+      methods: [
+      {
+        name: "create_game",
+        entrypoint: "create_game",
+        description: "create_game",
+      },
+      { 
+          name: "create_snapshot", 
+          entrypoint: "create_snapshot", 
+          description: "create_snapshot" 
+      },
+      { 
+          name: "create_game_from_snapshot", 
+          entrypoint: "create_game_from_snapshot", 
+          description: "create_game_from_snapshot" 
+      },
+      { 
+          name: "cancel_game", 
+          entrypoint: "cancel_game", 
+          description: "cancel_game" 
+      },
+      { 
+          name: "join_game", 
+          entrypoint: "join_game", 
+          description: "join_game" 
+      },
+      { 
+          name: "make_move", 
+          entrypoint: "make_move", 
+          description: "make_move" 
+      },
+      { 
+          name: "skip_move", 
+          entrypoint: "skip_move", 
+          description: "skip_move" 
+      },
+      { 
+          name: "finish_game", 
+          entrypoint: "finish_game", 
+          description: "finish_game" 
+      }
+    ],
+  },
+  [EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS]: {
+      methods: [
+        {
+          name: "balance",
+          entrypoint: "balance",
+          description: "balance"
+        },
+        {
+          name: "username",
+          entrypoint: "username",
+          description: "username"
+        },
+        {
+          name: "change_username",
+          entrypoint: "change_username",
+          description: "avchange_usernameatar"
+        },
+        {
+          name: "active_skin",
+          entrypoint: "active_skin",
+          description: "active_skin"
+        },
+        {
+          name: "change_skin",
+          entrypoint: "change_skin",
+          description: "change_skin"
+        },
+        {
+          name: "become_bot",
+          entrypoint: "become_bot",
+          description: "become_bot"
+        },
+      
+      ]
+    }
+  }
+}
+
+
+const slotChain = typeof window !== 'undefined' 
+  ? getSlotChain(shortString.encodeShortString(process.env.SLOT_PROJECT || ''))
+  : null;
+
+const connector = slotChain ? new ControllerConnector({
+  policies,
+  defaultChainId: num.toHex(slotChain.id) || '',
+  chains: [
+    { ...slotChain, rpcUrl: process.env.RPC || ''},
+  ]
+}) : null;
+
+// Configure RPC provider
+const provider = jsonRpcProvider({
+  rpc: (chain: Chain) => {
+    switch (chain) {
+      case slotChain:
+        return { nodeUrl: process.env.RPC || '' }
+      default:
+        return { nodeUrl: process.env.RPC || '' }
+    }
+  },
+})
+
+export default function StarknetProvider({ children }: { children: React.ReactNode }) {
+  if (!slotChain || !connector) {
+    return null;
+  }
+  return (
+    <StarknetConfig
+      autoConnect
+      chains={[slotChain]}
+      provider={provider}
+      connectors={[connector]}
+      explorer={starkscan}
+    >
+      {children}
+    </StarknetConfig>
+  )
+} 
