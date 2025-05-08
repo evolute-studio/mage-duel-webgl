@@ -8,7 +8,6 @@ import { initScreenTimeTracking, stopScreenTimeTracking } from "../lib/events";
 import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import { ConnectWallet } from "@/components/WalletConnector";
-import InstallPWA from "@/components/InstallPWA";
 import OfflineNotification from "@/components/OfflineNotification";
 import DirectOrientationFix from "@/components/DirectOrientationFix";
 import dynamic from "next/dynamic";
@@ -35,7 +34,6 @@ export default function Home() {
       <OfflineNotification />
       <ServiceWorker />
       <ConnectWallet />
-      <InstallPWA />
       <DirectOrientationFix />
       <UnityPlayer />
       {/* Rotation message overlay */}
@@ -61,8 +59,8 @@ export default function Home() {
         </div>
 
         {/* Rotation instructions panel */}
-        <div className="p-8 rounded-xl max-w-[80%]">
-          <div className="phone-container mx-auto mb-20">
+        <div className="rounded-xl max-w-[80%]">
+          <div className="phone-container mx-auto mb-10 scale-[0.8]">
             <img
               src="/phone.png"
               className="phone-rotate"
@@ -70,10 +68,10 @@ export default function Home() {
             />
           </div>
           <h2
-            className="m-0 mb-4 text-2xl font-bold text-center"
+            className="m-0 mb-4 text-3xl font-bold text-center text-outline max-w-50"
             style={{ color: "white" }}
           >
-            Rotate Your Device to Play
+            Rotate Device to Play
           </h2>
         </div>
       </div>

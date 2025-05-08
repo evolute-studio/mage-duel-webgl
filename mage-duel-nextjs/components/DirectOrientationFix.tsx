@@ -96,12 +96,12 @@ export default function DirectOrientationFix() {
       
       if (isLandscape) {
         // In landscape mode
-        portraitOverlay.style.display = 'none';
-        gameContainer.style.display = 'block';
+        portraitOverlay!.style.display = 'none';
+        gameContainer!.style.display = 'block';
         
         // Make sure the container fills the entire screen
-        gameContainer.className = 'fixed top-0 left-0 w-screen h-screen p-0 m-0 bg-black';
-        gameContainer.style.display = 'block'; // Must set this directly as it's controlled by JS
+        gameContainer!.className = 'fixed top-0 left-0 w-screen h-screen p-0 m-0 bg-black';
+        gameContainer!.style.display = 'block'; // Must set this directly as it's controlled by JS
         
         // Fix canvas size and positioning
         const canvas = document.getElementById('unity-canvas');
@@ -112,16 +112,16 @@ export default function DirectOrientationFix() {
         
         if (gameLoaded) {
           // Game is loaded
-          loadingElement.style.display = 'none';
+          loadingElement!.style.display = 'none';
         } else {
           // Game is still loading
-          loadingElement.style.display = 'flex';
+          loadingElement!.style.display = 'flex';
         }
       } else {
         // In portrait mode
-        portraitOverlay.style.display = 'flex';
-        gameContainer.style.display = 'none';
-        loadingElement.style.display = 'none';
+        portraitOverlay!.style.display = 'flex';
+        gameContainer!.style.display = 'none';
+        loadingElement!.style.display = 'none';
       }
     }
     

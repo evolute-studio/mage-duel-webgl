@@ -168,4 +168,12 @@ body {
   }
 }
 
-/* Removed blinking animation */
+/* Text outline for better visibility */
+.text-outline {
+  text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000,
+    0 2px 4px rgba(0, 0, 0, 0.6);
+}
