@@ -10,6 +10,7 @@ declare global {
         account: any;
         unityConnector: UnityConnector;
         handleConnect: () => Promise<boolean>;
+        handleDisconnect: () => void;
     }
 }
 

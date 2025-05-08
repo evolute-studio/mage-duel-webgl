@@ -1,7 +1,7 @@
 'use client'
 
 import UnityConnector from '@/lib/unity-connector';
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef} from 'react'
 interface UnityInstance {
     SendMessage: (objectName: string, methodName: string, ...args: unknown[]) => void;
 }
@@ -31,7 +31,7 @@ export default function UnityPlayer() {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const projectId = "mageduel-webgl"
-    const version = "1.2.22t"
+    const version = "1.3.0t"
     const compression = ".br"
     const is_compressed = false
 
@@ -94,17 +94,16 @@ export default function UnityPlayer() {
                 document.body.appendChild(dojoScript);
             });
     
-            if (typeof window !== 'undefined') {
-                (window as UnityWindow).createUnityInstance(canvasRef.current, config, (progress: number) => {
-                    console.log(`Loading progress: ${progress * 100}%`);
-                }).then((unityInstance: UnityInstance) => {
-                    console.log("Unity loaded successfully");
-                    window.gameInstance = unityInstance; 
-                }).catch((message: string) => {
-                    console.error("Failed to load Unity:", message);
-                    });
-                    (window as UnityWindow).unityConnector = new UnityConnector();
-            }
+            
+            (window as UnityWindow).createUnityInstance(canvasRef.current, config, (progress: number) => {
+                console.log(`Loading progress: ${progress * 100}%`);
+            }).then((unityInstance: UnityInstance) => {
+                console.log("Unity loaded successfully");
+                window.gameInstance = unityInstance; 
+            }).catch((message: string) => {
+                console.error("Failed to load Unity:", message);
+            });
+            (window as UnityWindow).unityConnector = new UnityConnector();
         };
     
         loadUnity();

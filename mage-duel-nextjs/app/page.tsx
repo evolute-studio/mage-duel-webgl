@@ -10,7 +10,11 @@ import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import OrientationHandler from "@/components/OrientationHandler";
 import { ConnectWallet } from "@/components/WalletConnector";
-import StarknetProvider from "@/components/StarknetProvider";
+import dynamic from "next/dynamic";
+const StarknetProviderClient = dynamic(
+  () => import("@/components/StarknetProvider").then((mod) => mod.StarknetProvider),
+  { ssr: false },
+);
 
 export default function Home() {
   useEffect(() => {
@@ -23,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <StarknetProvider>
+    <StarknetProviderClient>
         <Analytics />
         <Head>
           <title>Evolute Kingdom: Mage Duel</title>
@@ -31,8 +35,8 @@ export default function Home() {
         </Head>
         <OrientationHandler />
         <ServiceWorker />
-        <ConnectWallet />
+        <ConnectWallet /> 
         <UnityPlayer />
-    </StarknetProvider>
+    </StarknetProviderClient>
   );
 } 

@@ -9,9 +9,6 @@ export default class UnityConnector {
 
     // !!!---- Transactions ----!!!
     public ExecuteTransaction = async (tx: Transaction | string) => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         //console.log('Executing transaction:', tx.toString());
         const transaction = typeof tx === 'string' ? JSON.parse(tx) as Transaction : tx;
         //console.log('Executing transaction:', transaction);
@@ -27,32 +24,22 @@ export default class UnityConnector {
     }
 
     public SendEvent = (event: string, data: string) => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         const win = window as UnityWindow;
         const gameInstance = win.gameInstance;
         gameInstance.SendMessage(unityReciver, event, data);
     }
 
     public GetConnectionData = ()  => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         return {
-            rpcUrl: process.env.RPC,
-            toriiUrl: process.env.TORII,
-            gameAddress: process.env.GAME_ADDRESS,
-            playerProfileActionsAddress: process.env.PLAYER_PROFILE_ADDRESS,
+            rpcUrl: process.env.NEXT_PUBLIC_RPC,
+            gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
+            playerProfileActionsAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
         }
     }
 
     // !!!---- Unity Calls ----!!!
 
     public GetUsername = (): string => {
-        if (typeof window === 'undefined') {
-            return "";
-        }
         const win = window as ControllerWindow;
         const controllerInstance = win.controllerInstance;
         if (!controllerInstance) {
@@ -64,9 +51,6 @@ export default class UnityConnector {
 
     //controller login
     public ControllerLogin = async () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         const win = window as ControllerWindow;
         const handleConnect = win.handleConnect;
         if (!handleConnect) {
@@ -79,9 +63,6 @@ export default class UnityConnector {
     }
 
     public IsControllerLoggedIn = () : boolean => {
-        if (typeof window === 'undefined') {
-            return false;
-        }
         const win = window as ControllerWindow;
         const account = win.account;
         if (!account) {
@@ -91,9 +72,6 @@ export default class UnityConnector {
     }
 
     public CheckControllerLoggedIn = () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         const win = window as ControllerWindow;
         const controllerInstance = win.controllerInstance;
         if (!controllerInstance) {
@@ -108,9 +86,6 @@ export default class UnityConnector {
     // !!!---- Unity events ----!!!
 
     public OnControllerLogin = () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         const winСontroller = window as ControllerWindow;
         const winUnity = window as UnityWindow;
         const gameInstance = winUnity.gameInstance;
@@ -123,9 +98,6 @@ export default class UnityConnector {
     }
 
     public OnControllerNotLoggedIn = () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
         console.log("Controller not logged in");
         this.SendEvent("OnControllerNotLoggedIn", "");
     }

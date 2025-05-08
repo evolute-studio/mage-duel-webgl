@@ -1,5 +1,5 @@
-const EVOLUTE_DUEL_GAME_ADDRESS = process.env.GAME_ADDRESS || '';
-const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.PLAYER_PROFILE_ADDRESS || '';
+const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || '';
+const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || '';
 
 export interface Transaction {
     contractAddress: string;

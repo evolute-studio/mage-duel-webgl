@@ -11,6 +11,7 @@ export interface ControllerWindow extends Window {
   username: string;
   account: AccountInterface;
   handleConnect: () => Promise<boolean>;
+  handleDisconnect: () => void;
 }
 
 export function ConnectWallet() {
@@ -27,13 +28,12 @@ export function ConnectWallet() {
     controller.username()?.then((n) => {
       setUsername(n);
       setControllerInstance(controller);
-      if (typeof window !== 'undefined') {
-        (window as ControllerWindow).username = n;
-        if (account) {
-          (window as ControllerWindow).account = account;
-        }
-        (window as UnityWindow).unityConnector.OnControllerLogin();
+      (window as ControllerWindow).username = n;
+      if (account) {
+        (window as ControllerWindow).account = account;
       }
+      (window as UnityWindow).unityConnector.OnControllerLogin();
+
     })
   }, [address, account, controller])
 
@@ -57,36 +57,22 @@ export function ConnectWallet() {
     }
     return false;
   }, [connect, controller, isRetrying, address, account])
+
+  const handleDisconnect = useCallback(() => {
+    disconnect()
+  }, [disconnect])
   
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as ControllerWindow).handleConnect = handleConnect;
-    }
-  }, [handleConnect]);
+    (window as ControllerWindow).handleConnect = handleConnect;
+    (window as ControllerWindow).handleDisconnect = handleDisconnect;
+  }, [handleConnect, handleDisconnect]);
 
   return (
-    <div className="wallet-connect" style={{ position: 'absolute', top: '10px', right: '10px' }}>
-      {address && (
-        <>
-          <p>Wallet Address: {address}</p>
-          {username && <p>Username: {username}</p>}
-        </>
-      )}
-      {address ? (
-        <button onClick={() => disconnect()}>Disconnect Wallet</button>
-      ) : (
-        <button onClick={handleConnect} disabled={isRetrying}>
-          {isRetrying ? 'Retrying...' : 'Connect Wallet'}
-        </button>
-      )}
-
-    </div>
+    <> </>
   )
 } 
 
 export function setControllerInstance(controller: ControllerConnector) {
-  if (typeof window !== 'undefined') {
-    (window as ControllerWindow).controllerInstance = controller;
-  }
+  (window as ControllerWindow).controllerInstance = controller;
 }
