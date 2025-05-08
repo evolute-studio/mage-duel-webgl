@@ -11,6 +11,7 @@ export interface ControllerWindow extends Window {
   username: string;
   account: AccountInterface;
   handleConnect: () => Promise<boolean>;
+  handleDisconnect: () => void;
 }
 
 export function ConnectWallet() {
@@ -56,29 +57,19 @@ export function ConnectWallet() {
     }
     return false;
   }, [connect, controller, isRetrying, address, account])
+
+  const handleDisconnect = useCallback(() => {
+    disconnect()
+  }, [disconnect])
   
 
   useEffect(() => {
     (window as ControllerWindow).handleConnect = handleConnect;
-  }, [handleConnect]);
+    (window as ControllerWindow).handleDisconnect = handleDisconnect;
+  }, [handleConnect, handleDisconnect]);
 
   return (
-    <div className="wallet-connect" style={{ position: 'absolute', top: '10px', right: '10px' }}>
-      {address && (
-        <>
-          <p>Wallet Address: {address}</p>
-          {username && <p>Username: {username}</p>}
-        </>
-      )}
-      {address ? (
-        <button onClick={() => disconnect()}>Disconnect Wallet</button>
-      ) : (
-        <button onClick={handleConnect} disabled={isRetrying}>
-          {isRetrying ? 'Retrying...' : 'Connect Wallet'}
-        </button>
-      )}
-
-    </div>
+    <> </>
   )
 } 
 
