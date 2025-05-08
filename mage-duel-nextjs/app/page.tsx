@@ -41,60 +41,37 @@ export default function Home() {
       {/* Rotation message overlay */}
       <div
         id="portrait-blocker"
+        className="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center text-center z-[4000]"
         style={{
           display: "none", // Initially hidden, will be controlled by DirectOrientationFix
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage: "url(/bg.png)",
+          backgroundImage: "url('/bg.png')",
           backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
           backgroundPosition: "48% center",
-          zIndex: 4000,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "#fff",
-          textAlign: "center",
+          color: "white",
         }}
       >
         {/* Game logo at top */}
-        <div
-          style={{
-            width: "100%",
-            paddingTop: "48px",
-            paddingBottom: "32px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+        <div className="w-full pt-12 pb-8 flex justify-center">
           <img
             src="/mageduel.gif"
             alt="Mage Duel"
-            style={{
-              width: "80%",
-              maxWidth: "500px",
-              display: "block",
-            }}
+            className="w-4/5 max-w-[500px] block"
           />
         </div>
 
         {/* Rotation instructions panel */}
-        <div
-          style={{
-            padding: "32px",
-            borderRadius: "12px",
-            maxWidth: "80%",
-          }}
-        >
+        <div className="p-8 rounded-xl max-w-[80%]">
+          <div className="phone-container mx-auto mb-20">
+            <img
+              src="/phone.png"
+              className="phone-rotate"
+              alt="Rotate your device"
+            />
+          </div>
           <h2
-            style={{
-              margin: "0 0 16px 0",
-              fontSize: "28px",
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
+            className="m-0 mb-4 text-2xl font-bold text-center"
+            style={{ color: "white" }}
           >
             Rotate Your Device to Play
           </h2>

@@ -70,24 +70,38 @@ export default function OrientationHandler() {
         <div
           id="portrait-overlay"
           ref={portraitOverlayRef}
+          className="hidden fixed top-0 left-0 w-full h-full z-[1000] flex-col justify-center items-center text-center"
           style={{
-            display: "flex",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 1)",
-            opacity: 0.5,
-            zIndex: 1000,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
+            display: "flex", // Need to keep this for dynamic JS control
             color: "white",
-            textAlign: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)"
           }}
         >
-          Rotate device
+          <div className="flex flex-col items-center justify-center gap-6">
+            <div className="phone-container">
+              <img 
+                src="/phone.png" 
+                alt="Rotate your phone"
+                className="phone-rotate"
+              />
+              <div style={{
+                position: "absolute",
+                top: "50%", 
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "130px",
+                height: "30px",
+                border: "2px dashed #4CAF50",
+                borderRadius: "5px",
+                opacity: 0.7,
+                animation: "blink 1s ease-in-out infinite alternate"
+              }}></div>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-2xl font-bold mb-2">Rotate Your Device</span>
+              <span className="text-lg">Turn your phone sideways to play</span>
+            </div>
+          </div>
         </div>
       )}
     </>

@@ -105,22 +105,12 @@ export default function UnityPlayer() {
         <div 
             ref={containerRef} 
             id="unity-container" 
-            style={{ 
-                width: '100%', 
-                height: '100%',
-                position: 'fixed',
-                left: 0,
-                top: 0
-            }}
+            className="fixed w-full h-full top-0 left-0"
         >
             <canvas 
                 ref={canvasRef} 
                 id="unity-canvas" 
-                style={{ 
-                    width: '100%', 
-                    height: '100%',
-                    display: 'block'
-                }}
+                className="w-full h-full block"
                 tabIndex={-1}
             />
             <div id="unity-warning"></div>

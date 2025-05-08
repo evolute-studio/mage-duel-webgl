@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Exo2";
+  src: url("/fonts/Exo2-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -21,6 +27,7 @@ body {
   padding: 0;
   overflow: hidden;
   background-color: #000000;
+  font-family: "Exo2", sans-serif;
 }
 
 #unity-container {
@@ -113,8 +120,52 @@ body {
   padding: 0 20px;
 }
 
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  50% { transform: rotate(90deg); }
-  100% { transform: rotate(90deg); }
+.phone-rotate {
+  animation: phone-rotate 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  display: block;
+  width: 140px;
+  height: auto;
 }
+
+.phone-container {
+  animation: phone-pulse 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Removed orientation indicator */
+
+@keyframes phone-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-90deg);
+  }
+  50% {
+    transform: rotate(-90deg);
+  }
+  75% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Add pulse effect to phone to draw attention */
+@keyframes phone-pulse {
+  0% {
+  }
+  50% {
+  }
+  100% {
+  }
+}
+
+/* Removed blinking animation */

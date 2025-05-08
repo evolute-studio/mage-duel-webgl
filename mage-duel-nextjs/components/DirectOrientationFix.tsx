@@ -63,33 +63,26 @@ export default function DirectOrientationFix() {
     if (!loadingElement) {
       loadingElement = document.createElement('div');
       loadingElement.id = 'game-loading-overlay';
-      loadingElement.style.position = 'fixed';
-      loadingElement.style.top = '0';
-      loadingElement.style.left = '0';
-      loadingElement.style.width = '100%';
-      loadingElement.style.height = '100%';
-      loadingElement.style.backgroundColor = 'rgba(0,0,0,0.9)';
-      loadingElement.style.zIndex = '5000';
-      loadingElement.style.display = 'flex';
-      loadingElement.style.flexDirection = 'column';
-      loadingElement.style.justifyContent = 'center';
-      loadingElement.style.alignItems = 'center';
+      loadingElement.className = 'fixed top-0 left-0 w-full h-full z-[5000] flex flex-col justify-center items-center';
+      loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
       loadingElement.style.color = 'white';
+      loadingElement.style.display = 'flex'; // Keep this for dynamic control
       
       // Add loader gif - twice as large
       const loaderImg = document.createElement('img');
       loaderImg.src = '/loader.gif';
       loaderImg.alt = 'Loading';
-      loaderImg.style.width = '200px';
-      loaderImg.style.height = '200px';
-      loaderImg.style.position = 'absolute';
-      loaderImg.style.top = '50%';
-      loaderImg.style.left = '50%';
+      loaderImg.className = 'w-[200px] h-[200px] absolute top-1/2 left-1/2 block';
       loaderImg.style.transform = 'translate(-50%, -50%)';
       loaderImg.style.display = 'block';
       
-      // Append only the loader image
-      loadingElement.appendChild(loaderImg);
+      // Create a styled wrapper for the loader
+      const loaderWrapper = document.createElement('div');
+      loaderWrapper.className = 'flex justify-center items-center w-full h-full';
+      
+      // Append the loader to the wrapper then the wrapper to the loading element
+      loaderWrapper.appendChild(loaderImg);
+      loadingElement.appendChild(loaderWrapper);
       document.body.appendChild(loadingElement);
     }
     
@@ -107,26 +100,13 @@ export default function DirectOrientationFix() {
         gameContainer.style.display = 'block';
         
         // Make sure the container fills the entire screen
-        gameContainer.style.width = '100vw';
-        gameContainer.style.height = '100vh';
-        gameContainer.style.position = 'fixed';
-        gameContainer.style.top = '0';
-        gameContainer.style.left = '0';
-        gameContainer.style.padding = '0';
-        gameContainer.style.margin = '0';
-        gameContainer.style.backgroundColor = '#000000';
+        gameContainer.className = 'fixed top-0 left-0 w-screen h-screen p-0 m-0 bg-black';
         gameContainer.style.display = 'block'; // Must set this directly as it's controlled by JS
         
         // Fix canvas size and positioning
         const canvas = document.getElementById('unity-canvas');
         if (canvas) {
-          canvas.style.width = '100vw';
-          canvas.style.height = '100vh';
-          canvas.style.position = 'fixed';
-          canvas.style.top = '0';
-          canvas.style.left = '0';
-          canvas.style.padding = '0';
-          canvas.style.margin = '0';
+          canvas.className = 'fixed top-0 left-0 w-screen h-screen p-0 m-0';
           canvas.style.display = 'block';
         }
         
