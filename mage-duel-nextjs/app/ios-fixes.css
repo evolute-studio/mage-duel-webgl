@@ -1,0 +1,70 @@
+/* iOS-specific fixes for Unity WebGL display */
+
+/* General adjustments for iOS devices */
+@supports (-webkit-touch-callout: none) {
+  html,
+  body {
+    height: 100vh !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    touch-action: none !important;
+    -webkit-text-size-adjust: 100%;
+    background-color: #000000;
+  }
+
+  #unity-container {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: #000000;
+    overflow: hidden !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  #unity-canvas {
+    position: absolute !important;
+    width: 100% !important; 
+    height: 100% !important;
+    display: block !important;
+    background-color: #000000;
+  }
+}
+
+/* iPhone in landscape mode */
+@media screen and (orientation: landscape) and (-webkit-device-pixel-ratio: 2),
+       screen and (orientation: landscape) and (-webkit-device-pixel-ratio: 3) {
+  
+  /* Apply safe area insets as margin rather than padding */
+  #unity-container {
+    margin-left: env(safe-area-inset-left) !important;
+    margin-right: env(safe-area-inset-right) !important;
+    width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+  }
+  
+  /* Adjust canvas to be centered within the now-inset container */
+  #unity-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-position: center center !important; 
+    /* Slight zoom to eliminate potential black edges */
+    transform: scale(1.02) !important;
+  }
+}
+
+/* iPhone with notch in portrait mode - should run in landscape but just in case */
+@media screen and (orientation: portrait) and (-webkit-device-pixel-ratio: 2),
+       screen and (orientation: portrait) and (-webkit-device-pixel-ratio: 3) {
+  
+  #unity-container {
+    margin-top: env(safe-area-inset-top) !important;
+    margin-bottom: env(safe-area-inset-bottom) !important;
+    height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  }
+}

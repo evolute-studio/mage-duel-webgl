@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" fill="#000000"/>
+  <text x="256" y="286" font-family="Arial, sans-serif" font-size="64" fill="white" text-anchor="middle">Mage Duel</text>
+  <circle cx="256" cy="196" r="80" fill="#4F46E5"/>
+  <path d="M256 116C209.6 116 172 153.6 172 200C172 246.4 209.6 284 256 284C302.4 284 340 246.4 340 200C340 153.6 302.4 116 256 116ZM256 276C214 276 180 242 180 200C180 158 214 124 256 124C298 124 332 158 332 200C332 242 298 276 256 276Z" fill="#6366F1"/>
+  <path d="M256 144L275.16 183.545L318 189.2L287 219.345L294.24 262L256 242L217.76 262L225 219.345L194 189.2L236.84 183.545L256 144Z" fill="white"/>
+</svg>

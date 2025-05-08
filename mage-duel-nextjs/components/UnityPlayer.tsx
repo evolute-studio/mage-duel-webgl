@@ -54,23 +54,14 @@ export default function UnityPlayer() {
 
         
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            
-                const meta = document.createElement('meta');
-                meta.name = 'viewport';
-                meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-                document.getElementsByTagName('head')[0].appendChild(meta);
-
-                // Встановлюємо класи для мобільних пристроїв
+                // Just set the mobile class, other settings will be handled by the IPhoneFix component
                 if (containerRef.current) {
                     containerRef.current.className = "unity-mobile";
                 }
                 if (canvasRef.current) {
                     canvasRef.current.className = "unity-mobile";
                 }
-
-                
             } else {
-                
                 if (canvasRef.current) {
                     canvasRef.current.style.width = "1880px";
                     canvasRef.current.style.height = "930px";
@@ -111,11 +102,25 @@ export default function UnityPlayer() {
     
     return (
         <>
-        <div ref={containerRef} id="unity-container" style={{ width: '100%', height: '100%' }}>
+        <div 
+            ref={containerRef} 
+            id="unity-container" 
+            style={{ 
+                width: '100%', 
+                height: '100%',
+                position: 'fixed',
+                left: 0,
+                top: 0
+            }}
+        >
             <canvas 
                 ref={canvasRef} 
                 id="unity-canvas" 
-                style={{ width: '100%', height: '100%' }}
+                style={{ 
+                    width: '100%', 
+                    height: '100%',
+                    display: 'block'
+                }}
                 tabIndex={-1}
             />
             <div id="unity-warning"></div>

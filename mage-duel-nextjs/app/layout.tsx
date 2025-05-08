@@ -1,8 +1,35 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import './ios-fixes.css';
+import type { Metadata, Viewport } from 'next';
+
 export const metadata: Metadata = {
   title: 'Evolute Kingdom: Mage Duel',
   description: 'A WebGL game by EvoluteStudio',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Mage Duel'
+  },
+  applicationName: 'Mage Duel',
+  themeColor: '#000000',
+  icons: {
+    icon: [
+      { url: '/icons/icon-192x192.svg', sizes: '192x192', type: 'image/svg+xml' },
+      { url: '/icons/icon-512x512.svg', sizes: '512x512', type: 'image/svg+xml' }
+    ],
+    apple: [
+      { url: '/icons/apple-icon-180x180.svg', sizes: '180x180', type: 'image/svg+xml' }
+    ]
+  }
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover'
 };
 
 export default function RootLayout({
@@ -12,8 +39,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/apple-icon-180x180.svg" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </head>
       <body>
-          {children}
+        {children}
       </body>
     </html>
   );
