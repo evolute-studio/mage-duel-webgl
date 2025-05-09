@@ -70,12 +70,13 @@ export default function DirectOrientationFix() {
       loadingElement.style.color = "white";
       loadingElement.style.display = "flex"; // Keep this for dynamic control
 
-      // Add loader gif - twice as large
+      // Add loader gif - scaled to 30% of screen height
       const loaderImg = document.createElement("img");
       loaderImg.src = "/loader.gif";
       loaderImg.alt = "Loading";
-      loaderImg.className =
-        "w-[200px] h-[200px] absolute top-1/2 left-1/2 block";
+      loaderImg.className = "absolute top-1/2 left-1/2 block";
+      loaderImg.style.height = "35vh"; // 30% of viewport height
+      loaderImg.style.width = "auto"; // Maintain aspect ratio
       loaderImg.style.transform = "translate(-50%, -50%)";
       loaderImg.style.display = "block";
 
