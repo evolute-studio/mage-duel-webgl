@@ -104,6 +104,8 @@ const policies: SessionPolicies = {
 const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PUBLIC_SLOT_PROJECT || ''));
 
 const connector = new ControllerConnector({
+  namespace: "evolute_duel", 
+  slot: "liyard-evolute-duel", 
   policies,
   defaultChainId: num.toHex(slotChain.id),
   chains: [
