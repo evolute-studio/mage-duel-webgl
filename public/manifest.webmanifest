@@ -1,6 +1,6 @@
 {
   "name": "Evolute Kingdom: Mage Duel",
-  "short_name": "Evolue: Mage Duel",
+  "short_name": "Mage Duel",
   "description": "A WebGL game by EvoluteStudio",
   "start_url": "/",
   "display": "standalone",

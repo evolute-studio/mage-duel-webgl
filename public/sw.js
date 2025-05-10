@@ -1,6 +1,6 @@
 // This is the service worker with the Cache-first network strategy.
 
-const CACHE = "mage-duel-pwa-cache-v4";
+const CACHE = "mage-duel-pwa-cache-v5";
 const precacheResources = [
   "/",
   "/favicon.ico",
@@ -11,7 +11,7 @@ const precacheResources = [
   "/icon-512.png",
   "/offline.html",
   "/manifest.webmanifest",
-  "/TemplateData/style.css"
+  "/TemplateData/style.css",
 ];
 
 // The install handler takes care of precaching the resources we always need.
@@ -22,14 +22,14 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) => {
       // Use individual cache.add calls instead of cache.addAll to prevent a single failure from aborting all caches
-      const cachePromises = precacheResources.map(resource => {
-        return cache.add(resource).catch(error => {
-          console.error('Failed to cache resource:', resource, error);
+      const cachePromises = precacheResources.map((resource) => {
+        return cache.add(resource).catch((error) => {
+          console.error("Failed to cache resource:", resource, error);
           // Continue with the installation even if some resources fail to cache
           return Promise.resolve();
         });
       });
-      
+
       return Promise.all(cachePromises);
     }),
   );
@@ -63,58 +63,67 @@ self.addEventListener("activate", (event) => {
 // If no response is found, it fetches it from the network.
 self.addEventListener("fetch", (event) => {
   // Skip cross-origin requests and non-GET requests
-  if (!event.request.url.startsWith(self.location.origin) || event.request.method !== 'GET') {
+  if (
+    !event.request.url.startsWith(self.location.origin) ||
+    event.request.method !== "GET"
+  ) {
     return;
   }
-  
+
   // Handle the request
   event.respondWith(
     // Try the cache
-    caches.match(event.request)
-      .then(cachedResponse => {
+    caches
+      .match(event.request)
+      .then((cachedResponse) => {
         // Return the cached response if we have it
         if (cachedResponse) {
           return cachedResponse;
         }
-        
+
         // Otherwise try the network
         return fetch(event.request)
-          .then(response => {
+          .then((response) => {
             // Don't cache if response is not valid
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (
+              !response ||
+              response.status !== 200 ||
+              response.type !== "basic"
+            ) {
               return response;
             }
-            
+
             // Clone the response to cache it and return the original
             const responseToCache = response.clone();
-            caches.open(CACHE)
-              .then(cache => {
-                cache.put(event.request, responseToCache)
-                  .catch(err => console.error('Cache put error:', err));
+            caches
+              .open(CACHE)
+              .then((cache) => {
+                cache
+                  .put(event.request, responseToCache)
+                  .catch((err) => console.error("Cache put error:", err));
               })
-              .catch(err => console.error('Cache open error:', err));
-              
+              .catch((err) => console.error("Cache open error:", err));
+
             return response;
           })
-          .catch(error => {
-            console.error('Fetch error:', error);
-            
+          .catch((error) => {
+            console.error("Fetch error:", error);
+
             // Return the offline page for navigation requests
-            if (event.request.mode === 'navigate') {
-              return caches.match('/offline.html')
-                .catch(() => {
-                  // If offline page is not cached, return a simple message
-                  return new Response(
-                    "You are offline. Please check your internet connection.",
-                    {
-                      status: 503,
-                      statusText: "Service Unavailable",
-                      headers: new Headers({ "Content-Type": "text/html" }),
-                    }
-                  );
-                });
+            if (event.request.mode === "navigate") {
+              return caches.match("/offline.html").catch(() => {
+                // If offline page is not cached, return a simple message
+                return new Response(
+                  "You are offline. Please check your internet connection.",
+                  {
+                    status: 503,
+                    statusText: "Service Unavailable",
+                    headers: new Headers({ "Content-Type": "text/html" }),
+                  },
+                );
+              });
             }
-            
+
             // Return a standard error message for other requests
             return new Response(
               "You are offline. Please check your internet connection.",
@@ -122,23 +131,20 @@ self.addEventListener("fetch", (event) => {
                 status: 503,
                 statusText: "Service Unavailable",
                 headers: new Headers({ "Content-Type": "text/plain" }),
-              }
+              },
             );
           });
       })
-      .catch(error => {
-        console.error('Cache match error:', error);
+      .catch((error) => {
+        console.error("Cache match error:", error);
         return fetch(event.request).catch(() => {
           // If all else fails, return a simple offline message
-          return new Response(
-            "Service worker error. Please reload the page.",
-            { 
-              status: 500,
-              headers: new Headers({ "Content-Type": "text/plain" })
-            }
-          );
+          return new Response("Service worker error. Please reload the page.", {
+            status: 500,
+            headers: new Headers({ "Content-Type": "text/plain" }),
+          });
         });
-      })
+      }),
   );
 });
 
