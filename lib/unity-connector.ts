@@ -32,8 +32,11 @@ export default class UnityConnector {
     public GetConnectionData = ()  => {
         return {
             rpcUrl: process.env.NEXT_PUBLIC_RPC,
+            toriiUrl: process.env.NEXT_PUBLIC_TORII,
             gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
             playerProfileActionsAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+            worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
+            slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
         }
     }
 
