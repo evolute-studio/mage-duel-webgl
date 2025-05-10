@@ -69,6 +69,56 @@ export function ConnectWallet() {
     (window as ControllerWindow).handleDisconnect = handleDisconnect;
   }, [handleConnect, handleDisconnect]);
 
+  // Add iframe scaling for landscape mode
+  useEffect(() => {
+    const scaleControllerIframe = (elementId) => {
+      const iframe = document.getElementById(elementId) as HTMLIFrameElement;
+      if (!iframe) return;
+
+      // Check if we're in landscape mode
+      const isLandscape = window.innerWidth > window.innerHeight;
+
+      // Only apply scaling in landscape mode
+      if (isLandscape) {
+        // Get the available viewport height
+        const viewportHeight = window.innerHeight;
+
+        // Original iframe height
+        const originalHeight = 600;
+
+        // Calculate scale factor only if viewport height is less than iframe height
+        if (viewportHeight < originalHeight) {
+          // Calculate scale factor (with a small margin for safety)
+          const scaleFactor = viewportHeight / originalHeight;
+
+          // Apply transform - the iframe will maintain its centered position
+          iframe.style.transform = `scale(${scaleFactor})`;
+          iframe.style.transformOrigin = "center center";
+        } else {
+          // Reset transform if no scaling needed
+          iframe.style.transform = "none";
+        }
+      } else {
+        // Reset for portrait mode
+        iframe.style.transform = "none";
+      }
+    };
+
+    // Initial scaling
+    scaleControllerIframe("controller-keychain");
+    scaleControllerIframe("controller-profile");
+
+    // Add event listeners
+    window.addEventListener("resize", scaleControllerIframe);
+    window.addEventListener("orientationchange", scaleControllerIframe);
+
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", scaleControllerIframe);
+      window.removeEventListener("orientationchange", scaleControllerIframe);
+    };
+  }, [address, account, controller]);
+
   return <> </>;
 }
 
