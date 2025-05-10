@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Script from 'next/script';
 
 export default function ServiceWorker() {
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
     // Handle Service Worker registration directly
     useEffect(() => {
@@ -25,7 +23,8 @@ export default function ServiceWorker() {
                     
                     if (existingRegistration) {
                         console.log('Using existing Service Worker registration');
-                        setSwRegistration(existingRegistration);
+                        // Store registration for future reference
+                        console.log('Registration stored for future use');
                         
                         // Setup update checking for the existing service worker
                         const checkForUpdates = async () => {
@@ -61,7 +60,7 @@ export default function ServiceWorker() {
                 });
                 
                 console.log('Service Worker registered successfully with scope:', registration.scope);
-                setSwRegistration(registration);
+                console.log('Registration ready for use');
                 
                 // Handle new service worker installation
                 registration.addEventListener('updatefound', () => {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
+import Image from "next/image";
 
 const IOSViewportScript = () => (
   <Script id="ios-viewport-fix" strategy="afterInteractive">
@@ -59,10 +60,13 @@ const LoadingOverlay = ({ isVisible }: { isVisible: boolean }) => {
       className="fixed inset-0 z-[5000] flex flex-col items-center justify-center bg-black/90 text-white"
     >
       <div className="flex h-full w-full items-center justify-center">
-        <img 
+        <Image 
           src="/loader.gif" 
           alt="Loading" 
           className="absolute left-1/2 top-1/2 block h-[35vh] w-auto -translate-x-1/2 -translate-y-1/2"
+          width={200}
+          height={200}
+          priority
         />
       </div>
     </div>

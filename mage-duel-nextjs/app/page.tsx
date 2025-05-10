@@ -11,6 +11,7 @@ import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import DirectOrientationFix from "@/components/DirectOrientationFix";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const StarknetProviderClient = dynamic(
   () =>
@@ -52,20 +53,26 @@ export default function Home() {
       >
         {/* Game logo at top */}
         <div className="w-full pt-12 pb-8 flex justify-center">
-          <img
+          <Image
             src="/mageduel.gif"
             alt="Mage Duel"
             className="w-4/5 max-w-[500px] block"
+            width={500}
+            height={150}
+            priority
           />
         </div>
 
         {/* Rotation instructions panel */}
         <div className="rounded-xl max-w-[80%]">
           <div className="phone-container mx-auto mb-10 scale-[0.8]">
-            <img
+            <Image
               src="/phone.png"
               className="phone-rotate"
               alt="Rotate your device"
+              width={300}
+              height={200}
+              priority
             />
           </div>
           <h2
