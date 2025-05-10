@@ -1,164 +1,163 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Script from "next/script";
+
+const IOSViewportScript = () => (
+  <Script id="ios-viewport-fix" strategy="afterInteractive">
+    {`
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        // Add viewport meta tag
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        document.head.appendChild(meta);
+        
+        // Add iOS specific CSS
+        const style = document.createElement('style');
+        style.textContent = \`
+          @supports (-webkit-touch-callout: none) {
+            body, html {
+              height: 100vh !important;
+              width: 100vw !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              overflow: hidden !important;
+              position: fixed !important;
+            }
+            
+            #unity-container {
+              width: 100vw !important;
+              height: 100vh !important;
+              position: fixed !important;
+              left: 0 !important;
+              top: 0 !important;
+            }
+            
+            #unity-canvas {
+              width: 100vw !important;
+              height: 100vh !important;
+              position: fixed !important;
+              left: 0 !important;
+              top: 0 !important;
+              object-fit: cover !important;
+            }
+          }
+        \`;
+        document.head.appendChild(style);
+      }
+    `}
+  </Script>
+);
+
+const LoadingOverlay = ({ isVisible }: { isVisible: boolean }) => {
+  if (!isVisible) return null;
+  
+  return (
+    <div 
+      id="game-loading-overlay"
+      className="fixed inset-0 z-[5000] flex flex-col items-center justify-center bg-black/90 text-white"
+    >
+      <div className="flex h-full w-full items-center justify-center">
+        <img 
+          src="/loader.gif" 
+          alt="Loading" 
+          className="absolute left-1/2 top-1/2 block h-[35vh] w-auto -translate-x-1/2 -translate-y-1/2"
+        />
+      </div>
+    </div>
+  );
+};
 
 export default function DirectOrientationFix() {
+  const [isIOS, setIsIOS] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(true);
+  const [gameLoaded, setGameLoaded] = useState(false);
+
   useEffect(() => {
-    // Add iOS specific viewport meta tag
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // Detect iOS
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+    
+    // Initial orientation check
+    setIsLandscape(window.innerWidth > window.innerHeight);
 
-    if (isIOS) {
-      // Create viewport meta tag specifically for iOS
-      const viewportMeta = document.createElement("meta");
-      viewportMeta.name = "viewport";
-      viewportMeta.content =
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
-      document.head.appendChild(viewportMeta);
-
-      // Add iOS specific CSS
-      const iosCss = document.createElement("style");
-      iosCss.textContent = `
-        @supports (-webkit-touch-callout: none) {
-          body, html {
-            height: 100vh !important;
-            width: 100vw !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            overflow: hidden !important;
-            position: fixed !important;
-          }
-          
-          #unity-container {
-            width: 100vw !important;
-            height: 100vh !important;
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
-          }
-          
-          #unity-canvas {
-            width: 100vw !important;
-            height: 100vh !important;
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
-            object-fit: cover !important;
-          }
-        }
-      `;
-      document.head.appendChild(iosCss);
+    // Check if game is already loaded
+    if (typeof window !== "undefined" && window.gameInstance !== undefined) {
+      setGameLoaded(true);
     }
 
-    // Get DOM elements
+    // Function to check orientation
+    const checkOrientation = () => {
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    };
+
+    // Function to handle orientation change with multiple checks
+    const handleOrientationChange = () => {
+      setTimeout(checkOrientation, 100);
+      setTimeout(checkOrientation, 500);
+    };
+
+    // Check for game loading periodically
+    const loadInterval = setInterval(() => {
+      if (typeof window !== "undefined" && window.gameInstance !== undefined) {
+        setGameLoaded(true);
+      }
+    }, 500);
+
+    // Set up orientation listeners
+    window.addEventListener("resize", checkOrientation);
+    window.addEventListener("orientationchange", handleOrientationChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkOrientation);
+      window.removeEventListener("orientationchange", handleOrientationChange);
+      clearInterval(loadInterval);
+    };
+  }, []);
+
+  // Update UI elements when state changes
+  useEffect(() => {
     const portraitOverlay = document.getElementById("portrait-blocker");
     const gameContainer = document.getElementById("unity-container");
-    const loadingOverlay = document.getElementById("game-loading-overlay");
-
+    
     if (!portraitOverlay || !gameContainer) {
       console.error("Required DOM elements not found");
       return;
     }
 
-    // Create loading overlay if it doesn't exist
-    let loadingElement = loadingOverlay;
-    if (!loadingElement) {
-      loadingElement = document.createElement("div");
-      loadingElement.id = "game-loading-overlay";
-      loadingElement.className =
-        "fixed top-0 left-0 w-full h-full z-[5000] flex flex-col justify-center items-center";
-      loadingElement.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
-      loadingElement.style.color = "white";
-      loadingElement.style.display = "flex"; // Keep this for dynamic control
+    if (isLandscape) {
+      // Landscape mode - show game, hide overlay
+      portraitOverlay.style.display = "none";
+      gameContainer.style.display = "block";
 
-      // Add loader gif - scaled to 30% of screen height
-      const loaderImg = document.createElement("img");
-      loaderImg.src = "/loader.gif";
-      loaderImg.alt = "Loading";
-      loaderImg.className = "absolute top-1/2 left-1/2 block";
-      loaderImg.style.height = "35vh"; // 30% of viewport height
-      loaderImg.style.width = "auto"; // Maintain aspect ratio
-      loaderImg.style.transform = "translate(-50%, -50%)";
-      loaderImg.style.display = "block";
+      const canvas = document.getElementById("unity-canvas");
+      if (canvas) {
+        canvas.style.display = "block";
+      }
 
-      // Create a styled wrapper for the loader
-      const loaderWrapper = document.createElement("div");
-      loaderWrapper.className =
-        "flex justify-center items-center w-full h-full";
-
-      // Append the loader to the wrapper then the wrapper to the loading element
-      loaderWrapper.appendChild(loaderImg);
-      loadingElement.appendChild(loaderWrapper);
-      document.body.appendChild(loadingElement);
-    }
-
-    // Direct function to check orientation and update UI
-    function updateOrientation() {
-      const isLandscape = window.innerWidth > window.innerHeight;
-      const gameLoaded =
-        typeof window !== "undefined" && window.gameInstance !== undefined;
-
-      if (isLandscape) {
-        // In landscape mode
-        portraitOverlay!.style.display = "none";
-        gameContainer!.style.display = "block";
-
-        // Make sure the container fills the entire screen
-        gameContainer!.className =
-          "fixed top-0 left-0 w-screen h-screen p-0 m-0 bg-black";
-        gameContainer!.style.display = "block"; // Must set this directly as it's controlled by JS
-
-        // Fix canvas size and positioning
-        const canvas = document.getElementById("unity-canvas");
-        if (canvas) {
-          canvas.className = "fixed top-0 left-0 w-screen h-screen p-0 m-0";
-          canvas.style.display = "block";
-        }
-
-        if (gameLoaded) {
-          // Game is loaded
-          loadingElement!.style.display = "none";
-        } else {
-          // Game is still loading
-          loadingElement!.style.display = "flex";
-        }
-      } else {
-        // In portrait mode
-        portraitOverlay!.style.display = "flex";
-        gameContainer!.style.display = "none";
-        loadingElement!.style.display = "none";
+      // Check if game is loaded to hide loading overlay
+      const loadingOverlay = document.getElementById("game-loading-overlay");
+      if (loadingOverlay && gameLoaded) {
+        loadingOverlay.style.display = "none";
+      }
+    } else {
+      // Portrait mode - show overlay, hide game
+      portraitOverlay.style.display = "flex";
+      gameContainer.style.display = "none";
+      
+      // Hide loading overlay in portrait mode
+      const loadingOverlay = document.getElementById("game-loading-overlay");
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "none";
       }
     }
+  }, [isLandscape, gameLoaded]);
 
-    // Check for game loading periodically
-    const checkForGameLoad = () => {
-      if (typeof window !== "undefined" && window.gameInstance !== undefined) {
-        updateOrientation();
-      }
-    };
-
-    // Initial check
-    updateOrientation();
-
-    // Set up listeners
-    window.addEventListener("resize", updateOrientation);
-    window.addEventListener("orientationchange", () => {
-      // Check multiple times to catch any delay
-      setTimeout(updateOrientation, 100);
-      setTimeout(updateOrientation, 500);
-    });
-
-    // Set up periodic checks
-    const loadInterval = setInterval(checkForGameLoad, 500);
-    const orientationInterval = setInterval(updateOrientation, 2000);
-
-    // Clean up
-    return () => {
-      window.removeEventListener("resize", updateOrientation);
-      window.removeEventListener("orientationchange", updateOrientation);
-      clearInterval(loadInterval);
-      clearInterval(orientationInterval);
-    };
-  }, []);
-
-  return null;
+  return (
+    <>
+      {isIOS && <IOSViewportScript />}
+      <LoadingOverlay isVisible={isLandscape && !gameLoaded} />
+    </>
+  );
 }
