@@ -71,7 +71,7 @@ export function ConnectWallet() {
 
   // Add iframe scaling for landscape mode
   useEffect(() => {
-    const scaleControllerIframe = (elementId) => {
+    const scaleControllerIframe = (elementId: string) => {
       const iframe = document.getElementById(elementId) as HTMLIFrameElement;
       if (!iframe) return;
 
@@ -108,14 +108,24 @@ export function ConnectWallet() {
     scaleControllerIframe("controller-keychain");
     scaleControllerIframe("controller-profile");
 
-    // Add event listeners
-    window.addEventListener("resize", scaleControllerIframe);
-    window.addEventListener("orientationchange", scaleControllerIframe);
+    // Add event listeners with proper event typing
+    const handleResize = () => {
+      scaleControllerIframe("controller-keychain");
+      scaleControllerIframe("controller-profile");
+    };
+    
+    const handleOrientationChange = () => {
+      scaleControllerIframe("controller-keychain");
+      scaleControllerIframe("controller-profile");
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleOrientationChange);
 
     // Clean up
     return () => {
-      window.removeEventListener("resize", scaleControllerIframe);
-      window.removeEventListener("orientationchange", scaleControllerIframe);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleOrientationChange);
     };
   }, [address, account, controller]);
 
