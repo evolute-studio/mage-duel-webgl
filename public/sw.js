@@ -1,6 +1,6 @@
 // This is the service worker with the Cache-first network strategy.
 
-const CACHE = "mage-duel-pwa-cache-v5";
+const CACHE = "mage-duel-pwa-cache-v6";
 const precacheResources = [
   "/",
   "/favicon.ico",
