@@ -32,22 +32,28 @@ export default function Home() {
     // Detect if running as PWA
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone ||
+      // @ts-expect-error: Safari-specific standalone property
+      window.navigator.standalone ||
       document.referrer.includes("android-app://");
 
     setIsPWA(isStandalone);
 
     // Check if on mobile device and detect platform
     const userAgent =
-      navigator.userAgent || navigator.vendor || (window as any).opera;
+      navigator.userAgent ||
+      navigator.vendor ||
+      // @ts-expect-error: Opera-specific property
+      window.opera;
     const userAgentLower = userAgent.toLowerCase();
     const isMobileDevice =
       /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
         userAgentLower,
       );
-    const isIOSDevice =
+    // Make sure this is always a boolean
+    const isIOSDevice = Boolean(
       /iphone|ipad|ipod/i.test(userAgentLower) ||
-      (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
+      (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+    );
 
     setIsMobile(isMobileDevice);
     setIsIOS(isIOSDevice);
