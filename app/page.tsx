@@ -11,6 +11,7 @@ import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import LoginButtonsWeb from "@/components/LoginButtonsWeb";
 
 const StarknetProviderClient = dynamic(
   () =>
@@ -299,25 +300,8 @@ export default function Home() {
           />
         </div>
 
-        {/* Rotation instructions panel */}
-        <div className="rounded-xl max-w-[80%]">
-          <div className="phone-container mx-auto mb-10 scale-[0.8]">
-            <Image
-              src="/phone.png"
-              className="phone-rotate"
-              alt="Rotate your device"
-              width={300}
-              height={200}
-              priority
-            />
-          </div>
-          <h2
-            className="m-0 mb-4 text-3xl font-bold text-center text-outline max-w-50"
-            style={{ color: "white" }}
-          >
-            Rotate Device to Play
-          </h2>
-        </div>
+        
+        <LoginButtonsWeb />
       </div>
     </StarknetProviderClient>
   );
