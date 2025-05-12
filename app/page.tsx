@@ -52,7 +52,7 @@ export default function Home() {
     // Make sure this is always a boolean
     const isIOSDevice = Boolean(
       /iphone|ipad|ipod/i.test(userAgentLower) ||
-      (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+        (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)),
     );
 
     setIsMobile(isMobileDevice);
@@ -176,7 +176,7 @@ export default function Home() {
           {!isLandscape ? (
             // Full screen PWA install prompt in portrait mode
             <>
-              <div className="w-full pt-12 pb-5 flex justify-center">
+              <div className="w-full pt-12 pb-10 flex justify-center">
                 <Image
                   src="/mageduel.gif"
                   alt="Mage Duel"
@@ -186,8 +186,9 @@ export default function Home() {
                   priority
                 />
               </div>
-              <div className="bg-[#24170e] rounded-xl px-6 py-6 mx-4 mb-8 max-w-[90%]">
-                <h2 className="text-3xl font-bold text-outline-sm mb-4">
+
+              <div className="bg-black/70 border-[#BD835B] border-2 rounded-xl px-6 py-6 mx-4 mb-8 max-w-[90%]">
+                <h2 className="text-3xl font-bold text-outline-sm mb-7">
                   Install Mage Duel
                 </h2>
                 <p className="text-md mb-3 text-outline-sm">
