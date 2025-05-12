@@ -21,6 +21,7 @@ const StarknetProviderClient = dynamic(
 export default function Home() {
   const [isPWA, setIsPWA] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const [isLandscape, setIsLandscape] = useState(true);
   const [gameLoaded, setGameLoaded] = useState(false);
 
@@ -36,14 +37,20 @@ export default function Home() {
 
     setIsPWA(isStandalone);
 
-    // Check if on mobile device
+    // Check if on mobile device and detect platform
     const userAgent =
       navigator.userAgent || navigator.vendor || (window as any).opera;
+    const userAgentLower = userAgent.toLowerCase();
     const isMobileDevice =
       /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-        userAgent.toLowerCase(),
+        userAgentLower,
       );
+    const isIOSDevice =
+      /iphone|ipad|ipod/i.test(userAgentLower) ||
+      (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
+
     setIsMobile(isMobileDevice);
+    setIsIOS(isIOSDevice);
 
     // Initial orientation check
     checkOrientation();
@@ -173,45 +180,51 @@ export default function Home() {
                   priority
                 />
               </div>
-              <div className="bg-black/70 rounded-xl p-4 mx-4 mb-8 max-w-[90%]">
+              <div className="bg-[#24170e] rounded-xl px-6 py-6 mx-4 mb-8 max-w-[90%]">
                 <h2 className="text-3xl font-bold text-outline-sm mb-4">
                   Install Mage Duel
                 </h2>
-                <p className="text-md mb-3 text-outline-sm">In Address Bar:</p>
-                <div className="text-center mb-4 mx-auto ">
-                  <p className="mb-3">
-                    <strong>iOS: </strong>
-                    <span className="bg-[#BD835B] px-2 py-1 rounded">
-                      <img
-                        src="/ios-share.svg"
-                        alt="Share"
-                        className="inline-block w-[21px] h-[21px] mb-2"
-                      />
-                    </span>{" "}
-                    →{" "}
-                    <span className="bg-[#BD835B] px-2 py-1 rounded text-outline-sm">
-                      Add to Home Screen
-                    </span>
-                  </p>
-                  <p>
-                    <strong className="text-outline-sm">Android: </strong>
-                    <span className="bg-[#BD835B] px-2 py-1 rounded">
-                      <span className="px-1 inline-block leading-0  text-xl">
-                        ⋮
+                <p className="text-md mb-3 text-outline-sm">
+                  Tap in Address Bar:
+                </p>
+                <div className="text-center mx-auto ">
+                  {isIOS ? (
+                    <p className="mb-3">
+                      <span className="bg-[#BD835B] px-2 py-1 rounded">
+                        <img
+                          src="/ios-share.svg"
+                          alt="Share"
+                          className="inline-block w-[21px] h-[21px] mb-2"
+                        />
+                      </span>{" "}
+                      →{" "}
+                      <span className="bg-[#BD835B] px-2 py-1 rounded text-outline-sm">
+                        Add to Home Screen
                       </span>
-                    </span>{" "}
-                    →{" "}
-                    <span className="bg-[#BD835B] px-2 py-1 rounded whitespace-nowrap flex-nowrap text-outline-sm">
-                      Add to Home Screen
-                    </span>
-                  </p>
-                  <div className="flex items-center gap-4 justify-center mt-8">
-                    <img
-                      src="/icon-512.png"
-                      alt="Mage Duel Icon"
-                      className="w-10 h-10"
-                    />{" "}
-                    Play via Home Screen
+                    </p>
+                  ) : (
+                    <p>
+                      <span className="bg-[#BD835B] px-2 py-1 rounded">
+                        <span className="px-1 inline-block leading-0  text-xl">
+                          ⋮
+                        </span>
+                      </span>{" "}
+                      →{" "}
+                      <span className="bg-[#BD835B] px-2 py-1 rounded whitespace-nowrap flex-nowrap text-outline-sm">
+                        Add to Home Screen
+                      </span>
+                    </p>
+                  )}
+                  <div className="flex items-center gap-3 flex-col mt-8">
+                    Play from Home Screen:
+                    <div className="flex items-center gap-2 justify-center flex-col">
+                      <img
+                        src="/icon-512.png"
+                        alt="Mage Duel Icon"
+                        className="w-15 h-15"
+                      />
+                      <span className="text-xs">Mage Duel</span>
+                    </div>
                   </div>
                 </div>
               </div>
