@@ -187,7 +187,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="bg-black/70 border-[#BD835B] border-2 rounded-xl px-6 py-6 mx-4 mb-8 max-w-[90%]">
+              <div className="bg-[#24170e]  rounded-xl px-10 py-6 mx-4 mb-8 max-w-[90%]">
                 <h2 className="text-3xl font-bold text-outline-sm mb-7">
                   Install Mage Duel
                 </h2>
