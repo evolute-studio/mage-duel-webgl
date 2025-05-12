@@ -278,7 +278,7 @@ export default function Home() {
       {/* Rotation message overlay - shown whenever in portrait mode */}
       <div
         id="portrait-blocker"
-        className="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center text-center z-[4000]"
+        className="fixed top-0 left-0 w-full h-full gap-10 flex flex-col justify-center items-center text-center z-[4000]"
         style={{
           display: "none", // Initially hidden, will be controlled by orientation code
           backgroundImage: "url('/bg.png')",
@@ -289,7 +289,7 @@ export default function Home() {
         }}
       >
         {/* Game logo at top */}
-        <div className="w-full pt-12 pb-8 flex justify-center">
+        <div className="w-full flex justify-center items-end flex-1">
           <Image
             src="/mageduel.gif"
             alt="Mage Duel"
@@ -300,8 +300,9 @@ export default function Home() {
           />
         </div>
 
-        
-        <LoginButtonsWeb />
+        <div className="flex-1 flex flex-col items-center ">
+          <LoginButtonsWeb />
+        </div>
       </div>
     </StarknetProviderClient>
   );

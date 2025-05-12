@@ -24,7 +24,7 @@ export default function LoginButtonsWeb() {
 
   if (account || address || isGuest) {
     return (
-      <div className="rounded-xl max-w-[80%]">
+      <div>
         <div className="phone-container mx-auto mb-10 scale-[0.8]">
           <Image
             src="/phone.png"
@@ -46,7 +46,7 @@ export default function LoginButtonsWeb() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-5 text-2xl min-h-[268px] justify-end">
+    <div className="flex flex-col items-center justify-center gap-5 text-2xl">
       <button
         onClick={handleLogin}
         className="text-outline relative cursor-pointer hover:opacity-85 transition-opacity w-60 flex items-center justify-center"
