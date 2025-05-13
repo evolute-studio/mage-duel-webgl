@@ -9,7 +9,6 @@ import {
   starkscan,
 } from "@starknet-react/core";
 import ControllerConnector from "@cartridge/connector/controller";
-import { SessionPolicies } from "@cartridge/presets";
 import { shortString, num } from 'starknet';
 
 // ETH contract address
@@ -17,7 +16,7 @@ const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || ''
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || ''
 
 // Define session policies
-const policies: SessionPolicies = {
+const policies = {
   contracts: {
     [EVOLUTE_DUEL_GAME_ADDRESS]: {
       methods: [
