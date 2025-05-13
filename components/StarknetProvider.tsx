@@ -110,7 +110,8 @@ const connector = new ControllerConnector({
   defaultChainId: num.toHex(slotChain.id),
   chains: [
     { ...slotChain, rpcUrl: process.env.NEXT_PUBLIC_RPC || ''},
-  ]
+  ],
+  preset: "mage-duel",
 })
 
 // Configure RPC provider
