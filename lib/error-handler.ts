@@ -24,6 +24,27 @@ if (typeof window !== 'undefined') {
             return String(arg);
           })
           .join(' ');
+        // Check for JSON-RPC error
+        if (errorMessage.includes('JSON-RPC error: code=14') && 
+            errorMessage.includes('connection error')) {
+          console.log('Detected JSON-RPC connection error, reloading page...');
+          window.location.reload();
+          return;
+        }
+        if (errorMessage.includes('ContractNotFound')){
+          console.log('Detected ContractNotFound error, clearing IndexedDB and reloading page...');
+          // Clear all IndexedDB databases
+          window.indexedDB.databases().then((dbs) => {
+            dbs.forEach((db) => {
+              if (db.name) {
+                window.indexedDB.deleteDatabase(db.name);
+              }
+            });
+            // Reload page after clearing
+            window.location.reload();
+          });
+          return;
+        }
 
         const error = new Error(errorMessage);
         error.stack = args.find(arg => arg instanceof Error)?.stack || new Error().stack;
