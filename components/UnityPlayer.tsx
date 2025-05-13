@@ -31,7 +31,7 @@ export default function UnityPlayer() {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const projectId = "mageduel-webgl"
-    const version = "1.3.12"
+    const version = "1.3.13"
     const compression = ".br"
     const is_compressed = true
 
