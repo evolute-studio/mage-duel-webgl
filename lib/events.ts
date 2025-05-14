@@ -1,5 +1,6 @@
 import { getPlayerId } from '@/utils/player_data';
 import { logEvent } from '../lib/axiom';
+import { ControllerWindow } from '@/components/WalletConnector';
 
 
 export const GameLoaded = () => {
@@ -9,27 +10,48 @@ export const GameLoaded = () => {
     });
 };
 
-const SCREEN_TIME_INTERVAL = 15000; // 15 секунд
+export const controllerLoginEvent = () => {
+  const win = window as ControllerWindow;
+  logEvent('controller_login', {
+    player_id: getPlayerId(),
+    timestamp: new Date().toISOString(),
+    player_id_timestamp: localStorage.getItem('player_id_timestamp'),
+    controller_username: win.username,
+    controller_address: win.account.address,
+    url: window.location.href,
+  });
+}
+
+const SCREEN_TIME_INTERVAL = 15000; 
 
 let screenTimeInterval: NodeJS.Timeout | null = null;
 
-// Функція для відправки івента ScreenTime
 const sendScreenTimeEvent = () => {
-  logEvent('ScreenTime', {
+  var event_type = 'screen_time';
+  var data = {
     player_id: getPlayerId(),
     timestamp: new Date().toISOString(),
     url: window.location.href,
-  });
+    controller_username: '',
+    controller_address: '',
+  }
+  const win = window as ControllerWindow
+  if(win.controllerInstance !== undefined && win.controllerInstance.controller !== undefined) {
+    event_type += '_controller';
+    data.controller_username = win.username;
+    data.controller_address = win.account.address;
+  }
+  logEvent(event_type, data);
 };
 
-// Ініціалізація відстеження часу екрану
+
 export const initScreenTimeTracking = () => {
   if (typeof window === 'undefined') return;
 
-  // Запуск інтервалу для відправки івентів
+  
   screenTimeInterval = setInterval(sendScreenTimeEvent, SCREEN_TIME_INTERVAL);
 
-  // Очищення при виході зі сторінки
+
   window.addEventListener('beforeunload', () => {
     if (screenTimeInterval) {
       clearInterval(screenTimeInterval);
@@ -37,7 +59,6 @@ export const initScreenTimeTracking = () => {
   });
 };
 
-// Зупинка відстеження
 export const stopScreenTimeTracking = () => {
   if (screenTimeInterval) {
     clearInterval(screenTimeInterval);
