@@ -94,6 +94,11 @@ const policies = {
           entrypoint: "become_bot",
           description: "become_bot"
         },
+        {
+          name: "become_controller",
+          entrypoint: "become_controller",
+          description: "become_controller"
+        },
       
       ]
     }
@@ -104,7 +109,7 @@ const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PU
 
 const connector = new ControllerConnector({
   namespace: "evolute_duel", 
-  slot: "liyard-evolute-duel", 
+  slot: "evolute-duel", 
   policies,
   defaultChainId: num.toHex(slotChain.id),
   chains: [

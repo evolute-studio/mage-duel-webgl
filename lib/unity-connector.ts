@@ -1,8 +1,6 @@
-"use client";
-
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
-import { Transaction } from "./transactions";
+import { type Transaction } from "./transactions";
 const unityReciver = "WrapperTester";
 
 export default class UnityConnector {
@@ -40,7 +38,18 @@ export default class UnityConnector {
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
     };
   };
+  public BecomeController = async () => {
+    //console.log("Becoming controller" + become_controller);
+    const tx = {
+      contractAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+      entrypoint: "become_controller",
+      calldata: [],
+    } as Transaction;
+    //console.log("Tx:", tx);
+    await this.ExecuteTransaction(tx);
+  }
 
+  
   // !!!---- Unity Calls ----!!!
 
   public GetUsername = (): string => {

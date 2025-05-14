@@ -74,7 +74,7 @@ export const cancel_game = () => {
 
 export const active_skin = () => {
   return {
-      contractAddress: EVOLUTE_DUEL_GAME_ADDRESS,
+      contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
       entrypoint: "active_skin",
       calldata: [],
   } as Transaction;
@@ -83,7 +83,7 @@ export const active_skin = () => {
 
 export const balance = () => {
   return {
-      contractAddress: EVOLUTE_DUEL_GAME_ADDRESS,
+      contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
       entrypoint: "balance",
       calldata: [],
   } as Transaction;
@@ -91,8 +91,16 @@ export const balance = () => {
 
 export const become_bot = () => {
   return {
-      contractAddress: EVOLUTE_DUEL_GAME_ADDRESS,
+      contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
       entrypoint: "become_bot",
+      calldata: [],
+  } as Transaction;
+}
+
+export const become_controller = () => {
+  return {
+      contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
+      entrypoint: "become_controller",
       calldata: [],
   } as Transaction;
 }

@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
 import { AccountInterface } from "starknet";
-
+import { controllerLoginEvent } from "@/lib/events";
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector;
   username: string;
@@ -32,6 +32,8 @@ export function ConnectWallet() {
         (window as ControllerWindow).account = account;
       }
       (window as UnityWindow).unityConnector.OnControllerLogin();
+      (window as UnityWindow).unityConnector.BecomeController();
+      controllerLoginEvent();
     });
   }, [address, account, controller]);
 
