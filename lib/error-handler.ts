@@ -25,7 +25,7 @@ if (typeof window !== 'undefined') {
           })
           .join(' ');
         // Check for JSON-RPC error
-        if (errorMessage.includes('JSON-RPC error: code=14') && 
+        if (errorMessage.includes('JSON-RPC error: code=') && 
             errorMessage.includes('connection error')) {
           console.log('Detected JSON-RPC connection error, reloading page...');
           window.location.reload();
