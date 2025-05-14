@@ -94,7 +94,7 @@ export default function ServiceWorker() {
       if (!refreshing) {
         refreshing = true;
         console.log("New Service Worker controller, refreshing page...");
-        window.location.reload();
+        // window.location.reload();
       }
     };
 
@@ -120,7 +120,7 @@ export default function ServiceWorker() {
               console.log(
                 "Fallback reload: IndexedDB operations may have stalled",
               );
-              window.location.reload();
+              //   window.location.reload();
             }
           }, 3000); // 3 second timeout
         } catch (error) {
@@ -128,7 +128,7 @@ export default function ServiceWorker() {
 
           // Reload even if there was an error
           console.log("Reloading page despite localStorage clearing error...");
-          setTimeout(() => window.location.reload(), 500);
+          //   setTimeout(() => window.location.reload(), 500);
         }
 
         // Clear all IndexedDB databases
@@ -161,20 +161,20 @@ export default function ServiceWorker() {
 
             // Reload the page after clearing storage to ensure a clean state
             console.log("Reloading page to ensure clean state...");
-            window.location.reload();
+            // window.location.reload();
           };
 
           clearIndexedDB().catch((error) => {
             console.error("Error clearing IndexedDB databases:", error);
             // Still reload even if there was an error
             console.log("Reloading page despite IndexedDB clearing error...");
-            window.location.reload();
+            // window.location.reload();
           });
         } catch (error) {
           console.error("Error accessing IndexedDB:", error);
           // Reload even if there was an error accessing IndexedDB
           console.log("Reloading page despite IndexedDB access error...");
-          window.location.reload();
+          //   window.location.reload();
         }
       }
     };
