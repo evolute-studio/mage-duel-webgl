@@ -1,6 +1,6 @@
 // This is the service worker with the Cache-first network strategy.
 
-const CACHE = "mage-duel-pwa-cache-v1315v5";
+const CACHE = "mage-duel-pwa-cache-v1315v6";
 
 const precacheResources = [
   "/",
@@ -20,19 +20,41 @@ self.addEventListener("install", (event) => {
   console.log("Service worker installing...");
   self.skipWaiting();
 
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => {
-      // Use individual cache.add calls instead of cache.addAll to prevent a single failure from aborting all caches
-      const cachePromises = precacheResources.map((resource) => {
-        return cache.add(resource).catch((error) => {
-          console.error("Failed to cache resource:", resource, error);
-          // Continue with the installation even if some resources fail to cache
-          return Promise.resolve();
+  // Clear all localStorage data
+  const clearLocalStorage = () => {
+    return new Promise((resolve) => {
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'CLEAR_STORAGE',
+            message: 'Clearing localStorage and indexedDB'
+          });
         });
+        console.log('Sent message to clear localStorage and indexedDB');
+        resolve();
       });
+    });
+  };
 
-      return Promise.all(cachePromises);
-    }),
+  event.waitUntil(
+    Promise.all([
+      // Clear local storage
+      clearLocalStorage(),
+      
+      // Cache resources
+      caches.open(CACHE).then((cache) => {
+        // Use individual cache.add calls instead of cache.addAll to prevent a single failure from aborting all caches
+        const cachePromises = precacheResources.map((resource) => {
+          return cache.add(resource).catch((error) => {
+            console.error("Failed to cache resource:", resource, error);
+            // Continue with the installation even if some resources fail to cache
+            return Promise.resolve();
+          });
+        });
+
+        return Promise.all(cachePromises);
+      })
+    ])
   );
 });
 

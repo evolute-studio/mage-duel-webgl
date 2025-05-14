@@ -92,7 +92,82 @@ export default function ServiceWorker() {
             }
         };
         
+        // Setup message handler to clear localStorage and indexedDB
+        const messageHandler = (event: MessageEvent) => {
+            if (event.data && event.data.type === 'CLEAR_STORAGE') {
+                console.log('Received message to clear storage:', event.data.message);
+                
+                // Clear localStorage
+                try {
+                    console.log('Clearing localStorage...');
+                    localStorage.clear();
+                    console.log('localStorage cleared successfully');
+                    
+                    // Set a flag to indicate we've processed storage clearing
+                    // This ensures we still reload if IndexedDB clearing doesn't execute
+                    localStorage.setItem('storage_cleared', 'true');
+                    
+                    // Set a timeout to ensure page reloads even if IndexedDB operations fail
+                    setTimeout(() => {
+                        if (localStorage.getItem('storage_cleared') === 'true') {
+                            console.log('Fallback reload: IndexedDB operations may have stalled');
+                            window.location.reload();
+                        }
+                    }, 3000); // 3 second timeout
+                } catch (error) {
+                    console.error('Error clearing localStorage:', error);
+                    
+                    // Reload even if there was an error
+                    console.log('Reloading page despite localStorage clearing error...');
+                    setTimeout(() => window.location.reload(), 500);
+                }
+                
+                // Clear all IndexedDB databases
+                try {
+                    console.log('Clearing IndexedDB databases...');
+                    const clearIndexedDB = async () => {
+                        const databases = await window.indexedDB.databases();
+                        
+                        for (const db of databases) {
+                            if (db.name) {
+                                console.log(`Deleting IndexedDB database: ${db.name}`);
+                                await new Promise<void>((resolve, reject) => {
+                                    const request = window.indexedDB.deleteDatabase(db.name!);
+                                    request.onsuccess = () => {
+                                        console.log(`Successfully deleted IndexedDB database: ${db.name}`);
+                                        resolve();
+                                    };
+                                    request.onerror = () => {
+                                        console.error(`Error deleting IndexedDB database: ${db.name}`);
+                                        reject();
+                                    };
+                                });
+                            }
+                        }
+                        console.log('All IndexedDB databases cleared successfully');
+                        
+                        // Reload the page after clearing storage to ensure a clean state
+                        console.log('Reloading page to ensure clean state...');
+                        window.location.reload();
+                    };
+                    
+                    clearIndexedDB().catch(error => {
+                        console.error('Error clearing IndexedDB databases:', error);
+                        // Still reload even if there was an error
+                        console.log('Reloading page despite IndexedDB clearing error...');
+                        window.location.reload();
+                    });
+                } catch (error) {
+                    console.error('Error accessing IndexedDB:', error);
+                    // Reload even if there was an error accessing IndexedDB
+                    console.log('Reloading page despite IndexedDB access error...');
+                    window.location.reload();
+                }
+            }
+        };
+        
         navigator.serviceWorker.addEventListener('controllerchange', controllerChangeHandler);
+        navigator.serviceWorker.addEventListener('message', messageHandler);
         
         // Start the process
         checkExistingServiceWorker();
@@ -101,6 +176,7 @@ export default function ServiceWorker() {
         // Cleanup
         return () => {
             navigator.serviceWorker.removeEventListener('controllerchange', controllerChangeHandler);
+            navigator.serviceWorker.removeEventListener('message', messageHandler);
         };
     }, [scriptLoaded]);
 
