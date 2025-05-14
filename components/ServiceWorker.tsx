@@ -95,20 +95,6 @@ export default function ServiceWorker() {
         console.log("Clearing localStorage...");
         localStorage.clear();
         console.log("localStorage cleared successfully");
-
-        // Set a flag to indicate we've processed storage clearing
-        // This ensures we still reload if IndexedDB clearing doesn't execute
-        localStorage.setItem("storage_cleared", "true");
-
-        // Set a timeout to ensure page reloads even if IndexedDB operations fail
-        setTimeout(() => {
-          if (localStorage.getItem("storage_cleared") === "true") {
-            console.log(
-              "Fallback reload: IndexedDB operations may have stalled",
-            );
-            window.location.reload();
-          }
-        }, 3000); // 3 second timeout
       } catch (error) {
         console.error("Error clearing localStorage:", error);
 
