@@ -106,42 +106,28 @@ export default function ServiceWorker() {
       // Clear all IndexedDB databases
       try {
         console.log("Clearing IndexedDB databases...");
-        const clearIndexedDB = async () => {
-          const databases = await window.indexedDB.databases();
 
-          for (const db of databases) {
-            if (db.name) {
+        indexedDB
+          .databases()
+          .then((dbs) => {
+            dbs.forEach((db) => {
               console.log(`Deleting IndexedDB database: ${db.name}`);
-              await new Promise<void>((resolve, reject) => {
-                const request = window.indexedDB.deleteDatabase(db.name!);
-                request.onsuccess = () => {
-                  console.log(
-                    `Successfully deleted IndexedDB database: ${db.name}`,
-                  );
-                  resolve();
-                };
-                request.onerror = () => {
-                  console.error(
-                    `Error deleting IndexedDB database: ${db.name}`,
-                  );
-                  reject();
-                };
-              });
-            }
-          }
-          console.log("All IndexedDB databases cleared successfully");
+              const result = indexedDB.deleteDatabase(db.name);
+              result.onsuccess = () => {
+                console.log(
+                  `Successfully deleted IndexedDB database: ${db.name}`,
+                );
+              };
+            });
+          })
+          .catch((error) => {
+            console.error("Error clearing IndexedDB databases:", error);
+            // Still reload even if there was an error
+            console.log("Reloading page despite IndexedDB clearing error...");
+            window.location.reload();
+          });
 
-          // Reload the page after clearing storage to ensure a clean state
-          console.log("Reloading page to ensure clean state...");
-          window.location.reload();
-        };
-
-        clearIndexedDB().catch((error) => {
-          console.error("Error clearing IndexedDB databases:", error);
-          // Still reload even if there was an error
-          console.log("Reloading page despite IndexedDB clearing error...");
-          window.location.reload();
-        });
+        window.location.reload();
       } catch (error) {
         console.error("Error accessing IndexedDB:", error);
         // Reload even if there was an error accessing IndexedDB
