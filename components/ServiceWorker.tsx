@@ -3,15 +3,11 @@
 import { useEffect, useState } from "react";
 
 export default function ServiceWorker() {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-
   // Handle Service Worker registration directly
   useEffect(() => {
-    if (
-      scriptLoaded ||
-      typeof window === "undefined" ||
-      !("serviceWorker" in navigator)
-    ) {
+    console.log("danil4");
+    console.log(navigator.serviceWorker);
+    if (!("serviceWorker" in navigator)) {
       return;
     }
 
@@ -183,18 +179,17 @@ export default function ServiceWorker() {
       }
     };
 
+    console.log("danil");
+    console.log(navigator.serviceWorker);
+
     navigator.serviceWorker.addEventListener(
       "controllerchange",
       controllerChangeHandler,
     );
-
-    console.log("danil1");
-    console.log(navigator.serviceWorker);
     navigator.serviceWorker.addEventListener("message", messageHandler);
 
     // Start the process
     checkExistingServiceWorker();
-    setScriptLoaded(true);
 
     // Cleanup
     return () => {
@@ -204,7 +199,7 @@ export default function ServiceWorker() {
       );
       navigator.serviceWorker.removeEventListener("message", messageHandler);
     };
-  }, [scriptLoaded]);
+  }, []);
 
   // Return null since this component doesn't render any UI
   return null;
