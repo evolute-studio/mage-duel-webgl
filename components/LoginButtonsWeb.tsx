@@ -25,7 +25,7 @@ export default function LoginButtonsWeb() {
   if (account || address || isGuest) {
     return (
       <div>
-        <div className="phone-container mx-auto mb-10 scale-[0.8]">
+        <div className="phone-container mx-auto mb-10 scale-[0.75]">
           <Image
             src="/phone.png"
             className="phone-rotate"
