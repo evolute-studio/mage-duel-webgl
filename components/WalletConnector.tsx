@@ -32,6 +32,7 @@ export function ConnectWallet() {
         (window as ControllerWindow).account = account;
       }
       (window as UnityWindow).unityConnector.OnControllerLogin();
+      (window as UnityWindow).unityConnector.BecomeController();
       controllerLoginEvent();
     });
   }, [address, account, controller]);

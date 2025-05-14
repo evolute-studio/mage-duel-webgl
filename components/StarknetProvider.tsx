@@ -94,6 +94,11 @@ const policies = {
           entrypoint: "become_bot",
           description: "become_bot"
         },
+        {
+          name: "become_controller",
+          entrypoint: "become_controller",
+          description: "become_controller"
+        },
       
       ]
     }
