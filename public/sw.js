@@ -1,6 +1,6 @@
 // This is the service worker with the Cache-first network strategy.
 
-const CACHE = "mage-duel-pwa-cache-v1315v6";
+const CACHE = "mage-duel-pwa-cache-v1315v7";
 
 const precacheResources = [
   "/",
@@ -23,14 +23,14 @@ self.addEventListener("install", (event) => {
   // Clear all localStorage data
   const clearLocalStorage = () => {
     return new Promise((resolve) => {
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
           client.postMessage({
-            type: 'CLEAR_STORAGE',
-            message: 'Clearing localStorage and indexedDB'
+            type: "CLEAR_STORAGE",
+            message: "Clearing localStorage and indexedDB",
           });
         });
-        console.log('Sent message to clear localStorage and indexedDB');
+        console.log("Sent message to clear localStorage and indexedDB");
         resolve();
       });
     });
@@ -40,7 +40,7 @@ self.addEventListener("install", (event) => {
     Promise.all([
       // Clear local storage
       clearLocalStorage(),
-      
+
       // Cache resources
       caches.open(CACHE).then((cache) => {
         // Use individual cache.add calls instead of cache.addAll to prevent a single failure from aborting all caches
@@ -53,8 +53,8 @@ self.addEventListener("install", (event) => {
         });
 
         return Promise.all(cachePromises);
-      })
-    ])
+      }),
+    ]),
   );
 });
 
