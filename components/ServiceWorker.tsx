@@ -104,36 +104,22 @@ export default function ServiceWorker() {
       }
 
       // Clear all IndexedDB databases
-      try {
-        console.log("Clearing IndexedDB databases...");
+      console.log("Clearing IndexedDB databases...");
 
-        indexedDB
-          .databases()
-          .then((dbs) => {
-            dbs.forEach((db) => {
-              console.log(`Deleting IndexedDB database: ${db.name}`);
-              const result = indexedDB.deleteDatabase(db.name!);
-              result.onsuccess = () => {
-                console.log(
-                  `Successfully deleted IndexedDB database: ${db.name}`,
-                );
-              };
-            });
-          })
-          .catch((error) => {
-            console.error("Error clearing IndexedDB databases:", error);
-            // Still reload even if there was an error
-            console.log("Reloading page despite IndexedDB clearing error...");
-            window.location.reload();
-          });
-
-        window.location.reload();
-      } catch (error) {
-        console.error("Error accessing IndexedDB:", error);
-        // Reload even if there was an error accessing IndexedDB
-        console.log("Reloading page despite IndexedDB access error...");
-        window.location.reload();
-      }
+      window.indexedDB
+        .databases()
+        .then((r) => {
+          for (var i = 0; i < r.length; i++)
+            window.indexedDB.deleteDatabase(r[i].name!);
+        })
+        .then(() => {
+          console.log("All data cleared. RELOADING PAGE...");
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error clearing IndexedDB:", error);
+          window.location.reload();
+        });
     }
 
     let refreshing = false;
