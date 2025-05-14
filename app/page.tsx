@@ -125,8 +125,10 @@ export default function Home() {
       if (loadingOverlay && gameLoaded) {
         loadingOverlay.style.display = "none";
       }
+      document.body.style.height = "auto"; // Hide scrollbars
     } else {
       // Portrait mode - handle differently based on device type and PWA status
+      document.body.style.height = "100vh";
       gameContainer.style.display = "none";
 
       // For mobile, show rotate screen only if it's a PWA, otherwise keep it hidden
