@@ -1,6 +1,5 @@
 "use client";
 
-import { log } from "console";
 import { useEffect, useState } from "react";
 
 export default function ServiceWorker() {
