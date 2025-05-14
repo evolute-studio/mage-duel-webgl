@@ -112,7 +112,7 @@ export default function ServiceWorker() {
           .then((dbs) => {
             dbs.forEach((db) => {
               console.log(`Deleting IndexedDB database: ${db.name}`);
-              const result = indexedDB.deleteDatabase(db.name);
+              const result = indexedDB.deleteDatabase(db.name!);
               result.onsuccess = () => {
                 console.log(
                   `Successfully deleted IndexedDB database: ${db.name}`,
