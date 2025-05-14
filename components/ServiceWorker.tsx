@@ -182,10 +182,6 @@ export default function ServiceWorker() {
     console.log("danil");
     console.log(navigator.serviceWorker);
 
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      controllerChangeHandler,
-    );
     navigator.serviceWorker.addEventListener("message", messageHandler);
 
     // Start the process
