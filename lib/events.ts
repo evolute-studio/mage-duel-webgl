@@ -27,8 +27,8 @@ const SCREEN_TIME_INTERVAL = 15000;
 let screenTimeInterval: NodeJS.Timeout | null = null;
 
 const sendScreenTimeEvent = () => {
-  var event_type = 'screen_time';
-  var data = {
+  let event_type = 'screen_time';
+  let data = {
     player_id: getPlayerId(),
     timestamp: new Date().toISOString(),
     url: window.location.href,
