@@ -1,6 +1,6 @@
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
-import { become_controller, type Transaction } from "./transactions";
+import { type Transaction } from "./transactions";
 const unityReciver = "WrapperTester";
 
 export default class UnityConnector {
