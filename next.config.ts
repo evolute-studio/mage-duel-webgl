@@ -29,6 +29,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/:path*.wasm.br",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/wasm",
+          },
+        ],
+      },
+      {
         source: "/:path*.data",
         headers: [
           {
