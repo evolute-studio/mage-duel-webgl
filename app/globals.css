@@ -201,7 +201,8 @@ body {
 }
 
 @media screen and (max-width: 768px) {
-  #controller-keychain {
+  #controller-keychain,
+  #controller-profile {
     padding-top: 60px;
     background: #000;
   }
