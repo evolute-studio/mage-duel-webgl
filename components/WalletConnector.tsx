@@ -114,10 +114,28 @@ export function ConnectWallet() {
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleOrientationChange);
 
+    const iframe = document.getElementById("controller") as HTMLIFrameElement;
+    if (!iframe) return;
+
+    const sync = () => {
+      const vis = getComputedStyle(iframe).visibility;
+      iframe.style.display = vis === "visible" ? "flex" : "none";
+    };
+
+    // watch for style or class changes
+    const observer = new MutationObserver(sync);
+    observer.observe(iframe, {
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
+
+    sync();
+
     // Clean up
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleOrientationChange);
+      observer.disconnect();
     };
   }, [address, account, controller]);
 
