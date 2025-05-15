@@ -148,7 +148,7 @@ export default function UnityPlayer({
             />
 
             {/* Progress bar container */}
-            <div className="w-[300px] h-[20px] bg-gray-800 rounded-full overflow-hidden border border-gray-700">
+            <div className="w-[250px] h-[20px] bg-gray-800 rounded-full overflow-hidden border border-gray-700">
               {/* Progress bar fill */}
               <div
                 className="h-full bg-[#BD835B] duration-300 ease-out transition-width"
