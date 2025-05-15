@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  compress: true,
 
   /* config options here */
   async headers() {
@@ -38,11 +39,29 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/:path*.wasm.gz",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/wasm",
+          },
+        ],
+      },
+      {
         source: "/:path*.data",
         headers: [
           {
             key: "Content-Type",
             value: "application/octet-stream",
+          },
+        ],
+      },
+      {
+        source: "/:path*.data.gz",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/gzip",
           },
         ],
       },
