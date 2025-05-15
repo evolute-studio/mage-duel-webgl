@@ -2,16 +2,18 @@
 
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import "../lib/error-handler";
-import { GameLoaded } from "../lib/events";
+
 import { initScreenTimeTracking, stopScreenTimeTracking } from "../lib/events";
 import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
-import Image from "next/image";
+
 import LoginButtonsWeb from "@/components/LoginButtonsWeb";
+import { log } from "console";
 
 const StarknetProviderClient = dynamic(
   () =>
@@ -24,10 +26,10 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isLandscape, setIsLandscape] = useState(true);
+  const [gameContainerMounted, setGameContainerMounted] = useState(false);
   const [gameLoaded, setGameLoaded] = useState(false);
 
   useEffect(() => {
-    GameLoaded();
     initScreenTimeTracking();
 
     // Detect if running as PWA
@@ -62,18 +64,6 @@ export default function Home() {
     // Initial orientation check
     checkOrientation();
 
-    // Check if game is already loaded
-    if (typeof window !== "undefined" && window.gameInstance !== undefined) {
-      setGameLoaded(true);
-    }
-
-    // Check for game loading periodically
-    const loadInterval = setInterval(() => {
-      if (typeof window !== "undefined" && window.gameInstance !== undefined) {
-        setGameLoaded(true);
-      }
-    }, 500);
-
     // Set up orientation listeners
     window.addEventListener("resize", checkOrientation);
     window.addEventListener("orientationchange", handleOrientationChange);
@@ -82,7 +72,6 @@ export default function Home() {
       stopScreenTimeTracking();
       window.removeEventListener("resize", checkOrientation);
       window.removeEventListener("orientationchange", handleOrientationChange);
-      clearInterval(loadInterval);
     };
   }, []);
 
@@ -103,10 +92,15 @@ export default function Home() {
 
   // Update UI elements when orientation changes
   useEffect(() => {
+    if (!gameContainerMounted) {
+      return;
+    }
+
     const portraitOverlay = document.getElementById("portrait-blocker");
     const gameContainer = document.getElementById("unity-container");
 
     if (!portraitOverlay || !gameContainer) {
+      console.error("GameContainer not found");
       return;
     }
 
@@ -120,13 +114,9 @@ export default function Home() {
         canvas.style.display = "block";
       }
 
-      // Check if game is loaded to hide loading overlay
-      const loadingOverlay = document.getElementById("game-loading-overlay");
-      if (loadingOverlay && gameLoaded) {
-        loadingOverlay.style.display = "none";
-      }
       document.body.style.height = "auto"; // Hide scrollbars
     } else {
+      console.log("Portrait mode detected");
       // Portrait mode - handle differently based on device type and PWA status
       document.body.style.height = "100vh";
       gameContainer.style.display = "none";
@@ -137,16 +127,12 @@ export default function Home() {
         portraitOverlay.style.display = "none";
       } else {
         // In all other cases (desktop or PWA), show the rotate screen
-        portraitOverlay.style.display = "flex";
-      }
-
-      // Hide loading overlay in portrait mode
-      const loadingOverlay = document.getElementById("game-loading-overlay");
-      if (loadingOverlay) {
-        loadingOverlay.style.display = "none";
+        if (gameLoaded) {
+          portraitOverlay.style.display = "flex";
+        }
       }
     }
-  }, [isLandscape, gameLoaded, isMobile, isPWA]);
+  }, [isLandscape, isMobile, isPWA, gameContainerMounted, gameLoaded]);
 
   return (
     <StarknetProviderClient>
@@ -154,8 +140,10 @@ export default function Home() {
       <OfflineNotification />
       <ServiceWorker />
       <ConnectWallet />
-
-      <UnityPlayer />
+      <UnityPlayer
+        onUnityContainerMounted={() => setGameContainerMounted(true)}
+        onGameLoaded={() => setGameLoaded(true)}
+      />
 
       {/* PWA Install Prompt - shown differently based on orientation */}
       {isMobile && !isPWA && (
@@ -258,24 +246,6 @@ export default function Home() {
           )}
         </div>
       )}
-
-      {/* Loading overlay */}
-      <div
-        id="game-loading-overlay"
-        className="fixed inset-0 z-[5000] flex flex-col items-center justify-center bg-black/90 text-white"
-        style={{ display: isLandscape && !gameLoaded ? "flex" : "none" }}
-      >
-        <div className="flex h-full w-full items-center justify-center">
-          <Image
-            src="/loader.gif"
-            alt="Loading"
-            className="absolute left-1/2 top-1/2 block h-[35vh] w-auto -translate-x-1/2 -translate-y-1/2"
-            width={200}
-            height={200}
-            priority
-          />
-        </div>
-      </div>
 
       {/* Rotation message overlay - shown whenever in portrait mode */}
       <div
