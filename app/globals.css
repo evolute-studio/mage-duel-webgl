@@ -172,11 +172,15 @@ body {
 /* Text outline for better visibility */
 .text-outline {
   text-shadow:
+    /* corners 2 px out */
     -2px -2px 0 #000,
     2px -2px 0 #000,
     -2px 2px 0 #000,
     2px 2px 0 #000,
-    0 2px 4px rgba(0, 0, 0, 0.6);
+    /* edges 2 px out */ -2px 0 0 #000,
+    2px 0 0 #000,
+    0 -2px 0 #000,
+    0 2px 0 #000;
 }
 
 .text-outline-sm {
