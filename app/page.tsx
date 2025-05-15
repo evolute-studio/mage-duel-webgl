@@ -13,7 +13,6 @@ import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
 
 import LoginButtonsWeb from "@/components/LoginButtonsWeb";
-import { log } from "console";
 
 const StarknetProviderClient = dynamic(
   () =>

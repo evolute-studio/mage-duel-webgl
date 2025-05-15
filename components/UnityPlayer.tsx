@@ -1,10 +1,9 @@
 "use client";
 
 import UnityConnector from "@/lib/unity-connector";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { GameLoaded } from "../lib/events";
-import { on } from "events";
 interface UnityInstance {
   SendMessage: (
     objectName: string,
