@@ -95,17 +95,14 @@ export default function Home() {
       return;
     }
 
-    const portraitOverlay = document.getElementById("portrait-blocker");
     const gameContainer = document.getElementById("unity-container");
 
-    if (!portraitOverlay || !gameContainer) {
+    if (!gameContainer) {
       console.error("GameContainer not found");
       return;
     }
 
     if (isLandscape) {
-      // Landscape mode - show game, hide overlay
-      portraitOverlay.style.display = "none";
       if (gameLoaded) {
         gameContainer.style.display = "block";
       }
@@ -121,17 +118,6 @@ export default function Home() {
       // Portrait mode - handle differently based on device type and PWA status
       document.body.style.height = "100vh";
       gameContainer.style.display = "none";
-
-      // For mobile, show rotate screen only if it's a PWA, otherwise keep it hidden
-      if (isMobile && !isPWA) {
-        // If mobile and not PWA, hide rotate screen (will show PWA install hint instead)
-        portraitOverlay.style.display = "none";
-      } else {
-        // In all other cases (desktop or PWA), show the rotate screen
-        if (gameLoaded) {
-          portraitOverlay.style.display = "flex";
-        }
-      }
     }
   }, [isLandscape, isMobile, isPWA, gameContainerMounted, gameLoaded]);
 
@@ -227,12 +213,11 @@ export default function Home() {
           </div>
         )}
 
-        {/* Rotation message overlay - shown whenever in portrait mode */}
         <div
           id="portrait-blocker"
           className="fixed top-0 left-0 w-full h-full gap-10 flex flex-col justify-center items-center text-center z-[4000]"
           style={{
-            display: "none", // Initially hidden, will be controlled by orientation code
+            display: isLandscape || !gameLoaded ? "none" : "flex",
             color: "white",
           }}
         >
