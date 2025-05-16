@@ -7,6 +7,7 @@ import "../lib/error-handler";
 
 import { initScreenTimeTracking, stopScreenTimeTracking } from "../lib/events";
 import UnityPlayer from "@/components/UnityPlayer";
+import ServiceWorker from "@/components/ServiceWorker";
 import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
@@ -26,17 +27,6 @@ export default function Home() {
   const [isLandscape, setIsLandscape] = useState(true);
   const [gameContainerMounted, setGameContainerMounted] = useState(false);
   const [gameLoaded, setGameLoaded] = useState(false);
-
-  useEffect(() => {
-    console.log("Before cleaning up service workers");
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      console.log("Try cleaning up service workers");
-      for (const registration of registrations) {
-        console.log("Service Worker registration found, unregister");
-        registration.unregister();
-      }
-    });
-  }, []);
 
   useEffect(() => {
     initScreenTimeTracking();
@@ -142,6 +132,7 @@ export default function Home() {
           backgroundPosition: "center center",
         }}
       >
+        <ServiceWorker />
         <Analytics />
         <OfflineNotification />
         <ConnectWallet />
