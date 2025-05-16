@@ -29,6 +29,10 @@ export default function Home() {
   const [gameLoaded, setGameLoaded] = useState(false);
 
   useEffect(() => {
+    console.log("New code loaded");
+  }, []);
+
+  useEffect(() => {
     initScreenTimeTracking();
 
     // Detect if running as PWA
