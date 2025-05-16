@@ -4,6 +4,7 @@ import UnityConnector from "@/lib/unity-connector";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { GameLoaded } from "../lib/events";
+
 interface UnityInstance {
   SendMessage: (
     objectName: string,
@@ -21,7 +22,6 @@ interface UnityConfig {
   productName: string;
   productVersion: string;
   loaderUrl: string;
-  showBanner: (msg: string, type: string) => void;
 }
 
 export interface UnityWindow extends Window {
@@ -41,14 +41,32 @@ export default function UnityPlayer({
   onUnityContainerMounted?: () => void;
   onGameLoaded?: () => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const projectId = "mageduel-webgl";
-  const version = "1.3.20";
-  const compression = ".gz";
+  const version = "1.3.25";
+  const compression = ".br";
   const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+
+  const buildUrl = "Build";
+
+  const config: UnityConfig = {
+    dataUrl:
+      buildUrl +
+      `/${projectId}-${version}.data${is_compressed ? compression : ""}`,
+    frameworkUrl:
+      buildUrl +
+      `/${projectId}-${version}.framework.js${is_compressed ? compression : ""}`,
+    codeUrl:
+      buildUrl +
+      `/${projectId}-${version}.wasm${is_compressed ? compression : ""}`,
+    loaderUrl: buildUrl + `/${projectId}-${version}.loader.js`,
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "EvoluteStudio",
+    productName: "Evolute Kingdom: Mage Duel",
+    productVersion: version,
+  };
 
   useEffect(() => {
     onUnityContainerMounted?.();
@@ -66,32 +84,9 @@ export default function UnityPlayer({
 
   useEffect(() => {
     const loadUnity = async () => {
-      const buildUrl = "Build";
-
-      const config: UnityConfig = {
-        dataUrl:
-          buildUrl +
-          `/${projectId}-${version}.data${is_compressed ? compression : ""}`,
-        frameworkUrl:
-          buildUrl +
-          `/${projectId}-${version}.framework.js${is_compressed ? compression : ""}`,
-        codeUrl:
-          buildUrl +
-          `/${projectId}-${version}.wasm${is_compressed ? compression : ""}`,
-        loaderUrl: buildUrl + `/${projectId}-${version}.loader.js`,
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "EvoluteStudio",
-        productName: "Evolute Kingdom: Mage Duel",
-        productVersion: version,
-        showBanner: (msg: string, type: string) => {
-          console.log(`Unity Banner: ${msg} (${type})`);
-        },
-      };
-
       const loaderScript = document.createElement("script");
       loaderScript.src = config.loaderUrl;
       loaderScript.onload = () => {
-        console.log("Unity loader script loaded");
         (window as UnityWindow)
           .createUnityInstance(
             canvasRef.current,
@@ -116,9 +111,13 @@ export default function UnityPlayer({
     };
 
     loadUnity();
-  }, [is_compressed]);
 
-  console.log("Game loaded:", gameLoaded);
+    return () => {
+      if (window.gameInstance) {
+        window.gameInstance.Quit().then();
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -135,7 +134,7 @@ export default function UnityPlayer({
             <Image
               src="/loader.gif"
               alt="Loading"
-              className="block h-[35vh] max-h-[300px] w-auto  mb-8 aspect-square"
+              className="block h-[35vh] max-h-[300px] min-h-[250px] w-auto  mb-8 aspect-square"
               width={200}
               height={200}
               priority
@@ -159,12 +158,9 @@ export default function UnityPlayer({
         </div>
       </div>
       <div
-        ref={containerRef}
         id="unity-container"
         className="fixed w-full h-full top-0 left-0"
-        style={{
-          display: gameLoaded ? "block" : "none",
-        }}
+        style={{ display: gameLoaded ? "block" : "none" }}
       >
         <canvas
           ref={canvasRef}

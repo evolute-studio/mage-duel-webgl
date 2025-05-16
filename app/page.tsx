@@ -7,7 +7,6 @@ import "../lib/error-handler";
 
 import { initScreenTimeTracking, stopScreenTimeTracking } from "../lib/events";
 import UnityPlayer from "@/components/UnityPlayer";
-import ServiceWorker from "@/components/ServiceWorker";
 import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
@@ -72,7 +71,7 @@ export default function Home() {
       window.removeEventListener("resize", checkOrientation);
       window.removeEventListener("orientationchange", handleOrientationChange);
     };
-  }, []);
+  }, [gameLoaded]);
 
   // Function to check if display is in landscape mode or has sufficient aspect ratio
   const checkOrientation = () => {
@@ -134,7 +133,6 @@ export default function Home() {
       >
         <Analytics />
         <OfflineNotification />
-        <ServiceWorker />
         <ConnectWallet />
         {(!isMobile || isPWA) && (
           <UnityPlayer
@@ -215,10 +213,9 @@ export default function Home() {
 
         <div
           id="portrait-blocker"
-          className="fixed top-0 left-0 w-full h-full gap-10 flex flex-col justify-center items-center text-center z-[4000]"
+          className="fixed top-0 left-0 w-full h-full gap-10 flex flex-col justify-center items-center text-center text-white z-[4000]"
           style={{
             display: isLandscape || !gameLoaded ? "none" : "flex",
-            color: "white",
           }}
         >
           {/* Game logo at top */}

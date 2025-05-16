@@ -134,10 +134,10 @@ export default function ServiceWorker() {
       }
     };
 
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      controllerChangeHandler,
-    );
+    // navigator.serviceWorker.addEventListener(
+    //   "controllerchange",
+    //   controllerChangeHandler,
+    // );
 
     // Start the process
     checkExistingServiceWorker();
