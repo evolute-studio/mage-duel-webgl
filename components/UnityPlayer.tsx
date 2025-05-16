@@ -20,6 +20,7 @@ interface UnityConfig {
   companyName: string;
   productName: string;
   productVersion: string;
+  loaderUrl: string;
   showBanner: (msg: string, type: string) => void;
 }
 
@@ -51,12 +52,22 @@ export default function UnityPlayer({
 
   useEffect(() => {
     onUnityContainerMounted?.();
+
+    (window as UnityWindow).unityConnector = new UnityConnector();
+
+    const dojoScript = document.createElement("script");
+    dojoScript.src = "TemplateData/dojo.js/dojo_c.js";
+    dojoScript.onload = async () => {
+      console.log("Dojo script loaded");
+      await wasm_bindgen();
+    };
+    document.body.appendChild(dojoScript);
   }, []);
 
   useEffect(() => {
     const loadUnity = async () => {
       const buildUrl = "Build";
-      const loaderUrl = buildUrl + `/${projectId}-${version}.loader.js`;
+
       const config: UnityConfig = {
         dataUrl:
           buildUrl +
@@ -67,6 +78,7 @@ export default function UnityPlayer({
         codeUrl:
           buildUrl +
           `/${projectId}-${version}.wasm${is_compressed ? compression : ""}`,
+        loaderUrl: buildUrl + `/${projectId}-${version}.loader.js`,
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EvoluteStudio",
         productName: "Evolute Kingdom: Mage Duel",
@@ -76,65 +88,47 @@ export default function UnityPlayer({
         },
       };
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Just set the mobile class, other settings will be handled by the IPhoneFix component
-        if (containerRef.current) {
-          containerRef.current.className = "unity-mobile";
-        }
-        if (canvasRef.current) {
-          canvasRef.current.className = "unity-mobile";
-        }
-      } else {
-        if (canvasRef.current) {
-          canvasRef.current.style.width = "1880px";
-          canvasRef.current.style.height = "930px";
-        }
-      }
-
-      const dojoScript = document.createElement("script");
-      dojoScript.src = "TemplateData/dojo.js/dojo_c.js";
-      dojoScript.onload = async () => {
-        await wasm_bindgen();
-        console.log("Dojo loaded successfully");
+      const loaderScript = document.createElement("script");
+      loaderScript.src = config.loaderUrl;
+      loaderScript.onload = () => {
+        console.log("Unity loader script loaded");
+        (window as UnityWindow)
+          .createUnityInstance(
+            canvasRef.current,
+            config,
+            (progress: number) => {
+              setLoadingProgress(progress);
+            },
+          )
+          .then((unityInstance: UnityInstance) => {
+            console.log("Unity loaded successfully");
+            window.gameInstance = unityInstance;
+            setGameLoaded(true);
+            setLoadingProgress(1);
+            onGameLoaded?.();
+            GameLoaded();
+          })
+          .catch((message: string) => {
+            console.error("Failed to load Unity:", message);
+          });
       };
-
-      await new Promise<void>((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => resolve();
-        script.onerror = reject;
-        document.body.appendChild(script);
-        document.body.appendChild(dojoScript);
-      });
-
-      (window as UnityWindow)
-        .createUnityInstance(canvasRef.current, config, (progress: number) => {
-          setLoadingProgress(progress);
-        })
-        .then((unityInstance: UnityInstance) => {
-          console.log("Unity loaded successfully");
-          window.gameInstance = unityInstance;
-          setGameLoaded(true);
-          setLoadingProgress(1);
-          onGameLoaded?.();
-          GameLoaded();
-        })
-        .catch((message: string) => {
-          console.error("Failed to load Unity:", message);
-        });
-      (window as UnityWindow).unityConnector = new UnityConnector();
+      document.body.appendChild(loaderScript);
     };
 
     loadUnity();
   }, [is_compressed]);
+
+  console.log("Game loaded:", gameLoaded);
 
   return (
     <>
       {/* Loading overlay */}
       <div
         id="game-loading-overlay"
-        className="fixed inset-0 z-[5000] flex flex-col items-center justify-center bg-blac/90 text-white"
-        style={{ display: !gameLoaded ? "flex" : "none" }}
+        className="fixed inset-0 z-[5000] flex flex-col items-center justify-center text-white"
+        style={{
+          display: !gameLoaded ? "flex" : "none",
+        }}
       >
         <div className="flex h-full w-full items-center justify-center">
           <div className="absolute w-full left-1/2 top-1/2 flex flex-col items-center -translate-x-1/2 -translate-y-1/2">
@@ -168,6 +162,9 @@ export default function UnityPlayer({
         ref={containerRef}
         id="unity-container"
         className="fixed w-full h-full top-0 left-0"
+        style={{
+          display: gameLoaded ? "block" : "none",
+        }}
       >
         <canvas
           ref={canvasRef}
