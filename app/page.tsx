@@ -30,10 +30,11 @@ export default function Home() {
   useEffect(() => {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       for (const registration of registrations) {
+        console.log("Service Worker registration found, unregister");
         registration.unregister();
       }
     });
-  });
+  }, []);
 
   useEffect(() => {
     initScreenTimeTracking();
