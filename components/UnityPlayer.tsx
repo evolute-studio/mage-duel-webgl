@@ -173,7 +173,6 @@ export default function UnityPlayer({
           ref={canvasRef}
           id="unity-canvas"
           className="w-full h-full block"
-          tabIndex={-1}
         />
         <div id="unity-warning"></div>
       </div>

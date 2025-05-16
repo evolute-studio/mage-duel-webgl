@@ -36,3 +36,5 @@ next-env.d.ts
 
 # Unity WebGL specific
 /public/unity_build
+
+certificates
