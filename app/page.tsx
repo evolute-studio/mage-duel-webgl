@@ -28,6 +28,14 @@ export default function Home() {
   const [gameLoaded, setGameLoaded] = useState(false);
 
   useEffect(() => {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+  });
+
+  useEffect(() => {
     initScreenTimeTracking();
 
     // Detect if running as PWA
