@@ -33,6 +33,8 @@ export default function ServiceWorker() {
                 cacheNames.map((name) => caches.delete(name)), // Boolean for each deletion
               );
             }
+
+            window.location.reload();
           }
         }
       } catch (error) {
