@@ -11,10 +11,6 @@ import {
 import ControllerConnector from "@cartridge/connector/controller";
 import { shortString, num } from 'starknet';
 
-// ETH contract address
-const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || ''
-const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || ''
-
 
 const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PUBLIC_SLOT_PROJECT || ''));
 
