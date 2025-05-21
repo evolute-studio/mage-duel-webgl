@@ -96,6 +96,14 @@ export default class UnityConnector {
     //this.OnUsernameReceived(win.username);
   };
 
+  public GetControllerUsername = () => {
+    const winСontroller = window as ControllerWindow;
+    const winUnity = window as UnityWindow;
+    const gameInstance = winUnity.gameInstance;
+    console.log("Controller username:", winСontroller.username);
+    gameInstance.SendMessage(unityReciver, "OnControllerUsername", winСontroller.username);
+  }
+
   // !!!---- Unity events ----!!!
 
   public OnControllerLogin = () => {

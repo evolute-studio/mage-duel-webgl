@@ -109,7 +109,7 @@ const slotChain = getSlotChain(shortString.encodeShortString(process.env.NEXT_PU
 
 const connector = new ControllerConnector({
   namespace: "evolute_duel", 
-  slot: "evolute-duel", 
+  slot: "evolute-duel-arcade", 
   policies,
   defaultChainId: num.toHex(slotChain.id),
   chains: [
