@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  compress: true,
 
   /* config options here */
   async headers() {
@@ -38,6 +39,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/:path*.wasm.gz",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/wasm",
+          },
+        ],
+      },
+      {
         source: "/:path*.data",
         headers: [
           {
@@ -47,18 +57,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/sw.js",
+        source: "/:path*.data.gz",
         headers: [
           {
-            key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate",
-          },
-          {
             key: "Content-Type",
-            value: "application/javascript; charset=utf-8",
+            value: "application/gzip",
           },
         ],
       },
+
       {
         source: "/(.*)",
         headers: [
@@ -73,6 +80,23 @@ const nextConfig: NextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; script-src 'self'",
           },
         ],
       },

@@ -37,7 +37,6 @@ body {
   position: absolute;
   overflow: hidden;
   background-color: #000000;
-  z-index: -1;
 }
 
 #unity-container.unity-mobile {
@@ -198,10 +197,12 @@ body {
   left: 0;
   height: 100vh;
   width: 100vw;
+  display: none;
 }
 
 @media screen and (max-width: 768px) {
-  #controller-keychain {
+  #controller-keychain,
+  #controller-profile {
     padding-top: 60px;
     background: #000;
   }

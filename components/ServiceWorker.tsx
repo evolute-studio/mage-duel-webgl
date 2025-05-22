@@ -21,134 +21,30 @@ export default function ServiceWorker() {
           );
 
           if (existingRegistration) {
-            console.log("Using existing Service Worker registration");
-            // Store registration for future reference
-            console.log("Registration stored for future use");
+            const registrations =
+              await navigator.serviceWorker.getRegistrations(); // array of ServiceWorkerRegistration
+            await Promise.all(
+              registrations.map((reg) => reg.unregister()), // returns Boolean for each registration
+            );
 
-            // Setup update checking for the existing service worker
-            const checkForUpdates = async () => {
-              try {
-                await existingRegistration.update();
-                console.log("Service Worker update check completed");
-              } catch (err) {
-                console.error("Service Worker update check failed:", err);
-              }
-            };
+            if ("caches" in window) {
+              const cacheNames = await caches.keys(); // array of cache-name strings
+              await Promise.all(
+                cacheNames.map((name) => caches.delete(name)), // Boolean for each deletion
+              );
+            }
 
-            // Check for updates immediately and then every 60 seconds
-            checkForUpdates();
-            const updateInterval = setInterval(checkForUpdates, 60000);
-
-            return () => clearInterval(updateInterval);
+            window.location.reload();
           }
         }
-
-        // No active service worker found, register a new one
-        registerServiceWorker();
       } catch (error) {
         console.error("Error checking service worker registration:", error);
-        registerServiceWorker(); // Fallback to registering a new one
       }
     };
 
-    // Register a new service worker
-    const registerServiceWorker = async () => {
-      try {
-        const registration = await navigator.serviceWorker.register("/sw.js", {
-          scope: "/",
-        });
-
-        console.log(
-          "Service Worker registered successfully with scope:",
-          registration.scope,
-        );
-        console.log("Registration ready for use");
-
-        // Handle new service worker installation
-        registration.addEventListener("updatefound", () => {
-          const newWorker = registration.installing;
-          if (!newWorker) return;
-
-          newWorker.addEventListener("statechange", () => {
-            console.log("Service Worker state changed to:", newWorker.state);
-
-            // When a new service worker is installed and ready
-            if (
-              newWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              // Skip waiting to activate it immediately
-              newWorker.postMessage({ type: "SKIP_WAITING" });
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Service Worker registration failed:", error);
-      }
-    };
-
-    // Setup controller change handler (for page refresh)
-
-    function clearAllStorages() {
-      // Clear localStorage
-      try {
-        console.log("Clearing localStorage...");
-        localStorage.clear();
-        console.log("localStorage cleared successfully");
-      } catch (error) {
-        console.error("Error clearing localStorage:", error);
-
-        // Reload even if there was an error
-        console.log("Reloading page despite localStorage clearing error...");
-        setTimeout(() => window.location.reload(), 500);
-      }
-
-      // Clear all IndexedDB databases
-      console.log("Clearing IndexedDB databases...");
-
-      window.indexedDB
-        .databases()
-        .then((r) => {
-          for (let i = 0; i < r.length; i++)
-            window.indexedDB.deleteDatabase(r[i].name!);
-        })
-        .then(() => {
-          console.log("All data cleared. RELOADING PAGE...");
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.error("Error clearing IndexedDB:", error);
-          window.location.reload();
-        });
-    }
-
-    let refreshing = false;
-    const controllerChangeHandler = () => {
-      if (!refreshing) {
-        refreshing = true;
-        console.log(
-          "New Service Worker controller, clear storage and refreshing page...",
-        );
-
-        clearAllStorages();
-      }
-    };
-
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      controllerChangeHandler,
-    );
-
-    // Start the process
     checkExistingServiceWorker();
 
-    // Cleanup
-    return () => {
-      navigator.serviceWorker.removeEventListener(
-        "controllerchange",
-        controllerChangeHandler,
-      );
-    };
+    return () => {};
   }, []);
 
   // Return null since this component doesn't render any UI
