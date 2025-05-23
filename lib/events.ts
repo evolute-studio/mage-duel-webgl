@@ -51,7 +51,7 @@ const sendScreenTimeEvent = () => {
     return;
   }
 
-  let event_type = 'test_screen_time';
+  let event_type = 'active_screen_time';
   const data = {
     player_id: getPlayerId(),
     timestamp: new Date().toISOString(),
