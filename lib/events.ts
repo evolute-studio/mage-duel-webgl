@@ -37,7 +37,7 @@ export const onchainTransactionEvent = (transaction: Transaction) => {
   });
 }
 
-const SCREEN_TIME_INTERVAL = 1000; 
+const SCREEN_TIME_INTERVAL = 15000; 
 
 let screenTimeInterval: NodeJS.Timeout | null = null;
 
