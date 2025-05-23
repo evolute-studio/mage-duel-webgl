@@ -1,6 +1,9 @@
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
 import { type Transaction } from "./transactions";
+import { onchainTransactionEvent } from "./events";
+import { setInSession } from "./gameState";
+
 const unityReciver = "WrapperTester";
 
 export default class UnityConnector {
@@ -18,8 +21,20 @@ export default class UnityConnector {
     //console.log('Tx:', transaction.contractAddress, transaction.entrypoint, transaction.calldata);
     const tx_hash = await account.execute(transaction);
     console.log("Transaction hash:", tx_hash);
+    onchainTransactionEvent(transaction);
+    this.checkTransaction(transaction);
     return tx_hash;
   };
+
+  private checkTransaction = (tx: Transaction) => {
+    // make_move, skip_move, join_game
+    if (tx.entrypoint === "make_move" || tx.entrypoint === "skip_move" || tx.entrypoint === "join_game") {
+      setInSession(true);
+    }
+    else {
+      setInSession(false);
+    }
+  }
 
   public SendEvent = (event: string, data: string) => {
     const win = window as UnityWindow;
