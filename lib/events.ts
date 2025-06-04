@@ -1,12 +1,15 @@
 import { getPlayerId } from '@/utils/player_data';
 import { logEvent } from '../lib/axiom';
 import { ControllerWindow } from '@/components/WalletConnector';
+import { Transaction } from './transactions';
+import { getGameState } from './gameState';
 
 
 export const GameLoaded = () => {
     logEvent('game_loaded', {
         player_id: getPlayerId(),
         player_id_timestamp: localStorage.getItem('player_id_timestamp'),
+        url: window.location.href,
     });
 };
 
@@ -22,12 +25,33 @@ export const controllerLoginEvent = () => {
   });
 }
 
+export const onchainTransactionEvent = (transaction: Transaction) => {
+  const win = window as ControllerWindow;
+  logEvent('onchain_transaction', {
+    player_id: getPlayerId(),
+    controller_address: win.account.address,
+    controller_username: win.username,
+    entrypoint: transaction.entrypoint,
+    timestamp: new Date().toISOString(),
+    url: window.location.href,
+  });
+}
+
 const SCREEN_TIME_INTERVAL = 15000; 
 
 let screenTimeInterval: NodeJS.Timeout | null = null;
 
+let isTabVisible = true;
+let isWindowFocused = true;
+
 const sendScreenTimeEvent = () => {
-  let event_type = 'screen_time';
+  const gameState = getGameState();
+  
+  if (!gameState.inSession && (!isTabVisible || !isWindowFocused)) {
+    return;
+  }
+
+  let event_type = 'active_screen_time';
   const data = {
     player_id: getPlayerId(),
     timestamp: new Date().toISOString(),
@@ -48,9 +72,22 @@ const sendScreenTimeEvent = () => {
 export const initScreenTimeTracking = () => {
   if (typeof window === 'undefined') return;
 
-  
-  screenTimeInterval = setInterval(sendScreenTimeEvent, SCREEN_TIME_INTERVAL);
+  isTabVisible = !document.hidden;
+  isWindowFocused = document.hasFocus();
 
+  document.addEventListener('visibilitychange', () => {
+    isTabVisible = !document.hidden;
+  });
+
+  window.addEventListener('focus', () => {
+    isWindowFocused = true;
+  });
+
+  window.addEventListener('blur', () => {
+    isWindowFocused = false;
+  });
+
+  screenTimeInterval = setInterval(sendScreenTimeEvent, SCREEN_TIME_INTERVAL);
 
   window.addEventListener('beforeunload', () => {
     if (screenTimeInterval) {
