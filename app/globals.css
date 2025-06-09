@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+  cursor: none !important;
+}
+
 @font-face {
   font-family: "Exo2";
   src: url("/fonts/Exo2-SemiBold.ttf") format("truetype");
