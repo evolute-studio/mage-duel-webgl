@@ -43,7 +43,7 @@ export default function UnityPlayer({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const projectId = "mageduel-webgl";
-  const version = "1.4.10";
+  const version = "1.4.11";
   const compression = ".br";
   const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
