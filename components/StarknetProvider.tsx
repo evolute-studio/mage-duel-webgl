@@ -58,7 +58,7 @@ const policies = {
           name: "finish_game", 
           entrypoint: "finish_game", 
           description: "finish_game" 
-      }
+      },
     ],
   },
   [EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS]: {
