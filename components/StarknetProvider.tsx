@@ -59,6 +59,21 @@ const policies = {
           entrypoint: "finish_game", 
           description: "finish_game" 
       },
+      {
+        name: "commit_tiles",
+        entrypoint: "commit_tiles",
+        description: "Commits initial tile hashes from the deck"
+      },
+      {
+        name: "reveal_tile",
+        entrypoint: "reveal_tile",
+        description: "Reveal tile for everyone"
+      },
+      {
+        name: "request_next_tile",
+        entrypoint: "request_next_tile",
+        description: "Request next tile"
+      },
     ],
   },
   [EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS]: {
@@ -110,7 +125,7 @@ const slotChain = getSlotChain(
 
 const connector = new ControllerConnector({
   namespace: "evolute_duel",
-  slot: "liyard-evolute-duel",
+  slot: "evolute-duel",
   policies,
   defaultChainId: num.toHex(slotChain.id),
   chains: [{ ...slotChain, rpcUrl: process.env.NEXT_PUBLIC_RPC || "" }],
