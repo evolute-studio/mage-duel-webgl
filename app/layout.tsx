@@ -24,11 +24,16 @@ export const metadata: Metadata = {
         sizes: "512x512",
         type: "image/png",
       },
+      {
+        url: "/icon-1024.png",
+        sizes: "1024x1024",
+        type: "image/png",
+      },
     ],
     apple: [
       {
-        url: "/icon-192.png",
-        sizes: "192x192",
+        url: "/icon-1024.png",
+        sizes: "1024x1024",
         type: "image/png",
       },
     ],
@@ -60,7 +65,7 @@ export default function RootLayout({
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="/icon-1024.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#000000" />
       </head>
