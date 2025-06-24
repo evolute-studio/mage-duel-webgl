@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { GameVersion } from './UnityPlayer';
 
 export const NEED_TO_LOGOUT_KEY = 'NEED_TO_LOGOUT';
 
@@ -10,20 +11,20 @@ export default function VersionChecker() {
         console.log("[VersionChecker] clearing data");
         localStorage.clear();
         localStorage.setItem(NEED_TO_LOGOUT_KEY, 'true');
-        localStorage.setItem('SLOT_DATA_VERSION', newVersion);
+        localStorage.setItem('GAME_VERSION', newVersion);
         window.location.reload();
     }
 
     useEffect(() => {
-        const currentVersion = process.env.NEXT_PUBLIC_SLOT_DATA_VERSION;
-        let storedVersion = localStorage.getItem('SLOT_DATA_VERSION');
+        const currentGameVersion = GameVersion;
+        let storedGameVersion = localStorage.getItem('GAME_VERSION');
 
-        console.log("[VersionChecker] currentVersion", currentVersion, "storedVersion", storedVersion);
+        console.log("[VersionChecker] currentVersion", currentGameVersion, "storedVersion", storedGameVersion);
 
 
-        console.log("[VersionChecker] storedVersion !== currentVersion", storedVersion !== currentVersion);
-        if( storedVersion !== currentVersion || storedVersion === null) {
-            clearData(currentVersion || '');
+        console.log("[VersionChecker] storedVersion !== currentVersion", storedGameVersion !== currentGameVersion);
+        if( storedGameVersion !== currentGameVersion || storedGameVersion === null) {
+            clearData(currentGameVersion || '');
         }
         
     }, []);

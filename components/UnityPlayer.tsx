@@ -34,6 +34,8 @@ export interface UnityWindow extends Window {
   unityConnector: UnityConnector;
 }
 
+export const GameVersion = "1.4.17";
+
 export default function UnityPlayer({
   onUnityContainerMounted,
   onGameLoaded,
@@ -43,7 +45,7 @@ export default function UnityPlayer({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const projectId = "mageduel-webgl";
-  const version = "1.4.17";
+  const version = GameVersion;
   const compression = ".br";
   const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
