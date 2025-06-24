@@ -16,7 +16,8 @@ export default function VersionChecker() {
     }
 
     useEffect(() => {
-        const currentGameVersion = GameVersion;
+        const currentSlotDataVersion = process.env.NEXT_PUBLIC_SLOT_DATA_VERSION;
+        const currentGameVersion = GameVersion + '.' + currentSlotDataVersion;
         const storedGameVersion = localStorage.getItem('GAME_VERSION');
 
         console.log("[VersionChecker] currentVersion", currentGameVersion, "storedVersion", storedGameVersion);
