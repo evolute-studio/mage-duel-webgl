@@ -34,7 +34,7 @@ export interface UnityWindow extends Window {
   unityConnector: UnityConnector;
 }
 
-export const GameVersion = "1.4.18";
+export const GameVersion = "1.4.19";
 
 export default function UnityPlayer({
   onUnityContainerMounted,
