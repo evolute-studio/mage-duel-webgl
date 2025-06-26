@@ -2,7 +2,7 @@ import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
 import { onchainTransactionEvent } from "./events";
 import { setInSession } from "./gameState";
-import { set_balance, type Transaction } from "./transactions";
+import { type Transaction } from "./transactions";
 import playerData from "../query-results.json";
 const unityReciver = "WrapperTester";
 

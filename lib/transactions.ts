@@ -89,7 +89,7 @@ export const balance = () => {
   } as Transaction;
 }
 
-export const set_balance = (amount: string, playerId: string) => {
+export const set_balance = () => {
   return {
       contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
       entrypoint: "balance",
