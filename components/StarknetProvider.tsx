@@ -113,7 +113,11 @@ const policies = {
           entrypoint: "become_controller",
           description: "become_controller"
         },
-      
+        {
+          name: "set_player",
+          entrypoint: "set_player",
+          description: "set_player"
+        }
       ]
     }
   }

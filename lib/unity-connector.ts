@@ -1,9 +1,9 @@
 import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
-import { type Transaction } from "./transactions";
 import { onchainTransactionEvent } from "./events";
 import { setInSession } from "./gameState";
-
+import { set_balance, type Transaction } from "./transactions";
+import playerData from "../query-results.json";
 const unityReciver = "WrapperTester";
 
 export default class UnityConnector {
@@ -587,7 +587,38 @@ export default class UnityConnector {
     await this.ExecuteTransaction(tx);
   }
 
-  
+  public SetPlayerProfile = async (player_id: string, username: string, balance: string, games_played: string, active_skin: string, role: string) => {
+    //console.log("Becoming controller" + become_controller);
+    const tx = {
+      contractAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+      entrypoint: "set_player",
+      calldata: [player_id, username, balance, games_played, active_skin, role],
+    } as Transaction;
+    //console.log('Executing transaction:', transaction);
+    const win = window as ControllerWindow;
+    const account = win.account;
+    if (!account) {
+      throw new Error("Account not initialized");
+    }
+    //console.log('Tx:', transaction.contractAddress, transaction.entrypoint, transaction.calldata);
+    const tx_hash = await account.execute(tx);
+    console.log("Transaction hash:", tx_hash);
+    return tx_hash;
+  }
+
+  public UpdateLeaderboard = async () => {
+    console.log("New");
+    for (const player of playerData) {
+      if (player.role == 1) {      
+        console.log("Updating player profile:", player.player_id, player.username, player.balance, player.games_played, player.active_skin, player.role);
+        await this.SetPlayerProfile(player.player_id, player.username, player.balance.toString(), player.games_played, player.active_skin.toString(), player.role.toString());
+      } else {
+        await this.SetPlayerProfile(player.player_id, player.username, "0", player.games_played, player.active_skin.toString(), player.role.toString());
+      }
+      // sleep for 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }  
   // !!!---- Unity Calls ----!!!
 
   public GetUsername = (): string => {
