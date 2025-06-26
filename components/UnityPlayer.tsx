@@ -4,6 +4,7 @@ import UnityConnector from "@/lib/unity-connector";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { GameLoaded } from "../lib/events";
+import { GameVersion } from "@/lib/version-checker";
 
 interface UnityInstance {
   SendMessage: (
@@ -33,8 +34,6 @@ export interface UnityWindow extends Window {
   ) => Promise<UnityInstance>;
   unityConnector: UnityConnector;
 }
-
-export const GameVersion = "1.4.23";
 
 export default function UnityPlayer({
   onUnityContainerMounted,

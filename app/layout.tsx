@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import VersionChecker from "@/components/VersionChecker";
 
 export const metadata: Metadata = {
   title: "Evolute Kingdom: Mage Duel",
@@ -71,7 +70,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body>
-        <VersionChecker />
         {children}
       </body>
     </html>
