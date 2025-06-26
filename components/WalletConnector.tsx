@@ -6,7 +6,7 @@ import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
 import { AccountInterface } from "starknet";
 import { controllerLoginEvent } from "@/lib/events";
-import { IsNewVersion, NEED_TO_LOGOUT_KEY } from "@/lib/version-checker";
+import { IsNewVersion } from "@/lib/version-checker";
 
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector & {
