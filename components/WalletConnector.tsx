@@ -6,8 +6,12 @@ import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
 import { AccountInterface } from "starknet";
 import { controllerLoginEvent } from "@/lib/events";
+import { NEED_TO_LOGOUT_KEY } from "./VersionChecker";
+
 export interface ControllerWindow extends Window {
-  controllerInstance: ControllerConnector;
+  controllerInstance: ControllerConnector & {
+    disconnect: () => void;
+  };
   username: string;
   account: AccountInterface;
   handleConnect: () => Promise<boolean>;
@@ -33,7 +37,15 @@ export function ConnectWallet() {
       }
       (window as UnityWindow).unityConnector.OnControllerLogin();
       (window as UnityWindow).unityConnector.BecomeController();
-      controllerLoginEvent();
+
+      if( localStorage.getItem(NEED_TO_LOGOUT_KEY) === 'true') {
+        console.log("[WalletConnector] NEED_TO_LOGOUT_KEY found, clearing data");
+        localStorage.removeItem(NEED_TO_LOGOUT_KEY);
+        disconnect();
+        window.location.reload();
+      } else {
+        controllerLoginEvent();
+      }
     });
   }, [address, account, controller]);
 

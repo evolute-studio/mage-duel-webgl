@@ -57,8 +57,23 @@ const policies = {
       { 
           name: "finish_game", 
           entrypoint: "finish_game", 
-          description: "finish_game" 
-      }
+          description: "finish_game"
+      },
+      {
+        name: "commit_tiles",
+        entrypoint: "commit_tiles",
+        description: "Commits initial tile hashes from the deck"
+      },
+      {
+        name: "reveal_tile",
+        entrypoint: "reveal_tile",
+        description: "Reveal tile for everyone"
+      },
+      {
+        name: "request_next_tile",
+        entrypoint: "request_next_tile",
+        description: "Request next tile"
+      },
     ],
   },
   [EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS]: {
@@ -98,7 +113,11 @@ const policies = {
           entrypoint: "become_controller",
           description: "become_controller"
         },
-      
+        {
+          name: "set_player",
+          entrypoint: "set_player",
+          description: "set_player"
+        }
       ]
     }
   }

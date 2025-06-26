@@ -89,6 +89,14 @@ export const balance = () => {
   } as Transaction;
 }
 
+export const set_balance = (amount: string, playerId: string) => {
+  return {
+      contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
+      entrypoint: "balance",
+      calldata: [],
+  } as Transaction;
+}
+
 export const become_bot = () => {
   return {
       contractAddress: EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS,
