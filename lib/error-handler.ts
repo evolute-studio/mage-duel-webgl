@@ -119,6 +119,7 @@ if (typeof window !== "undefined") {
           );
           return;
         }
+
         if (errorMessage.includes("ContractNotFound")) {
           console.log(
             "Detected ContractNotFound error, clearing IndexedDB and showing reload alert...",
@@ -132,6 +133,14 @@ if (typeof window !== "undefined") {
               "We are experiencing server stability issues. Please reload the page to reconnect.",
             );
           });
+          return;
+        }
+
+        if (errorMessage.includes("memory access out of bounds")) {
+          console.log(
+            "Detected memory access out of bounds error, showing reload alert...",
+          );
+          window.location.reload();
           return;
         }
 
