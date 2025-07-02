@@ -10,6 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#ffffff",
     theme_color: "#000000",
     orientation: "landscape",
+    scope: "/",
+    categories: ["games"],
     icons: [
       {
         src: "icon-72.png",
@@ -40,6 +42,12 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "icon-1024.png",
         sizes: "1024x1024",
         type: "image/png",
+      },
+    ],
+    protocol_handlers: [
+      {
+        protocol: "web+cartridge",
+        url: "/?handler=%s",
       },
     ],
   };
