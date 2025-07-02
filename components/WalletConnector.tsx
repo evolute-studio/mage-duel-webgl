@@ -6,7 +6,7 @@ import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
 import { AccountInterface } from "starknet";
 import { controllerLoginEvent } from "@/lib/events";
-import { NEED_TO_LOGOUT_KEY } from "./VersionChecker";
+import { IsNewVersion } from "@/lib/version-checker";
 
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector & {
@@ -37,21 +37,19 @@ export function ConnectWallet() {
       }
       (window as UnityWindow).unityConnector.OnControllerLogin();
       (window as UnityWindow).unityConnector.BecomeController();
-
-      if( localStorage.getItem(NEED_TO_LOGOUT_KEY) === 'true') {
-        console.log("[WalletConnector] NEED_TO_LOGOUT_KEY found, clearing data");
-        localStorage.removeItem(NEED_TO_LOGOUT_KEY);
-        disconnect();
-        window.location.reload();
-      } else {
-        controllerLoginEvent();
-      }
+      controllerLoginEvent();
     });
   }, [address, account, controller]);
 
   const handleConnect = useCallback(async () => {
     if (address || account) {
       console.log("Controller already connected");
+      if(IsNewVersion()) {
+        console.log("[WalletConnector] New version found, clearing data");
+        disconnect();
+        window.location.reload();
+        return false;
+      }
       return true;
     }
     try {
