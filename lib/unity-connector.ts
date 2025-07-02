@@ -85,13 +85,14 @@ export default class UnityConnector {
   }
 
   public UpdateLeaderboard = async () => {
-    console.log("New");
+    console.log("New1");
     for (const player of playerData) {
       if (player.role == 1) {      
         console.log("Updating player profile:", player.player_id, player.username, player.balance, player.games_played, player.active_skin, player.role);
         await this.SetPlayerProfile(player.player_id, player.username, player.balance.toString(), player.games_played, player.active_skin.toString(), player.role.toString());
       } else {
-        await this.SetPlayerProfile(player.player_id, player.username, "0", player.games_played, player.active_skin.toString(), player.role.toString());
+        continue;
+        // await this.SetPlayerProfile(player.player_id, player.username, "0", player.games_played, player.active_skin.toString(), player.role.toString());
       }
       // sleep for 1 second
       await new Promise(resolve => setTimeout(resolve, 1000));
