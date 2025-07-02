@@ -136,7 +136,7 @@ if (typeof window !== "undefined") {
           return;
         }
 
-        if (errorMessage.includes("memory access out of bounds")) {
+        if (errorMessage.includes("memory access out of bounds") || errorMessage.includes("Out of bounds memory")) {
           console.log(
             "Detected memory access out of bounds error, showing reload alert...",
           );
