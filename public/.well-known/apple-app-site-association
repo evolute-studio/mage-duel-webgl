@@ -3,5 +3,16 @@
     "apps": [
       "JG34FQUKN9.com.evolute.mageduel"
     ]
+  },
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "JG34FQUKN9.com.evolute.mageduel",
+        "paths": [
+          "*"
+        ]
+      }
+    ]
   }
 }
