@@ -128,7 +128,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
-              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss:",
+              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com",
             ].join("; "),
           },
         ],
