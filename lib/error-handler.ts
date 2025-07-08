@@ -2,6 +2,16 @@ import { logError } from "./axiom";
 
 type ConsoleArg = string | number | boolean | Error | object | null | undefined;
 
+// list of strings that will be sent to Unity
+const possibleProblems = [
+  "InvalidTransactionNonce",
+  "TransactionExecutionError",
+  "JSON-RPC",
+  "ContractNotFound",
+  "BlockNotFound",
+  "memory access",
+  "webtest"
+]
 // Only initialize on client side
 if (typeof window !== "undefined") {
   try {
@@ -105,48 +115,17 @@ if (typeof window !== "undefined") {
             return String(arg);
           })
           .join(" ");
+
         // Check for JSON-RPC error
         console.log("Error message:", errorMessage);
-        if (
-          errorMessage.includes("JSON-RPC error: code=") &&
-          errorMessage.includes("connection error")
-        ) {
-          console.log(
-            "Detected JSON-RPC connection error, showing reload alert...",
-          );
-          showReloadAlert(
-            "We are experiencing server stability issues. Please reload the page to reconnect.",
-          );
-          return;
-        }
-
-        if (errorMessage.includes("ContractNotFound")) {
-          console.log(
-            "Detected ContractNotFound error, clearing IndexedDB and showing reload alert...",
-          );
-          // Clear all IndexedDB databases
-          window.indexedDB.databases().then((dbs) => {
-            for (let i = 0; i < dbs.length; i++)
-              window.indexedDB.deleteDatabase(dbs[i].name!);
-            // Show reload alert after clearing
-            showReloadAlert(
-              "We are experiencing server stability issues. Please reload the page to reconnect.",
-            );
-          });
-          return;
-        }
-
-        if (errorMessage.includes("memory access out of bounds") || errorMessage.includes("Out of bounds memory")) {
-          console.log(
-            "Detected memory access out of bounds error, showing reload alert...",
-          );
-          window.location.reload();
-          return;
-        }
+        
+        
 
         const error = new Error(errorMessage);
         error.stack =
           args.find((arg) => arg instanceof Error)?.stack || new Error().stack;
+
+          
 
         // Enhanced error logging
         logError(error, {
@@ -168,10 +147,67 @@ if (typeof window !== "undefined") {
             }),
           ),
         });
+
+        CheckErrorWithReconnect(errorMessage);
+
+
       } catch (error) {
         console.error("Error in console.error:", error);
       }
+
+
+      
     };
+
+    const CheckErrorWithReconnect = (errorMessage: string) => {
+      if (
+        errorMessage.includes("JSON-RPC error: code=") &&
+        errorMessage.includes("connection error")
+      ) {
+        console.log(
+          "Detected JSON-RPC connection error, showing reload alert...",
+        );
+        showReloadAlert(
+          "We are experiencing server stability issues. Please reload the page to reconnect.",
+        );
+        return;
+      }
+
+      if (errorMessage.includes("ContractNotFound")) {
+        console.log(
+          "Detected ContractNotFound error, clearing IndexedDB and showing reload alert...",
+        );
+        // Clear all IndexedDB databases
+        window.indexedDB.databases().then((dbs) => {
+          for (let i = 0; i < dbs.length; i++)
+            window.indexedDB.deleteDatabase(dbs[i].name!);
+          // Show reload alert after clearing
+          showReloadAlert(
+            "We are experiencing server stability issues. Please reload the page to reconnect.",
+          );
+        });
+        return;
+      }
+
+      if (errorMessage.includes("memory access out of bounds") || errorMessage.includes("Out of bounds memory")) {
+        console.log(
+          "Detected memory access out of bounds error, showing reload alert...",
+        );
+        window.location.reload();
+        return;
+      }
+    }
+
+    const CheckErrorAndSendToClient = (errorMessage: string) => {
+      for (const problem of possibleProblems) {
+        if (errorMessage.includes(problem)) {
+          if (typeof window !== "undefined" && window.unityConnector) {
+            window.unityConnector.OnPossibleProblems(problem);
+          }
+          break;
+        }
+      }
+    }
 
     // Override console.warn
     // console.warn = function(...args: ConsoleArg[]) {
