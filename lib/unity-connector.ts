@@ -181,4 +181,10 @@ export default class UnityConnector {
     console.log("Controller not logged in");
     this.SendEvent("OnControllerNotLoggedIn", "");
   };
+
+  public OnPossibleProblems = (message: string) => {
+    const winUnity = window as UnityWindow;
+    const gameInstance = winUnity.gameInstance;
+    gameInstance.SendMessage(unityReciver, "OnPossibleProblems", message);
+  }
 }
