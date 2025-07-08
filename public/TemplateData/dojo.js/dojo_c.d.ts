@@ -99,12 +99,23 @@ declare namespace wasm_bindgen {
 	
 	export type TokenBalances = Page<TokenBalance>;
 	
+	export type TokenCollections = Page<TokenCollection>;
+	
 	export interface Token {
 	    contract_address: string;
 	    token_id: string;
 	    name: string;
 	    symbol: string;
 	    decimals: number;
+	    metadata: string;
+	}
+	
+	export interface TokenCollection {
+	    contract_address: string;
+	    name: string;
+	    symbol: string;
+	    decimals: number;
+	    count: number;
 	    metadata: string;
 	}
 	
@@ -124,7 +135,6 @@ declare namespace wasm_bindgen {
 	
 	export interface ClientConfig {
 	    toriiUrl: string;
-	    relayUrl: string;
 	    worldAddress: string;
 	}
 	
@@ -234,6 +244,11 @@ declare namespace wasm_bindgen {
 	    keys: string[];
 	    data: string[];
 	    transaction_hash: string;
+	}
+	
+	export interface Message {
+	    message: string;
+	    signature: string[];
 	}
 	
 	export class Account {
@@ -465,6 +480,7 @@ declare namespace wasm_bindgen {
 	   * Cancels an active subscription
 	   */
 	  cancel(): void;
+	  id: bigint;
 	}
 	export class ToriiClient {
 	  free(): void;
@@ -512,7 +528,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onTokenUpdated(contract_addresses: string[] | null | undefined, token_ids: WasmU256[] | null | undefined, callback: Function): Subscription;
+	  onTokenUpdated(contract_addresses: string[] | null | undefined, token_ids: WasmU256[] | null | undefined, callback: Function): Promise<Subscription>;
 	  /**
 	   * Gets token balances for given accounts and contracts
 	   *
@@ -527,6 +543,20 @@ declare namespace wasm_bindgen {
 	   * Result containing token balances or error
 	   */
 	  getTokenBalances(contract_addresses?: string[] | null, account_addresses?: string[] | null, token_ids?: WasmU256[] | null, limit?: number | null, cursor?: string | null): Promise<TokenBalances>;
+	  /**
+	   * Gets token collections for given accounts and contracts
+	   *
+	   * # Parameters
+	   * * `contract_addresses` - Array of contract addresses as hex strings
+	   * * `account_addresses` - Array of account addresses as hex strings
+	   * * `token_ids` - Array of token ids
+	   * * `limit` - Maximum number of token balances to return
+	   * * `cursor` - Cursor to start from
+	   *
+	   * # Returns
+	   * Result containing token balances or error
+	   */
+	  getTokenCollections(contract_addresses?: string[] | null, account_addresses?: string[] | null, token_ids?: WasmU256[] | null, limit?: number | null, cursor?: string | null): Promise<TokenCollections>;
 	  /**
 	   * Queries entities based on the provided query parameters
 	   *
@@ -568,7 +598,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onEntityUpdated(clause: Clause | null | undefined, callback: Function): Subscription;
+	  onEntityUpdated(clause: Clause | null | undefined, callback: Function): Promise<Subscription>;
 	  /**
 	   * Updates an existing entity subscription
 	   *
@@ -590,7 +620,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onEventMessageUpdated(clause: Clause | null | undefined, callback: Function): Subscription;
+	  onEventMessageUpdated(clause: Clause | null | undefined, callback: Function): Promise<Subscription>;
 	  /**
 	   * Updates an existing event message subscription
 	   *
@@ -612,7 +642,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onStarknetEvent(clauses: KeysClause[], callback: Function): Subscription;
+	  onStarknetEvent(clauses: KeysClause[], callback: Function): Promise<Subscription>;
 	  /**
 	   * Subscribes to indexer updates
 	   *
@@ -623,7 +653,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onIndexerUpdated(contract_address: string | null | undefined, callback: Function): Subscription;
+	  onIndexerUpdated(contract_address: string | null | undefined, callback: Function): Promise<Subscription>;
 	  /**
 	   * Subscribes to token balance updates
 	   *
@@ -635,7 +665,7 @@ declare namespace wasm_bindgen {
 	   * # Returns
 	   * Result containing subscription handle or error
 	   */
-	  onTokenBalanceUpdated(contract_addresses: string[] | null | undefined, account_addresses: string[] | null | undefined, token_ids: WasmU256[] | null | undefined, callback: Function): Subscription;
+	  onTokenBalanceUpdated(contract_addresses: string[] | null | undefined, account_addresses: string[] | null | undefined, token_ids: WasmU256[] | null | undefined, callback: Function): Promise<Subscription>;
 	  /**
 	   * Updates an existing token balance subscription
 	   *
@@ -656,9 +686,19 @@ declare namespace wasm_bindgen {
 	   * * `signature` - Array of signature field elements as hex strings
 	   *
 	   * # Returns
-	   * Result containing message ID as byte array or error
+	   * Result containing entity id of the offchain message or error
 	   */
-	  publishMessage(message: string, signature: string[]): Promise<Uint8Array>;
+	  publishMessage(message: Message): Promise<string>;
+	  /**
+	   * Publishes multiple messages to the network
+	   *
+	   * # Parameters
+	   * * `messages` - Array of Message objects, each containing message and signature fields
+	   *
+	   * # Returns
+	   * Result containing array of entity ids of the offchain messages or error
+	   */
+	  publishMessageBatch(messages: Message[]): Promise<string[]>;
 	}
 	export class TypedData {
 	  free(): void;
@@ -754,26 +794,30 @@ declare interface InitOutput {
   readonly toriiclient_new: (a: any) => any;
   readonly toriiclient_getControllers: (a: number, b: number, c: number) => any;
   readonly toriiclient_getTokens: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
-  readonly toriiclient_onTokenUpdated: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number];
+  readonly toriiclient_onTokenUpdated: (a: number, b: number, c: number, d: number, e: number, f: any) => any;
   readonly toriiclient_getTokenBalances: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => any;
+  readonly toriiclient_getTokenCollections: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => any;
   readonly toriiclient_getEntities: (a: number, b: any) => any;
   readonly toriiclient_getAllEntities: (a: number, b: number, c: number, d: number) => any;
   readonly toriiclient_getEventMessages: (a: number, b: any) => any;
-  readonly toriiclient_onEntityUpdated: (a: number, b: number, c: any) => [number, number, number];
+  readonly toriiclient_onEntityUpdated: (a: number, b: number, c: any) => any;
   readonly toriiclient_updateEntitySubscription: (a: number, b: number, c: number) => any;
-  readonly toriiclient_onEventMessageUpdated: (a: number, b: number, c: any) => [number, number, number];
+  readonly toriiclient_onEventMessageUpdated: (a: number, b: number, c: any) => any;
   readonly toriiclient_updateEventMessageSubscription: (a: number, b: number, c: number) => any;
-  readonly toriiclient_onStarknetEvent: (a: number, b: number, c: number, d: any) => [number, number, number];
-  readonly toriiclient_onIndexerUpdated: (a: number, b: number, c: number, d: any) => [number, number, number];
-  readonly toriiclient_onTokenBalanceUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+  readonly toriiclient_onStarknetEvent: (a: number, b: number, c: number, d: any) => any;
+  readonly toriiclient_onIndexerUpdated: (a: number, b: number, c: number, d: any) => any;
+  readonly toriiclient_onTokenBalanceUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => any;
   readonly toriiclient_updateTokenBalanceSubscription: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
-  readonly toriiclient_publishMessage: (a: number, b: number, c: number, d: number, e: number) => any;
+  readonly toriiclient_publishMessage: (a: number, b: any) => any;
+  readonly toriiclient_publishMessageBatch: (a: number, b: number, c: number) => any;
   readonly subscription_cancel: (a: number) => void;
   readonly __wbg_toriiclient_free: (a: number, b: number) => void;
   readonly __wbg_provider_free: (a: number, b: number) => void;
   readonly __wbg_account_free: (a: number, b: number) => void;
   readonly __wbg_controlleraccount_free: (a: number, b: number) => void;
   readonly __wbg_subscription_free: (a: number, b: number) => void;
+  readonly __wbg_get_subscription_id: (a: number) => bigint;
+  readonly __wbg_set_subscription_id: (a: number, b: bigint) => void;
   readonly __wbg_intounderlyingbytesource_free: (a: number, b: number) => void;
   readonly intounderlyingbytesource_type: (a: number) => number;
   readonly intounderlyingbytesource_autoAllocateChunkSize: (a: number) => number;
@@ -796,12 +840,9 @@ declare interface InitOutput {
   readonly __externref_table_dealloc: (a: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __externref_drop_slice: (a: number, b: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h25a2d6c0cac360bc: (a: number, b: number) => void;
-  readonly closure1136_externref_shim: (a: number, b: number, c: any) => void;
-  readonly closure1161_externref_shim: (a: number, b: number, c: any) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hfd0262bcce7a58a4: (a: number, b: number) => void;
-  readonly closure2502_externref_shim: (a: number, b: number, c: any) => void;
-  readonly closure2678_externref_shim: (a: number, b: number, c: any, d: any) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h38cae09d0de780a2: (a: number, b: number) => void;
+  readonly closure932_externref_shim: (a: number, b: number, c: any) => void;
+  readonly closure1100_externref_shim: (a: number, b: number, c: any, d: any) => void;
   readonly __wbindgen_start: () => void;
 }
 
