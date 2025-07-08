@@ -149,6 +149,7 @@ if (typeof window !== "undefined") {
         });
 
         CheckErrorWithReconnect(errorMessage);
+        CheckErrorAndSendToClient(errorMessage);
 
 
       } catch (error) {
