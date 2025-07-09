@@ -12,6 +12,8 @@ import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
 
+import LoginButtonsWeb from "@/components/LoginButtonsWeb";
+
 const StarknetProviderClient = dynamic(
   () =>
     import("@/components/StarknetProvider").then((mod) => mod.StarknetProvider),
@@ -234,7 +236,9 @@ export default function Home() {
             />
           </div>
 
-          
+          <div className="flex-1 flex flex-col items-center ">
+            <LoginButtonsWeb />
+          </div>
         </div>
       </div>
     </StarknetProviderClient>
