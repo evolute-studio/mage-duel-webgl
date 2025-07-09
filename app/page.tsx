@@ -236,9 +236,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex-1 flex flex-col items-center ">
-            <LoginButtonsWeb />
-          </div>
+          
         </div>
       </div>
     </StarknetProviderClient>
