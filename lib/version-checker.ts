@@ -1,9 +1,9 @@
 export const NEED_TO_LOGOUT_KEY = 'NEED_TO_LOGOUT';
 
-export const GameVersion = "1.4.72";
+export const GameVersion = "1.4.71";
 
 export function IsNewVersion(): boolean {
-    const gameVersion = GameVersion + '.' + process.env.NEXT_PUBLIC_SLOT_DATA_VERSION;
+    const gameVersion = process.env.NEXT_PUBLIC_SLOT_DATA_VERSION || "";
 
     const clearData = () => {
         console.log("[VersionChecker] clearing data");

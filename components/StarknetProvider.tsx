@@ -57,7 +57,7 @@ const policies = {
       { 
           name: "finish_game", 
           entrypoint: "finish_game", 
-          description: "finish_game" 
+          description: "finish_game"
       },
       {
         name: "commit_tiles",

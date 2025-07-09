@@ -12,7 +12,7 @@ const possibleProblems = [
   "memory access",
   "webtest"
 ]
-// Only initialize on client sides
+// Only initialize on client side
 if (typeof window !== "undefined") {
   try {
     // Function to show reload alert
@@ -118,42 +118,8 @@ if (typeof window !== "undefined") {
 
         // Check for JSON-RPC error
         console.log("Error message:", errorMessage);
-        if (
-          errorMessage.includes("JSON-RPC error: code=") &&
-          errorMessage.includes("connection error")
-        ) {
-          console.log(
-            "Detected JSON-RPC connection error, showing reload alert...",
-          );
-          showReloadAlert(
-            "We are experiencing server stability issues. Please reload the page to reconnect.",
-          );
-          return;
-        }
-
-        if (errorMessage.includes("ContractNotFound")) {
-          console.log(
-            "Detected ContractNotFound error, clearing IndexedDB and showing reload alert...",
-          );
-          // Clear all IndexedDB databases
-          window.indexedDB.databases().then((dbs) => {
-            for (let i = 0; i < dbs.length; i++)
-              window.indexedDB.deleteDatabase(dbs[i].name!);
-            // Show reload alert after clearing
-            showReloadAlert(
-              "We are experiencing server stability issues. Please reload the page to reconnect.",
-            );
-          });
-          return;
-        }
-
-        if (errorMessage.includes("memory access out of bounds")) {
-          console.log(
-            "Detected memory access out of bounds error, showing reload alert...",
-          );
-          window.location.reload();
-          return;
-        }
+        
+        
 
         const error = new Error(errorMessage);
         error.stack =
@@ -183,6 +149,7 @@ if (typeof window !== "undefined") {
         });
 
         CheckErrorWithReconnect(errorMessage);
+        CheckErrorAndSendToClient(errorMessage);
 
 
       } catch (error) {
