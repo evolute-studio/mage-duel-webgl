@@ -12,8 +12,6 @@ import { ConnectWallet } from "@/components/WalletConnector";
 import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
 
-import LoginButtonsWeb from "@/components/LoginButtonsWeb";
-
 const StarknetProviderClient = dynamic(
   () =>
     import("@/components/StarknetProvider").then((mod) => mod.StarknetProvider),
