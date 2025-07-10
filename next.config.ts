@@ -133,22 +133,6 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
-              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss:",
-            ].join("; "),
-          },
-        ],
-      },
     ];
   },
   webpack: (config) => {
