@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   compress: true,
 
-  /* config options here */
   async headers() {
     return [
       {
@@ -82,7 +81,6 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-
       {
         source: "/(.*)",
         headers: [
@@ -90,19 +88,25 @@ const nextConfig: NextConfig = {
             key: "X-Content-Type-Options",
             value: "nosniff",
           },
+          // CHANGED: Allow specific domains for iframe embedding
           {
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN", // Changed from DENY to SAMEORIGIN
           },
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
+          // ENHANCED: More specific permissions for passkeys
           {
             key: "Permissions-Policy",
-            value:
-              "publickey-credentials-get=*, publickey-credentials-create=*",
+            value: [
+              'publickey-credentials-get=(self "https://x.cartridge.gg" "https://cartridge.gg")',
+              'publickey-credentials-create=(self "https://x.cartridge.gg" "https://cartridge.gg")',
+              "camera=(), microphone=(), geolocation=()",
+            ].join(", "),
           },
+          // ENHANCED: Better CSP for passkey authentication
           {
             key: "Content-Security-Policy",
             value: [
@@ -112,6 +116,9 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https:",
               "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
               "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com",
+              "frame-ancestors 'self' https://x.cartridge.gg https://cartridge.gg", // Added for iframe support
+              "worker-src 'self'", // Added for service workers
+              "manifest-src 'self'", // Added for PWA manifest
             ].join("; "),
           },
         ],
@@ -148,19 +155,16 @@ const nextConfig: NextConfig = {
       ],
     });
 
-    // Додаємо правило для WASM файлів
     config.module.rules.push({
       test: /\.wasm$/,
       type: "asset/resource",
     });
 
-    // Додаємо правило для .data файлів
     config.module.rules.push({
       test: /\.data$/,
       type: "asset/resource",
     });
 
-    // Включаємо експериментальну підтримку WASM
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
