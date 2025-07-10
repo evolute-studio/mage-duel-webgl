@@ -98,6 +98,22 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
+          {
+            key: "Permissions-Policy",
+            value:
+              "publickey-credentials-get=*, publickey-credentials-create=*",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
+              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com",
+            ].join("; "),
+          },
         ],
       },
       {
@@ -128,7 +144,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
-              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com",
+              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss:",
             ].join("; "),
           },
         ],
