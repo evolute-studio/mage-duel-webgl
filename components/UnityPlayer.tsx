@@ -99,7 +99,7 @@ export default function UnityPlayer({
           .then((unityInstance: UnityInstance) => {
             console.log("Unity loaded successfully");
             window.gameInstance = unityInstance;
-            setGameLoaded(false);
+            setGameLoaded(true);
             setLoadingProgress(1);
             onGameLoaded?.();
             GameLoaded();
@@ -122,7 +122,6 @@ export default function UnityPlayer({
 
   return (
     <>
-      {/* Loading overlay */}
       <div
         id="game-loading-overlay"
         className="fixed inset-0 z-[5000] flex flex-col items-center justify-center text-white"
@@ -131,10 +130,16 @@ export default function UnityPlayer({
         }}
       >
         <div className="flex h-full w-full items-center justify-center">
-          <div className="absolute w-full left-1/2 bottom-[4%] flex flex-col items-center -translate-x-1/2 -translate-y-1/2">
-            {/* Progress bar container */}
-            <div className="w-[40vw] h-[3vw] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
-              {/* Progress bar fill */}
+          <div className="absolute w-full left-1/2 bottom-[10vh] flex flex-col items-center -translate-x-1/2">
+            <Image
+              src="/mageduel.gif"
+              alt="Mage Duel"
+              className="w-[105.5vh] block mb-[10vh]"
+              width={1245}
+              height={570}
+              priority
+            />
+            <div className="w-[80vh] h-[5vh] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
               <div
                 className="h-full bg-[#BD835B] duration-300 ease-out transition-width"
                 role="progressbar"
@@ -142,8 +147,7 @@ export default function UnityPlayer({
               ></div>
             </div>
 
-            {/* Progress percentage */}
-            <div className="mt-4 text-white text-4xl font-bold text-outline">
+            <div className="text-white text-4xl font-bold text-outline text-[3vh] mt-[1vh]">
               Loading {Math.round(loadingProgress * 100)}%
             </div>
           </div>

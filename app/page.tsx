@@ -127,15 +127,19 @@ export default function Home() {
 
   return (
     <StarknetProviderClient>
-      <div
-        className="w-screen h-screen"
-        style={{
-          backgroundImage: "url('/bg.png')",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
-        }}
-      >
+      <div className="w-screen h-screen relative">
+        {/* Background Video */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover object-left -z-10"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/poster.jpg"
+        >
+          <source src="/background.webm" type="video/webm" />
+          <source src="/background.mp4" type="video/mp4" />
+        </video>
         <ServiceWorker />
         <Analytics />
         <OfflineNotification />
@@ -167,8 +171,8 @@ export default function Home() {
             </div>
 
             <div className="bg-[#24170e] rounded-xl px-10 mx-4 my-8 max-w-[90%] py-8 pb-6">
-              <h2 className="text-xl font-bold mb-4 text-outline-sm">
-                Available on Stores!
+              <h2 className="text-lg font-bold mb-4 text-outline-sm">
+                Mage Duel <br /> is Available on Stores!
               </h2>
               <div className="flex items-center gap-3 flex-col my-8 ">
                 <div className="flex items-center gap-2 justify-center flex-col">

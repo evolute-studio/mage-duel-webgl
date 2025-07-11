@@ -214,11 +214,17 @@ body {
   display: none;
 }
 
+#controller-keychain,
+#controller-profile {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  min-width: 480px;
+}
+
 @media screen and (max-width: 768px) {
   #controller-keychain,
   #controller-profile {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 60px;
     background: #000;
   }
 }
