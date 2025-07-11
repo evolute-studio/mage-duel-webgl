@@ -172,6 +172,16 @@ body {
   }
 }
 
+@keyframes scaleAnimation {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
 /* Text outline for better visibility */
 .text-outline {
   text-shadow:
@@ -202,6 +212,13 @@ body {
   height: 100vh;
   width: 100vw;
   display: none;
+}
+
+#controller-keychain,
+#controller-profile {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  min-width: 480px;
 }
 
 @media screen and (max-width: 768px) {

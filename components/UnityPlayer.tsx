@@ -122,7 +122,6 @@ export default function UnityPlayer({
 
   return (
     <>
-      {/* Loading overlay */}
       <div
         id="game-loading-overlay"
         className="fixed inset-0 z-[5000] flex flex-col items-center justify-center text-white"
@@ -131,19 +130,16 @@ export default function UnityPlayer({
         }}
       >
         <div className="flex h-full w-full items-center justify-center">
-          <div className="absolute w-full left-1/2 top-1/2 flex flex-col items-center -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute w-full left-1/2 bottom-[10vh] flex flex-col items-center -translate-x-1/2">
             <Image
-              src="/loader.gif"
-              alt="Loading"
-              className="block h-[35vh] max-h-[300px] min-h-[250px] w-auto  mb-8 aspect-square"
-              width={200}
-              height={200}
+              src="/mageduel.gif"
+              alt="Mage Duel"
+              className="w-[105.5vh] block mb-[10vh]"
+              width={1245}
+              height={570}
               priority
             />
-
-            {/* Progress bar container */}
-            <div className="w-[250px] h-[25px] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
-              {/* Progress bar fill */}
+            <div className="w-[80vh] h-[5vh] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
               <div
                 className="h-full bg-[#BD835B] duration-300 ease-out transition-width"
                 role="progressbar"
@@ -151,8 +147,7 @@ export default function UnityPlayer({
               ></div>
             </div>
 
-            {/* Progress percentage */}
-            <div className="mt-4 text-white text-2xl font-bold text-outline">
+            <div className="text-white text-4xl font-bold text-outline text-[3vh] mt-[1vh]">
               Loading {Math.round(loadingProgress * 100)}%
             </div>
           </div>
