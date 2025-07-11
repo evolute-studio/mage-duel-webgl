@@ -23,7 +23,8 @@ const StarknetProviderClient = dynamic(
 export default function Home() {
   const [isPWA, setIsPWA] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [, setIsIOS] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
   const [isLandscape, setIsLandscape] = useState(true);
   const [gameContainerMounted, setGameContainerMounted] = useState(false);
   const [gameLoaded, setGameLoaded] = useState(false);
@@ -60,9 +61,11 @@ export default function Home() {
       /iphone|ipad|ipod/i.test(userAgentLower) ||
         (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)),
     );
+    const isAndroidDevice = Boolean(/android/i.test(userAgentLower));
 
     setIsMobile(isMobileDevice);
     setIsIOS(isIOSDevice);
+    setIsAndroid(isAndroidDevice);
 
     // Initial orientation check
     checkOrientation();
@@ -191,12 +194,19 @@ export default function Home() {
                   animation: "scaleAnimation 2s ease-in-out infinite",
                 }}
               >
-                <a
-                  href="https://testflight.apple.com/join/kypR9ywg"
-                  className="bg-[#BD835B] hover:bg-[#A6724F] px-10 py-4 rounded text-white font-semibold text-outline-sm text-2xl transition-colors mb-4 inline-block shadow-2xl"
-                >
-                  Download Now
-                </a>
+{isAndroid || isIOS ? (
+                  <a
+                    href={isAndroid ? "/MageDuelAndroid.apk" : "https://testflight.apple.com/join/kypR9ywg"}
+                    className="bg-[#BD835B] hover:bg-[#A6724F] px-10 py-4 rounded text-white font-semibold text-outline-sm text-2xl transition-colors mb-4 inline-block shadow-2xl"
+                    download={isAndroid ? "MageDuelAndroid.apk" : undefined}
+                  >
+                    Download Now
+                  </a>
+                ) : (
+                  <div className="bg-gray-600 px-10 py-4 rounded text-white font-semibold text-outline-sm text-2xl mb-4 inline-block shadow-2xl">
+                    Device Not Supported
+                  </div>
+                )}
               </div>
             </div>
           </div>
