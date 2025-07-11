@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "network.evolute.mageduel.twa",
+    "package_name": "com.evolute.mageduel",
     "sha256_cert_fingerprints": ["04:E6:F6:34:03:D1:FB:DD:35:6A:2F:DA:35:52:97:FE:9A:6D:53:4B:C3:B0:72:C6:27:B3:49:4F:21:75:31:33"]
   }
 }]
