@@ -166,52 +166,33 @@ export default function Home() {
               />
             </div>
 
-            <div className="bg-[#24170e]  rounded-xl px-7 py-6 mx-4 my-8 max-w-[90%]">
-              <h2 className="text-3xl font-bold text-outline-sm mb-7">
-                Install Mage Duel
+            <div className="bg-[#24170e] rounded-xl px-10 mx-4 my-8 max-w-[90%] py-8 pb-6">
+              <h2 className="text-xl font-bold mb-4 text-outline-sm">
+                Available on Stores!
               </h2>
-              <p className="text-md mb-3 text-outline-sm">
-                Tap in Address Bar:
-              </p>
-              <div className="text-center mx-auto ">
-                {isIOS ? (
-                  <p className="mb-3">
-                    <span className="bg-[#BD835B] px-2 py-1 rounded">
-                      <img
-                        src="/ios-share.svg"
-                        alt="Share"
-                        className="inline-block w-[21px] h-[21px] mb-2"
-                      />
-                    </span>{" "}
-                    →{" "}
-                    <span className="bg-[#BD835B] px-2 py-1 rounded text-outline-sm">
-                      Add to Home Screen
-                    </span>
-                  </p>
-                ) : (
-                  <p>
-                    <span className="bg-[#BD835B] px-2 py-1 rounded">
-                      <span className="px-1 inline-block leading-0  text-xl">
-                        ⋮
-                      </span>
-                    </span>{" "}
-                    →{" "}
-                    <span className="bg-[#BD835B] px-2 py-1 rounded whitespace-nowrap flex-nowrap text-outline-sm">
-                      Add to Home Screen
-                    </span>
-                  </p>
-                )}
-                <div className="flex items-center gap-3 flex-col mt-8">
-                  Play from Home Screen:
-                  <div className="flex items-center gap-2 justify-center flex-col">
-                    <img
-                      src="/icon-512.png"
-                      alt="Mage Duel Icon"
-                      className="w-15 h-15"
-                    />
-                    <span className="text-xs">Mage Duel</span>
-                  </div>
+              <div className="flex items-center gap-3 flex-col my-8 ">
+                <div className="flex items-center gap-2 justify-center flex-col">
+                  <img
+                    src="/icon-512.png"
+                    alt="Mage Duel Icon"
+                    className="w-25 h-25 "
+                  />
+                  <span className="text-sm text-outline-sm">Mage Duel</span>
                 </div>
+              </div>
+
+              <div
+                className="text-center mx-auto hover:scale-110 transition-transform"
+                style={{
+                  animation: "scaleAnimation 2s ease-in-out infinite",
+                }}
+              >
+                <a
+                  href="https://testflight.apple.com/join/kypR9ywg"
+                  className="bg-[#BD835B] hover:bg-[#A6724F] px-10 py-4 rounded text-white font-semibold text-outline-sm text-2xl transition-colors mb-4 inline-block shadow-2xl"
+                >
+                  Download Now
+                </a>
               </div>
             </div>
           </div>

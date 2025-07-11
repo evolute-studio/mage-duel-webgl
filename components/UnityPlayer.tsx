@@ -99,7 +99,7 @@ export default function UnityPlayer({
           .then((unityInstance: UnityInstance) => {
             console.log("Unity loaded successfully");
             window.gameInstance = unityInstance;
-            setGameLoaded(true);
+            setGameLoaded(false);
             setLoadingProgress(1);
             onGameLoaded?.();
             GameLoaded();
@@ -131,18 +131,9 @@ export default function UnityPlayer({
         }}
       >
         <div className="flex h-full w-full items-center justify-center">
-          <div className="absolute w-full left-1/2 top-1/2 flex flex-col items-center -translate-x-1/2 -translate-y-1/2">
-            <Image
-              src="/loader.gif"
-              alt="Loading"
-              className="block h-[35vh] max-h-[300px] min-h-[250px] w-auto  mb-8 aspect-square"
-              width={200}
-              height={200}
-              priority
-            />
-
+          <div className="absolute w-full left-1/2 bottom-[4%] flex flex-col items-center -translate-x-1/2 -translate-y-1/2">
             {/* Progress bar container */}
-            <div className="w-[250px] h-[25px] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
+            <div className="w-[40vw] h-[3vw] bg-[#5a3a24] rounded-full overflow-hidden border-2 border-black">
               {/* Progress bar fill */}
               <div
                 className="h-full bg-[#BD835B] duration-300 ease-out transition-width"
@@ -152,7 +143,7 @@ export default function UnityPlayer({
             </div>
 
             {/* Progress percentage */}
-            <div className="mt-4 text-white text-2xl font-bold text-outline">
+            <div className="mt-4 text-white text-4xl font-bold text-outline">
               Loading {Math.round(loadingProgress * 100)}%
             </div>
           </div>
