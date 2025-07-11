@@ -23,7 +23,7 @@ const StarknetProviderClient = dynamic(
 export default function Home() {
   const [isPWA, setIsPWA] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [, setIsIOS] = useState(false);
   const [isLandscape, setIsLandscape] = useState(true);
   const [gameContainerMounted, setGameContainerMounted] = useState(false);
   const [gameLoaded, setGameLoaded] = useState(false);
