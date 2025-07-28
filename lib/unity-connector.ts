@@ -50,6 +50,7 @@ export default class UnityConnector {
       gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
       playerProfileActionsAddress:
         process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+      tutorialAddress: process.env.NEXT_PUBLIC_TUTORIAL_ADDRESS,
       worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
     };
