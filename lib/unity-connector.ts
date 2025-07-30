@@ -51,6 +51,7 @@ export default class UnityConnector {
       playerProfileActionsAddress:
         process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
       tutorialAddress: process.env.NEXT_PUBLIC_TUTORIAL_ADDRESS,
+      accountMigrationAddress: process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS,
       worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
     };
