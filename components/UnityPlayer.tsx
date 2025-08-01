@@ -99,10 +99,12 @@ export default function UnityPlayer({
           .then((unityInstance: UnityInstance) => {
             console.log("Unity loaded successfully");
             window.gameInstance = unityInstance;
-            setGameLoaded(true);
             setLoadingProgress(1);
-            onGameLoaded?.();
-            GameLoaded();
+            setTimeout(() => {
+              setGameLoaded(true);
+              onGameLoaded?.();
+              GameLoaded();
+            }, 1500);
           })
           .catch((message: string) => {
             console.error("Failed to load Unity:", message);
