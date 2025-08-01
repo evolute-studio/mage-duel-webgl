@@ -9,7 +9,6 @@ import { initScreenTimeTracking, stopScreenTimeTracking } from "../lib/events";
 import UnityPlayer from "@/components/UnityPlayer";
 import ServiceWorker from "@/components/ServiceWorker";
 import { ConnectWallet } from "@/components/WalletConnector";
-import OfflineNotification from "@/components/OfflineNotification";
 import dynamic from "next/dynamic";
 
 import LoginButtonsWeb from "@/components/LoginButtonsWeb";
@@ -145,7 +144,6 @@ export default function Home() {
         </video>
         <ServiceWorker />
         <Analytics />
-        <OfflineNotification />
         <ConnectWallet />
         {(!isMobile || isPWA) && (
           <UnityPlayer
@@ -194,9 +192,13 @@ export default function Home() {
                   animation: "scaleAnimation 2s ease-in-out infinite",
                 }}
               >
-{isAndroid || isIOS ? (
+                {isAndroid || isIOS ? (
                   <a
-                    href={isAndroid ? "/MageDuelAndroid.apk" : "https://testflight.apple.com/join/kypR9ywg"}
+                    href={
+                      isAndroid
+                        ? "/MageDuelAndroid.apk"
+                        : "https://testflight.apple.com/join/kypR9ywg"
+                    }
                     className="bg-[#BD835B] hover:bg-[#A6724F] px-10 py-4 rounded text-white font-semibold text-outline-sm text-2xl transition-colors mb-4 inline-block shadow-2xl"
                     download={isAndroid ? "MageDuelAndroid.apk" : undefined}
                   >
