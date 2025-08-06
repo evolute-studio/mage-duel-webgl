@@ -54,6 +54,10 @@ export default class UnityConnector {
       accountMigrationAddress: process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS,
       worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
+      feedbackWebhookUrl: process.env.NEXT_PUBLIC_FEEDBACK_WEBHOOK,
+      bugsWebhookUrl: process.env.NEXT_PUBLIC_BUGS_WEBHOOK,
+      possibleProblemsWebhookUrl: process.env.NEXT_PUBLIC_POSSIBLE_PROBLEMS_WEBHOOK,
+      criticalIssueWebhookUrl: process.env.NEXT_PUBLIC_CRITICAL_ISSUES_WEBHOOK,
     };
   };
   public BecomeController = async () => {
