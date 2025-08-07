@@ -35,12 +35,17 @@ export default function Home() {
   useEffect(() => {
     initScreenTimeTracking();
 
-    // Detect if running as PWA
+    // Detect if running as PWA or APK build
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       // @ts-expect-error: Safari-specific standalone property
       window.navigator.standalone ||
-      document.referrer.includes("android-app://");
+      document.referrer.includes("android-app://") ||
+      // Check if running in Android WebView (APK build)
+      /wv|Android.*Version\/\d+\.\d+.*Chrome\/\d+\.\d+\.\d+\.\d+.*Mobile.*Safari/.test(navigator.userAgent) ||
+      // Additional check for APK builds
+      window.location.protocol === 'file:' ||
+      document.referrer === '';
 
     setIsPWA(isStandalone);
 
