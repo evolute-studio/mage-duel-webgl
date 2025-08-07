@@ -46,7 +46,7 @@ export default function UnityPlayer({
   const projectId = "mageduel-webgl";
   const version = GameVersion;
   const compression = ".br";
-  const is_compressed = false;
+  const is_compressed = true;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
 
