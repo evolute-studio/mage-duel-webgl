@@ -38,8 +38,7 @@ export default function Home() {
     // Enhanced PWA/APK detection
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      // @ts-expect-error: Safari-specific standalone property
-      window.navigator.standalone ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone ||
       document.referrer.includes("android-app://") ||
       // Additional checks for PWA Builder APK
       window.location.href.includes("android-app://") ||
@@ -74,7 +73,7 @@ export default function Home() {
     // Debug logging for PWA detection
     console.log("PWA Detection Debug:", {
       displayMode: window.matchMedia("(display-mode: standalone)").matches,
-      navigatorStandalone: (window.navigator as any).standalone,
+      navigatorStandalone: (window.navigator as Navigator & { standalone?: boolean }).standalone,
       referrer: document.referrer,
       locationHref: window.location.href,
       userAgent: navigator.userAgent,
@@ -105,8 +104,8 @@ export default function Home() {
     const userAgent =
       navigator.userAgent ||
       navigator.vendor ||
-      // @ts-expect-error: Opera-specific property
-      window.opera;
+      (window as Window & { opera?: string }).opera ||
+      "";
     const userAgentLower = userAgent.toLowerCase();
     const isMobileDevice =
       /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
