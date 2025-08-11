@@ -49,6 +49,8 @@ export default function UnityPlayer({
   const is_compressed = true;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [unityReady, setUnityReady] = useState(false);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const buildUrl = "Build";
 
@@ -72,7 +74,35 @@ export default function UnityPlayer({
   useEffect(() => {
     onUnityContainerMounted?.();
 
-    (window as UnityWindow).unityConnector = new UnityConnector();
+    const connector = new UnityConnector();
+    (window as UnityWindow).unityConnector = connector;
+
+    // Override HideLoadingOverlay to control when loading actually stops
+    const originalHideLoadingOverlay = connector.HideLoadingOverlay;
+    connector.HideLoadingOverlay = () => {
+      setGameLoaded(true);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      originalHideLoadingOverlay();
+    };
+
+    // Start web app loading simulation
+    let currentProgress = 0;
+    progressIntervalRef.current = setInterval(() => {
+      if (!unityReady) {
+        // Simulate web app loading (slower progress to 70%)
+        currentProgress += Math.random() * 0.015 + 0.005;
+        if (currentProgress > 0.7) currentProgress = 0.7;
+        setLoadingProgress(currentProgress);
+      } else {
+        // Unity is ready, continue progress more slowly until Unity calls HideLoadingOverlay
+        currentProgress += Math.random() * 0.008 + 0.002;
+        if (currentProgress > 0.95) currentProgress = 0.95; // Don't reach 100% until Unity says so
+        setLoadingProgress(currentProgress);
+      }
+    }, 100);
 
     const dojoScript = document.createElement("script");
     dojoScript.src = "TemplateData/dojo.js/dojo_c.js";
@@ -81,6 +111,12 @@ export default function UnityPlayer({
       await wasm_bindgen();
     };
     document.body.appendChild(dojoScript);
+
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -93,18 +129,20 @@ export default function UnityPlayer({
             canvasRef.current,
             config,
             (progress: number) => {
-              setLoadingProgress(progress);
+              // Unity loading progress is now ignored for the progress bar
+              // We only use it to know when Unity is ready
+              if (progress >= 1) {
+                setUnityReady(true);
+              }
             },
           )
           .then((unityInstance: UnityInstance) => {
             console.log("Unity loaded successfully");
             window.gameInstance = unityInstance;
-            setLoadingProgress(1);
-            setTimeout(() => {
-              setGameLoaded(true);
-              onGameLoaded?.();
-              GameLoaded();
-            }, 1500);
+            setUnityReady(true);
+            onGameLoaded?.();
+            GameLoaded();
+            // Don't automatically hide loading - wait for Unity to call HideLoadingOverlay
           })
           .catch((message: string) => {
             console.error("Failed to load Unity:", message);

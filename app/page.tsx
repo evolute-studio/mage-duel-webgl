@@ -35,26 +35,77 @@ export default function Home() {
   useEffect(() => {
     initScreenTimeTracking();
 
-    // Detect if running as PWA or APK build
+    // Enhanced PWA/APK detection
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      // @ts-expect-error: Safari-specific standalone property
-      window.navigator.standalone ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone ||
       document.referrer.includes("android-app://") ||
-      // Check if running in Android WebView (APK build)
-      /wv|Android.*Version\/\d+\.\d+.*Chrome\/\d+\.\d+\.\d+\.\d+.*Mobile.*Safari/.test(navigator.userAgent) ||
-      // Additional check for APK builds
-      window.location.protocol === 'file:' ||
-      document.referrer === '';
+      // Additional checks for PWA Builder APK
+      window.location.href.includes("android-app://") ||
+      // Check if running in a WebView (common for APK)
+      /wv|WebView/i.test(navigator.userAgent) ||
+      // Check for TWA (Trusted Web Activity) indicators
+      window.location.search.includes("utm_source=android-app") ||
+      // Check if the app is running in fullscreen mode (common for APK)
+      (window.screen.height === window.innerHeight && window.screen.width === window.innerWidth) ||
+      // Additional APK detection methods
+      window.location.protocol === "file:" ||
+      // Check for custom URL schemes used by PWA Builder
+      window.location.href.includes("pwa-builder://") ||
+      // Check for specific Android WebView indicators
+      /Android.*Version\/[0-9]+\.[0-9]+.*Chrome\/[0-9]+\.[0-9]+.*Mobile/i.test(navigator.userAgent) ||
+      // Additional PWA Builder specific checks
+      window.location.href.includes("twa://") ||
+      // Check for specific PWA Builder user agent patterns
+      /PWA Builder|TWA/i.test(navigator.userAgent) ||
+      // Check if running in a custom WebView container
+      /CustomWebView|AppWebView/i.test(navigator.userAgent) ||
+      // Check for URL parameters that indicate APK
+      window.location.search.includes("source=apk") ||
+      window.location.search.includes("mode=standalone") ||
+      // Check for specific PWA Builder APK indicators
+      window.location.search.includes("pwa-builder=true") ||
+      // Check for TWA specific indicators
+      window.location.search.includes("twa=true");
 
     setIsPWA(isStandalone);
+    
+    // Debug logging for PWA detection
+    console.log("PWA Detection Debug:", {
+      displayMode: window.matchMedia("(display-mode: standalone)").matches,
+      navigatorStandalone: (window.navigator as Navigator & { standalone?: boolean }).standalone,
+      referrer: document.referrer,
+      locationHref: window.location.href,
+      userAgent: navigator.userAgent,
+      screenVsInner: {
+        screenHeight: window.screen.height,
+        screenWidth: window.screen.width,
+        innerHeight: window.innerHeight,
+        innerWidth: window.innerWidth
+      },
+      isStandalone,
+      // Additional APK detection info
+      isWebView: /wv|WebView/i.test(navigator.userAgent),
+      isTWA: /TWA/i.test(navigator.userAgent),
+      isPWABuilder: /PWA Builder/i.test(navigator.userAgent),
+      protocol: window.location.protocol,
+      hasAndroidAppScheme: window.location.href.includes("android-app://"),
+      hasPwaBuilderScheme: window.location.href.includes("pwa-builder://"),
+      hasTWAScheme: window.location.href.includes("twa://"),
+      // URL parameters for APK detection
+      searchParams: window.location.search,
+      hasSourceApk: window.location.search.includes("source=apk"),
+      hasModeStandalone: window.location.search.includes("mode=standalone"),
+      hasPwaBuilderTrue: window.location.search.includes("pwa-builder=true"),
+      hasTwaTrue: window.location.search.includes("twa=true")
+    });
 
     // Check if on mobile device and detect platform
     const userAgent =
       navigator.userAgent ||
       navigator.vendor ||
-      // @ts-expect-error: Opera-specific property
-      window.opera;
+      (window as Window & { opera?: string }).opera ||
+      "";
     const userAgentLower = userAgent.toLowerCase();
     const isMobileDevice =
       /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
@@ -158,7 +209,16 @@ export default function Home() {
         )}
 
         {/* PWA Install Prompt - shown differently based on orientation */}
-        {isMobile && !isPWA && (
+        {isMobile && !isPWA && 
+         !window.location.href.includes("android-app://") && 
+         !window.location.href.includes("pwa-builder://") &&
+         !window.location.href.includes("twa://") &&
+         window.location.protocol !== "file:" &&
+         !/PWA Builder|TWA|CustomWebView|AppWebView/i.test(navigator.userAgent) &&
+         !window.location.search.includes("source=apk") &&
+         !window.location.search.includes("mode=standalone") &&
+         !window.location.search.includes("pwa-builder=true") &&
+         !window.location.search.includes("twa=true") && (
           <div
             className={`fixed text-white text-center z-[5000] top-0 left-0 w-full h-full flex flex-col justify-center items-center over`}
           >
