@@ -78,20 +78,29 @@ export default function UnityPlayer({
     (window as UnityWindow).unityConnector = connector;
 
     // Override HideLoadingOverlay to control when loading actually stops
-    const originalHideLoadingOverlay = connector.HideLoadingOverlay;
+    const originalHideLoadingOverlay = connector.HideLoadingOverlay.bind(connector);
     connector.HideLoadingOverlay = () => {
+      console.log("HideLoadingOverlay called by Unity");
+      setLoadingProgress(1); // Complete the progress
       setGameLoaded(true);
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
         progressIntervalRef.current = null;
       }
-      originalHideLoadingOverlay();
+      // Don't call original - we handle hiding through React state
     };
 
     // Start web app loading simulation
     let currentProgress = 0;
+    let isUnityReady = false;
+    
     progressIntervalRef.current = setInterval(() => {
-      if (!unityReady) {
+      setUnityReady(current => {
+        isUnityReady = current;
+        return current;
+      });
+      
+      if (!isUnityReady) {
         // Simulate web app loading (slower progress to 70%)
         currentProgress += Math.random() * 0.015 + 0.005;
         if (currentProgress > 0.7) currentProgress = 0.7;
