@@ -49,7 +49,7 @@ export default function UnityPlayer({
   const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [unityReady, setUnityReady] = useState(false);
+  const [, setUnityReady] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const buildUrl = "Build";
@@ -78,7 +78,6 @@ export default function UnityPlayer({
     (window as UnityWindow).unityConnector = connector;
 
     // Override HideLoadingOverlay to control when loading actually stops
-    const originalHideLoadingOverlay = connector.HideLoadingOverlay.bind(connector);
     connector.HideLoadingOverlay = () => {
       console.log("HideLoadingOverlay called by Unity");
       setLoadingProgress(1); // Complete the progress
