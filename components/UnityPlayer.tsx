@@ -46,10 +46,10 @@ export default function UnityPlayer({
   const projectId = "mageduel-webgl";
   const version = GameVersion;
   const compression = ".br";
-  const is_compressed = true;
+  const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [unityReady, setUnityReady] = useState(false);
+  const [, setUnityBuildReady] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const buildUrl = "Build";
@@ -78,27 +78,35 @@ export default function UnityPlayer({
     (window as UnityWindow).unityConnector = connector;
 
     // Override HideLoadingOverlay to control when loading actually stops
-    const originalHideLoadingOverlay = connector.HideLoadingOverlay;
     connector.HideLoadingOverlay = () => {
+      console.log("HideLoadingOverlay called by Unity");
+      setLoadingProgress(1); // Complete the progress
       setGameLoaded(true);
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
         progressIntervalRef.current = null;
       }
-      originalHideLoadingOverlay();
+      // Don't call original - we handle hiding through React state
     };
 
     // Start web app loading simulation
     let currentProgress = 0;
+    let isBuildReady = false;
+    
     progressIntervalRef.current = setInterval(() => {
-      if (!unityReady) {
-        // Simulate web app loading (slower progress to 70%)
-        currentProgress += Math.random() * 0.015 + 0.005;
-        if (currentProgress > 0.7) currentProgress = 0.7;
+      setUnityBuildReady(current => {
+        isBuildReady = current;
+        return current;
+      });
+      
+      if (!isBuildReady) {
+        // Simulate web app loading (faster progress to 80%)
+        currentProgress += Math.random() * 0.02 + 0.01;
+        if (currentProgress > 0.8) currentProgress = 0.8;
         setLoadingProgress(currentProgress);
       } else {
-        // Unity is ready, continue progress more slowly until Unity calls HideLoadingOverlay
-        currentProgress += Math.random() * 0.008 + 0.002;
+        // Unity build is ready, continue progress quickly to 95%
+        currentProgress += Math.random() * 0.015 + 0.008;
         if (currentProgress > 0.95) currentProgress = 0.95; // Don't reach 100% until Unity says so
         setLoadingProgress(currentProgress);
       }
@@ -130,16 +138,16 @@ export default function UnityPlayer({
             config,
             (progress: number) => {
               // Unity loading progress is now ignored for the progress bar
-              // We only use it to know when Unity is ready
+              // We only use it to know when Unity build is ready
               if (progress >= 1) {
-                setUnityReady(true);
+                setUnityBuildReady(true);
               }
             },
           )
           .then((unityInstance: UnityInstance) => {
             console.log("Unity loaded successfully");
             window.gameInstance = unityInstance;
-            setUnityReady(true);
+            setUnityBuildReady(true);
             onGameLoaded?.();
             GameLoaded();
             // Don't automatically hide loading - wait for Unity to call HideLoadingOverlay
