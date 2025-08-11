@@ -193,4 +193,12 @@ export default class UnityConnector {
     const gameInstance = winUnity.gameInstance;
     gameInstance.SendMessage(unityReciver, "OnPossibleProblems", message);
   }
+
+  public HideLoadingOverlay = () => {
+    const overlay = document.getElementById("game-loading-overlay");
+    if (overlay) {
+      overlay.style.display = "none";
+    }
+    console.log("Loading overlay hidden by Unity");
+  };
 }
