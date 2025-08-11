@@ -125,7 +125,7 @@ export default class UnityConnector {
     }
     await handleConnect();
     if (this.IsControllerLoggedIn()) {
-      this.OnControllerLogin();
+      this.OnControllerLogin(win.username, win.account.address);
     }
   };
 
@@ -138,18 +138,6 @@ export default class UnityConnector {
     return true;
   };
 
-  public CheckControllerLoggedIn = () => {
-    const win = window as ControllerWindow;
-    const controllerInstance = win.controllerInstance;
-    if (!controllerInstance) {
-      this.OnControllerNotLoggedIn();
-      throw new Error("Controller not initialized");
-    }
-    console.log("Controller logged in");
-    this.OnControllerLogin();
-    //this.OnUsernameReceived(win.username);
-  };
-
   public GetControllerUsername = () => {
     const winСontroller = window as ControllerWindow;
     const winUnity = window as UnityWindow;
@@ -160,15 +148,21 @@ export default class UnityConnector {
 
   // !!!---- Unity events ----!!!
 
-  public OnControllerLogin = () => {
-    const winСontroller = window as ControllerWindow;
+  public OnControllerLogin = (username: string, address: string) => {
     const winUnity = window as UnityWindow;
     const gameInstance = winUnity.gameInstance;
-    console.log("Controller logged in");
+
+    // if username or address null or empty
+    if (!username || !address) {
+      console.error("Controller login failed: missing" + (!username ? " username" : "") + (!address ? " address" : ""));
+      return;
+    }
+
     const data = JSON.stringify({
-      username: winСontroller.username,
-      address: winСontroller.account.address,
+      username: username,
+      address: address,
     });
+    console.log("Controller login successful:", data);
     gameInstance.SendMessage(unityReciver, "OnControllerLogin", data);
   };
 
