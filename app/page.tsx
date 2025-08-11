@@ -165,10 +165,6 @@ export default function Home() {
     }
 
     if (isLandscape) {
-      if (gameLoaded) {
-        gameContainer.style.display = "block";
-      }
-
       const canvas = document.getElementById("unity-canvas");
       if (canvas) {
         canvas.style.display = "block";
