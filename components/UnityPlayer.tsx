@@ -100,17 +100,17 @@ export default function UnityPlayer({
       });
       
       if (!isBuildReady) {
-        // Simulate web app loading (slower progress to 60%)
-        currentProgress += Math.random() * 0.008 + 0.003;
-        if (currentProgress > 0.6) currentProgress = 0.6;
+        // Simulate web app loading (faster progress to 80%)
+        currentProgress += Math.random() * 0.02 + 0.01;
+        if (currentProgress > 0.8) currentProgress = 0.8;
         setLoadingProgress(currentProgress);
       } else {
-        // Unity build is ready, continue progress more slowly until Unity calls HideLoadingOverlay
-        currentProgress += Math.random() * 0.005 + 0.002;
+        // Unity build is ready, continue progress quickly to 95%
+        currentProgress += Math.random() * 0.015 + 0.008;
         if (currentProgress > 0.95) currentProgress = 0.95; // Don't reach 100% until Unity says so
         setLoadingProgress(currentProgress);
       }
-    }, 150);
+    }, 100);
 
     const dojoScript = document.createElement("script");
     dojoScript.src = "TemplateData/dojo.js/dojo_c.js";
