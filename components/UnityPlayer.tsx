@@ -49,7 +49,7 @@ export default function UnityPlayer({
   const is_compressed = false;
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [unityBuildReady, setUnityBuildReady] = useState(false);
+  const [, setUnityBuildReady] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const buildUrl = "Build";
