@@ -1,6 +1,6 @@
 export const NEED_TO_LOGOUT_KEY = 'NEED_TO_LOGOUT';
 
-export const GameVersion = "1.4.139";
+export const GameVersion = "1.4.140";
 
 export function IsNewVersion(): boolean {
     const gameVersion = process.env.NEXT_PUBLIC_SLOT_DATA_VERSION || "";
