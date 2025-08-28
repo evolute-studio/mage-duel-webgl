@@ -2,15 +2,40 @@ import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
 import { onchainTransactionEvent } from "./events";
 import { setInSession } from "./gameState";
-import { type Transaction } from "./transactions";
+import { enlist_duelist, enter_tournament, type Transaction } from "./transactions";
 import playerData from "../query-results.json";
 import { IsNewVersion } from "./version-checker";
+import { CairoOption, CairoOptionVariant, InvokeFunctionResponse, RpcProvider, shortString } from "starknet";
+import { useStarknetProvider } from "../components/StarknetProvider";
+import { useAccount, useConnect } from "@starknet-react/core";
+import { getSlotChain } from "@/utils/slot";
 const unityReciver = "WrapperTester";
 
+interface StarknetProviderContext {
+  account: any;
+  connect: () => Promise<void>;
+  connector: any;
+  provider: any;
+}
+
+const slotChain = getSlotChain(
+  shortString.encodeShortString(process.env.NEXT_PUBLIC_SLOT_PROJECT || ""),
+);
+
+let provider: RpcProvider;
+
 export default class UnityConnector {
+  private starknetContext?: StarknetProviderContext;
+
+  constructor(starknetContext?: StarknetProviderContext) {
+    this.starknetContext = starknetContext;
+  }
+
+  setStarknetContext(context: StarknetProviderContext) {
+    this.starknetContext = context;
+  }
   // !!!---- Transactions ----!!!
   public ExecuteTransaction = async (tx: Transaction | string) => {
-    //console.log('Executing transaction:', tx.toString());
     const transaction =
       typeof tx === "string" ? (JSON.parse(tx) as Transaction) : tx;
     console.log('Executing transaction:', transaction);
@@ -19,12 +44,30 @@ export default class UnityConnector {
     if (!account) {
       throw new Error("Account not initialized");
     }
-    //console.log('Tx:', transaction.contractAddress, transaction.entrypoint, transaction.calldata);
+    
     const tx_hash = await account.execute(transaction);
     console.log("Transaction hash:", tx_hash);
     onchainTransactionEvent(transaction);
     this.checkTransaction(transaction);
     return tx_hash;
+  };
+
+  public CallContract = async (tx: Transaction | string) => {
+    const transaction =
+      typeof tx === "string" ? (JSON.parse(tx) as Transaction) : tx;
+    console.log('Calling contract:', transaction);
+
+    const win = window as ControllerWindow;
+    const providerFunc = win.provider;
+    if (!provider) {
+      provider = providerFunc(slotChain);
+    }
+    console.log("Provider:", provider);
+    console.log("Chain ID:", provider.getChainId());
+
+    const response = await provider.callContract(transaction);
+    console.log("Contract call response:", response);
+    return response;
   };
 
   private checkTransaction = (tx: Transaction) => {
@@ -52,6 +95,7 @@ export default class UnityConnector {
         process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
       tutorialAddress: process.env.NEXT_PUBLIC_TUTORIAL_ADDRESS,
       accountMigrationAddress: process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS,
+      matchmakingAddress: process.env.NEXT_PUBLIC_MATCHMAKING_ADDRESS,
       worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
       feedbackWebhookUrl: process.env.NEXT_PUBLIC_FEEDBACK_WEBHOOK,
@@ -72,7 +116,6 @@ export default class UnityConnector {
   }
 
   public SetPlayerProfile = async (player_id: string, username: string, balance: string, games_played: string, active_skin: string, role: string) => {
-    //console.log("Becoming controller" + become_controller);
     const tx = {
       contractAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
       entrypoint: "set_player",
@@ -84,7 +127,7 @@ export default class UnityConnector {
     if (!account) {
       throw new Error("Account not initialized");
     }
-    //console.log('Tx:', transaction.contractAddress, transaction.entrypoint, transaction.calldata);
+    
     const tx_hash = await account.execute(tx);
     console.log("Transaction hash:", tx_hash);
     return tx_hash;
@@ -106,6 +149,34 @@ export default class UnityConnector {
   }  
   // !!!---- Unity Calls ----!!!
 
+  public EnrollToCurrentTournament = async () => {
+    const tournamentId = "0x3";
+    await this.EnterTournament(tournamentId);
+  };
+
+  public EnterTournament = async (tournamentId: string) =>{
+    const playerName = this.GetUsername();
+    const playerAddress = this.GetAddress();
+    const qualification = new CairoOption(CairoOptionVariant.None)
+
+    const tx = enter_tournament(tournamentId, playerName, playerAddress, qualification);
+    const response = await this.CallContract(tx);
+    const txHash = await this.ExecuteTransaction(tx);
+    console.log("Enter tournament response:", response);
+    console.log("Enter tournament txHash:", txHash);
+    const passId = response[0];
+    console.log("Pass ID:", passId);
+    this.EnlistDuelist(passId);
+  }
+
+  public EnlistDuelist = async (passId: string) => {
+
+    const tx = enlist_duelist(passId);
+    const response = await this.ExecuteTransaction(tx);
+    console.log("Enlist duelist response:", response);
+    this.SendEventToUnity("OnDuelistEnlisted");
+  }
+
   public GetUsername = (): string => {
     const win = window as ControllerWindow;
     const controllerInstance = win.controllerInstance;
@@ -115,6 +186,16 @@ export default class UnityConnector {
 
     return win.username;
   };
+
+  public GetAddress = (): string => {    
+    const win = window as ControllerWindow;
+    const controllerInstance = win.controllerInstance;
+    if (!controllerInstance) {
+      throw new Error("Controller not initialized");
+    }
+
+    return win.account.address;
+  }
 
   //controller login
   public ControllerLogin = async () => {
@@ -195,4 +276,10 @@ export default class UnityConnector {
     }
     console.log("Loading overlay hidden by Unity");
   };
+
+  public SendEventToUnity(eventName: string) {
+    const winUnity = window as UnityWindow;
+    const gameInstance = winUnity.gameInstance;
+    gameInstance.SendMessage(unityReciver, "OnWebEvent", JSON.stringify({ event: eventName }));
+  }
 }

@@ -1,12 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { Chain } from "@starknet-react/chains";
 import { getSlotChain } from "@/utils/slot";
 import {
   StarknetConfig,
   jsonRpcProvider,
   starkscan,
+  useAccount,
+  useConnect,
+  useDisconnect,
 } from "@starknet-react/core";
 import ControllerConnector from "@cartridge/connector/controller";
 import { shortString, num } from "starknet";
@@ -160,8 +163,33 @@ const provider = jsonRpcProvider({
   },
 });
 
+interface StarknetContextType {
+  connector: ControllerConnector;
+  slotChain: Chain;
+  provider: any;
+  policies: typeof policies;
+}
+
+const StarknetContext = createContext<StarknetContextType | undefined>(undefined);
+
+export function useStarknetProvider() {
+  const context = useContext(StarknetContext);
+  if (!context) {
+    throw new Error("useStarknetProvider must be used within a StarknetProvider");
+  }
+  return context;
+}
+
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
+  const contextValue: StarknetContextType = {
+    connector,
+    slotChain,
+    provider,
+    policies,
+  };
+
   return (
+    <StarknetContext.Provider value={contextValue}>
     <StarknetConfig
       autoConnect
       chains={[slotChain]}
@@ -171,5 +199,6 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
     </StarknetConfig>
+    </StarknetContext.Provider>
   );
 }

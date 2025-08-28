@@ -8,6 +8,7 @@ declare global {
         controllerInstance: any;
         username: string;
         account: any;
+        provider: any;
         unityConnector: UnityConnector;
         handleConnect: () => Promise<boolean>;
         handleDisconnect: () => void;
