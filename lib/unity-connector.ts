@@ -2,20 +2,16 @@ import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
 import { onchainTransactionEvent } from "./events";
 import { setInSession } from "./gameState";
-import { enlist_duelist, enter_tournament, type Transaction } from "./transactions";
+import { enlist_duelist, enter_tournament, Period, type Transaction } from "./transactions";
 import playerData from "../query-results.json";
 import { IsNewVersion } from "./version-checker";
-import { CairoOption, CairoOptionVariant, InvokeFunctionResponse, RpcProvider, shortString } from "starknet";
-import { useStarknetProvider } from "../components/StarknetProvider";
-import { useAccount, useConnect } from "@starknet-react/core";
+import { CairoOption, CairoOptionVariant, RpcProvider, shortString } from "starknet";
 import { getSlotChain } from "@/utils/slot";
+import { ChainProviderFactory } from "@starknet-react/core";
 const unityReciver = "WrapperTester";
 
 interface StarknetProviderContext {
-  account: any;
-  connect: () => Promise<void>;
-  connector: any;
-  provider: any;
+  provider: ChainProviderFactory<RpcProvider>;
 }
 
 const slotChain = getSlotChain(
@@ -60,7 +56,11 @@ export default class UnityConnector {
     const win = window as ControllerWindow;
     const providerFunc = win.provider;
     if (!provider) {
-      provider = providerFunc(slotChain);
+      const newProvider = providerFunc(slotChain);
+      if (!newProvider) {
+        throw new Error("Provider could not be initialized");
+      }
+      provider = newProvider;
     }
     console.log("Provider:", provider);
     console.log("Chain ID:", provider.getChainId());
@@ -157,7 +157,7 @@ export default class UnityConnector {
   public EnterTournament = async (tournamentId: string) =>{
     const playerName = this.GetUsername();
     const playerAddress = this.GetAddress();
-    const qualification = new CairoOption(CairoOptionVariant.None)
+    const qualification = new CairoOption<Period>(CairoOptionVariant.None)
 
     const tx = enter_tournament(tournamentId, playerName, playerAddress, qualification);
     const response = await this.CallContract(tx);

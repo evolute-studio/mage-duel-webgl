@@ -18,11 +18,6 @@ export function useUnityConnector() {
 
     if (account) {
       connectorRef.current.setStarknetContext({
-        account,
-        connect: async () => {
-          await connect({ connector: starknetProvider.connector });
-        },
-        connector: starknetProvider.connector,
         provider: starknetProvider.provider,
       });
     }

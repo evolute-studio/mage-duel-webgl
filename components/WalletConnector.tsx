@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
+import { ChainProviderFactory, useAccount, useConnect, useDisconnect } from "@starknet-react/core";
 import { useEffect, useState, useCallback } from "react";
 import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
@@ -15,7 +15,7 @@ export interface ControllerWindow extends Window {
   };
   username: string;
   account: AccountInterface;
-  provider: any;
+  provider: ChainProviderFactory<RpcProvider>;
   handleConnect: () => Promise<boolean>;
   handleDisconnect: () => void;
 }

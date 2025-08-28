@@ -4,15 +4,13 @@ import React, { createContext, useContext } from "react";
 import { Chain } from "@starknet-react/chains";
 import { getSlotChain } from "@/utils/slot";
 import {
+  ChainProviderFactory,
   StarknetConfig,
   jsonRpcProvider,
   starkscan,
-  useAccount,
-  useConnect,
-  useDisconnect,
 } from "@starknet-react/core";
 import ControllerConnector from "@cartridge/connector/controller";
-import { shortString, num } from "starknet";
+import { shortString, num, RpcProvider } from "starknet";
 
 const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || "";
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS =
@@ -166,7 +164,7 @@ const provider = jsonRpcProvider({
 interface StarknetContextType {
   connector: ControllerConnector;
   slotChain: Chain;
-  provider: any;
+  provider: ChainProviderFactory<RpcProvider>
   policies: typeof policies;
 }
 

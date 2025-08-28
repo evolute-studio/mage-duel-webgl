@@ -148,7 +148,7 @@ export const enter_tournament = (tournamentId: BigNumberish, playerName: BigNumb
     return {
         contractAddress: EVOLUTE_DUEL_TOURNAMENT_ADDRESS,
         entrypoint: "enter_tournament",
-        calldata: [tournamentId, playerName, playerAddress, qualification.isSome() ? "0" + qualification.unwrap().toString() : "1"],
+        calldata: [tournamentId, playerName, playerAddress, qualification.isSome() ? "0" + qualification.Some?.toString() : "1"],
     } as Transaction;
 }
 
@@ -158,4 +158,9 @@ export const enlist_duelist = (passId: BigNumberish) => {
         entrypoint: "enlist_duelist",
         calldata: [passId],
     } as Transaction;
+}
+
+export interface Period {
+	start: BigNumberish;
+	end: BigNumberish;
 }
