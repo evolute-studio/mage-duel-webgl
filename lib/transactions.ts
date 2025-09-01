@@ -4,6 +4,7 @@ const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || '';
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || '';
 const EVOLUTE_DUEL_TOURNAMENT_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS || '';
 const EVOLUTE_DUEL_TOURNAMENT_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_TOKEN_ADDRESS || '';
+const EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_EVOLUTE_TOKEN_ADDRESS || '';
 
 export interface Transaction {
     contractAddress: string;
@@ -159,6 +160,14 @@ export const enlist_duelist = (passId: BigNumberish) => {
         calldata: [passId],
     } as Transaction;
 }
+
+export const evlt_token_balance_of = (account: string) => {
+	return {
+      contractAddress: EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS,
+      entrypoint: "balanceOf",
+      calldata: [account],
+	} as Transaction;
+};
 
 export interface Period {
 	start: BigNumberish;

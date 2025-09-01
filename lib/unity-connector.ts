@@ -2,7 +2,7 @@ import { UnityWindow } from "../components/UnityPlayer";
 import { ControllerWindow } from "../components/WalletConnector";
 import { onchainTransactionEvent } from "./events";
 import { setInSession } from "./gameState";
-import { enlist_duelist, enter_tournament, Period, type Transaction } from "./transactions";
+import { enlist_duelist, enter_tournament, evlt_token_balance_of, Period, type Transaction } from "./transactions";
 import playerData from "../query-results.json";
 import { IsNewVersion } from "./version-checker";
 import { CairoOption, CairoOptionVariant, RpcProvider, shortString } from "starknet";
@@ -196,6 +196,14 @@ export default class UnityConnector {
 
     return win.account.address;
   }
+
+  // ulong
+  public GetEvltBalance = async (playerAddress: string): Promise<bigint> => {
+    const tx = evlt_token_balance_of(playerAddress);
+    const response = await this.CallContract(tx);
+    const result = BigInt(response[0]);
+    return result;
+  };
 
   //controller login
   public ControllerLogin = async () => {
