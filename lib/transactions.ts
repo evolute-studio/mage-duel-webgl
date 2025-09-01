@@ -1,5 +1,10 @@
+import { BigNumberish, CairoOption } from "starknet";
+
 const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || '';
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || '';
+const EVOLUTE_DUEL_TOURNAMENT_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS || '';
+const EVOLUTE_DUEL_TOURNAMENT_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_TOKEN_ADDRESS || '';
+const EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_EVOLUTE_TOKEN_ADDRESS || '';
 
 export interface Transaction {
     contractAddress: string;
@@ -135,4 +140,36 @@ export const username = () => {
       entrypoint: "username",
       calldata: [],
   } as Transaction;
+}
+
+
+// Tournament
+
+export const enter_tournament = (tournamentId: BigNumberish, playerName: BigNumberish, playerAddress: string, qualification: CairoOption<Period>) => {
+    return {
+        contractAddress: EVOLUTE_DUEL_TOURNAMENT_ADDRESS,
+        entrypoint: "enter_tournament",
+        calldata: [tournamentId, playerName, playerAddress, qualification.isSome() ? "0" + qualification.Some?.toString() : "1"],
+    } as Transaction;
+}
+
+export const enlist_duelist = (passId: BigNumberish) => {
+    return {
+        contractAddress: EVOLUTE_DUEL_TOURNAMENT_TOKEN_ADDRESS,
+        entrypoint: "enlist_duelist",
+        calldata: [passId],
+    } as Transaction;
+}
+
+export const evlt_token_balance_of = (account: string) => {
+	return {
+      contractAddress: EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS,
+      entrypoint: "balanceOf",
+      calldata: [account],
+	} as Transaction;
+};
+
+export interface Period {
+	start: BigNumberish;
+	end: BigNumberish;
 }

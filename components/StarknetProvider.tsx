@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { Chain } from "@starknet-react/chains";
 import { getSlotChain } from "@/utils/slot";
 import {
+  ChainProviderFactory,
   StarknetConfig,
   jsonRpcProvider,
   starkscan,
 } from "@starknet-react/core";
 import ControllerConnector from "@cartridge/connector/controller";
-import { shortString, num } from "starknet";
+import { shortString, num, RpcProvider } from "starknet";
 
 const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || "";
 const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS =
@@ -160,8 +161,33 @@ const provider = jsonRpcProvider({
   },
 });
 
+interface StarknetContextType {
+  connector: ControllerConnector;
+  slotChain: Chain;
+  provider: ChainProviderFactory<RpcProvider>
+  policies: typeof policies;
+}
+
+const StarknetContext = createContext<StarknetContextType | undefined>(undefined);
+
+export function useStarknetProvider() {
+  const context = useContext(StarknetContext);
+  if (!context) {
+    throw new Error("useStarknetProvider must be used within a StarknetProvider");
+  }
+  return context;
+}
+
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
+  const contextValue: StarknetContextType = {
+    connector,
+    slotChain,
+    provider,
+    policies,
+  };
+
   return (
+    <StarknetContext.Provider value={contextValue}>
     <StarknetConfig
       autoConnect
       chains={[slotChain]}
@@ -171,5 +197,6 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
     </StarknetConfig>
+    </StarknetContext.Provider>
   );
 }

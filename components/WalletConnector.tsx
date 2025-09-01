@@ -1,12 +1,13 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
+import { ChainProviderFactory, useAccount, useConnect, useDisconnect } from "@starknet-react/core";
 import { useEffect, useState, useCallback } from "react";
 import ControllerConnector from "@cartridge/connector/controller";
 import { UnityWindow } from "./UnityPlayer";
-import { AccountInterface } from "starknet";
+import { AccountInterface, RpcProvider } from "starknet";
 import { controllerLoginEvent } from "@/lib/events";
 import { IsNewVersion } from "@/lib/version-checker";
+import { useStarknetProvider } from "./StarknetProvider";
 
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector & {
@@ -14,6 +15,7 @@ export interface ControllerWindow extends Window {
   };
   username: string;
   account: AccountInterface;
+  provider: ChainProviderFactory<RpcProvider>;
   handleConnect: () => Promise<boolean>;
   handleDisconnect: () => void;
 }
@@ -22,6 +24,7 @@ export function ConnectWallet() {
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const { address, account } = useAccount();
+  const starknetProvider = useStarknetProvider();
   const controller = connectors[0] as ControllerConnector;
   const [, setUsername] = useState<string>();
   const [isRetrying, setIsRetrying] = useState(false);
@@ -32,6 +35,7 @@ export function ConnectWallet() {
       setUsername(n);
       setControllerInstance(controller);
       (window as ControllerWindow).username = n;
+      (window as ControllerWindow).provider = starknetProvider.provider;
       if (account) {
         (window as ControllerWindow).account = account;
         (window as UnityWindow).unityConnector.OnControllerLogin(n, address);
@@ -40,7 +44,7 @@ export function ConnectWallet() {
       }
       
     });
-  }, [address, account, controller]);
+  }, [address, account, controller, starknetProvider]);
 
   const handleConnect = useCallback(async () => {
     if (address || account) {
