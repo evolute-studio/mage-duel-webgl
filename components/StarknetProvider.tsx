@@ -7,7 +7,6 @@ import {
   ChainProviderFactory,
   StarknetConfig,
   jsonRpcProvider,
-  starkscan,
 } from "@starknet-react/core";
 import ControllerConnector from "@cartridge/connector/controller";
 import { shortString, num, RpcProvider } from "starknet";
@@ -193,7 +192,6 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
       chains={[slotChain]}
       provider={provider}
       connectors={[connector]}
-      explorer={starkscan}
     >
       {children}
     </StarknetConfig>

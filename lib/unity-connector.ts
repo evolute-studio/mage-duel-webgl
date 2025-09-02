@@ -56,6 +56,9 @@ export default class UnityConnector {
     const win = window as ControllerWindow;
     const providerFunc = win.provider;
     if (!provider) {
+      if (!providerFunc || typeof providerFunc !== 'function') {
+        throw new Error("Provider function not available");
+      }
       const newProvider = providerFunc(slotChain);
       if (!newProvider) {
         throw new Error("Provider could not be initialized");

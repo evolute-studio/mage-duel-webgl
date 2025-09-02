@@ -21,5 +21,10 @@ export function getSlotChain(projectId: string) {
         http: [`https://api.cartridge.gg/x/${projectId}/katana`],
       },
     },
-  } as const satisfies Chain;
+    paymasterRpcUrls: {
+      avnu: {
+        http: [`https://api.cartridge.gg/x/${projectId}/katana`],
+      },
+    }
+  } as const as Chain;
 }
