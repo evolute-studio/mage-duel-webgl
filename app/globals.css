@@ -215,6 +215,15 @@ body {
   display: none;
 }
 
+/* Fix for controller container blocking page interaction */
+#controller {
+  pointer-events: none !important;
+}
+
+#controller > * {
+  pointer-events: auto;
+}
+
 #controller-keychain,
 #controller-profile {
   padding-top: 25px;
