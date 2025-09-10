@@ -224,6 +224,17 @@ body {
   pointer-events: auto;
 }
 
+/* Auto-hide controller when opacity is 0 */
+#controller[style*="opacity: 0"],
+#controller[style*="opacity:0"] {
+  display: none !important;
+}
+
+#controller[style*="opacity: 1"],
+#controller[style*="opacity:1"] {
+  display: flex !important;
+}
+
 #controller-keychain,
 #controller-profile {
   padding-top: 25px;
