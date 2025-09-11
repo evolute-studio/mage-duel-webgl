@@ -8,7 +8,10 @@ import { IsNewVersion } from "./version-checker";
 import { CairoOption, CairoOptionVariant, RpcProvider, shortString } from "starknet";
 import { getSlotChain } from "@/utils/slot";
 import { ChainProviderFactory } from "@starknet-react/core";
-const unityReciver = "WrapperTester";
+
+const unityReciver = "WrapperConnector";
+const tournament_id = process.env.NEXT_PUBLIC_CURRENT_TOURNAMENT || "0x1";
+const decimals = 18;
 
 interface StarknetProviderContext {
   provider: ChainProviderFactory<RpcProvider>;
@@ -93,14 +96,20 @@ export default class UnityConnector {
     return {
       rpcUrl: process.env.NEXT_PUBLIC_RPC,
       toriiUrl: process.env.NEXT_PUBLIC_TORII,
+      slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
+
+      currentTournamentId: tournament_id,
+
+      worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
-      playerProfileActionsAddress:
-        process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
+      playerProfileActionsAddress: process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS,
       tutorialAddress: process.env.NEXT_PUBLIC_TUTORIAL_ADDRESS,
       accountMigrationAddress: process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS,
       matchmakingAddress: process.env.NEXT_PUBLIC_MATCHMAKING_ADDRESS,
-      worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
-      slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
+      evltTokenAddress: process.env.NEXT_PUBLIC_EVOLUTE_TOKEN_ADDRESS,
+      tournamentAddress: process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS,
+      tournamentTokenAddress: process.env.NEXT_PUBLIC_TOURNAMENT_TOKEN_ADDRESS,
+    
       feedbackWebhookUrl: process.env.NEXT_PUBLIC_FEEDBACK_WEBHOOK,
       bugsWebhookUrl: process.env.NEXT_PUBLIC_BUGS_WEBHOOK,
       possibleProblemsWebhookUrl: process.env.NEXT_PUBLIC_POSSIBLE_PROBLEMS_WEBHOOK,
@@ -153,8 +162,7 @@ export default class UnityConnector {
   // !!!---- Unity Calls ----!!!
 
   public EnrollToCurrentTournament = async () => {
-    const tournamentId = "0x3";
-    await this.EnterTournament(tournamentId);
+    await this.EnterTournament(tournament_id);
   };
 
   public EnterTournament = async (tournamentId: string) =>{
@@ -204,9 +212,10 @@ export default class UnityConnector {
   public GetEvltBalance = async (playerAddress: string): Promise<bigint> => {
     const tx = evlt_token_balance_of(playerAddress);
     const response = await this.CallContract(tx);
-    const result = BigInt(response[0]);
-    return result;
-  };
+    const balance = BigInt(response[0]) / BigInt(10 ** decimals);
+    console.log("EVLT balance:", balance.toString());
+    return balance;
+  }
 
   //controller login
   public ControllerLogin = async () => {

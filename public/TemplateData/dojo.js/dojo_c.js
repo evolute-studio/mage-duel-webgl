@@ -465,15 +465,19 @@ let wasm_bindgen;
     };
 
     function __wbg_adapter_56(arg0, arg1) {
-        wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h38cae09d0de780a2(arg0, arg1);
+        wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h859b951bee550a5a(arg0, arg1);
     }
 
-    function __wbg_adapter_59(arg0, arg1, arg2) {
-        wasm.closure932_externref_shim(arg0, arg1, arg2);
+    function __wbg_adapter_59(arg0, arg1) {
+        wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hbd34cb1bbccea715(arg0, arg1);
     }
 
-    function __wbg_adapter_283(arg0, arg1, arg2, arg3) {
-        wasm.closure1100_externref_shim(arg0, arg1, arg2, arg3);
+    function __wbg_adapter_62(arg0, arg1, arg2) {
+        wasm.closure965_externref_shim(arg0, arg1, arg2);
+    }
+
+    function __wbg_adapter_294(arg0, arg1, arg2, arg3) {
+        wasm.closure1146_externref_shim(arg0, arg1, arg2, arg3);
     }
 
     const __wbindgen_enum_ReadableStreamType = ["bytes"];
@@ -1165,13 +1169,6 @@ let wasm_bindgen;
             wasm.__wbg_subscription_free(ptr, 0);
         }
         /**
-         * Cancels an active subscription
-         */
-        cancel() {
-            const ptr = this.__destroy_into_raw();
-            wasm.subscription_cancel(ptr);
-        }
-        /**
          * @returns {bigint}
          */
         get id() {
@@ -1183,6 +1180,13 @@ let wasm_bindgen;
          */
         set id(arg0) {
             wasm.__wbg_set_subscription_id(this.__wbg_ptr, arg0);
+        }
+        /**
+         * Cancels an active subscription
+         */
+        cancel() {
+            const ptr = this.__destroy_into_raw();
+            wasm.subscription_cancel(ptr);
         }
     }
     __exports.Subscription = Subscription;
@@ -1235,13 +1239,43 @@ let wasm_bindgen;
          *
          * # Returns
          * Result containing controllers or error
-         * @param {string[]} contract_addresses
+         * @param {ControllerQuery} query
          * @returns {Promise<Controllers>}
          */
-        getControllers(contract_addresses) {
-            const ptr0 = passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
-            const len0 = WASM_VECTOR_LEN;
-            const ret = wasm.toriiclient_getControllers(this.__wbg_ptr, ptr0, len0);
+        getControllers(query) {
+            const ret = wasm.toriiclient_getControllers(this.__wbg_ptr, query);
+            return ret;
+        }
+        /**
+         * Gets transactions matching the given query
+         *
+         * # Parameters
+         * * `query` - Query parameters
+         *
+         * # Returns
+         * Result containing transactions or error
+         * @param {TransactionQuery} query
+         * @returns {Promise<Transactions>}
+         */
+        getTransactions(query) {
+            const ret = wasm.toriiclient_getTransactions(this.__wbg_ptr, query);
+            return ret;
+        }
+        /**
+         * Subscribes to transactions
+         *
+         * # Parameters
+         * * `filter` - Filter parameters
+         * * `callback` - JavaScript function to call on updates
+         *
+         * # Returns
+         * Result containing subscription handle or error
+         * @param {TransactionFilter | null | undefined} filter
+         * @param {Function} callback
+         * @returns {Promise<Subscription>}
+         */
+        onTransaction(filter, callback) {
+            const ret = wasm.toriiclient_onTransaction(this.__wbg_ptr, isLikeNone(filter) ? 0 : addToExternrefTable0(filter), callback);
             return ret;
         }
         /**
@@ -1255,20 +1289,11 @@ let wasm_bindgen;
          *
          * # Returns
          * Result containing token information or error
-         * @param {string[] | null} [contract_addresses]
-         * @param {WasmU256[] | null} [token_ids]
-         * @param {number | null} [limit]
-         * @param {string | null} [cursor]
+         * @param {TokenQuery} query
          * @returns {Promise<Tokens>}
          */
-        getTokens(contract_addresses, token_ids, limit, cursor) {
-            var ptr0 = isLikeNone(contract_addresses) ? 0 : passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ptr1 = isLikeNone(token_ids) ? 0 : passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
-            var len1 = WASM_VECTOR_LEN;
-            var ptr2 = isLikeNone(cursor) ? 0 : passStringToWasm0(cursor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len2 = WASM_VECTOR_LEN;
-            const ret = wasm.toriiclient_getTokens(this.__wbg_ptr, ptr0, len0, ptr1, len1, isLikeNone(limit) ? 0x100000001 : (limit) >>> 0, ptr2, len2);
+        getTokens(query) {
+            const ret = wasm.toriiclient_getTokens(this.__wbg_ptr, query);
             return ret;
         }
         /**
@@ -1305,23 +1330,11 @@ let wasm_bindgen;
          *
          * # Returns
          * Result containing token balances or error
-         * @param {string[] | null} [contract_addresses]
-         * @param {string[] | null} [account_addresses]
-         * @param {WasmU256[] | null} [token_ids]
-         * @param {number | null} [limit]
-         * @param {string | null} [cursor]
+         * @param {TokenBalanceQuery} query
          * @returns {Promise<TokenBalances>}
          */
-        getTokenBalances(contract_addresses, account_addresses, token_ids, limit, cursor) {
-            var ptr0 = isLikeNone(contract_addresses) ? 0 : passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ptr1 = isLikeNone(account_addresses) ? 0 : passArrayJsValueToWasm0(account_addresses, wasm.__wbindgen_malloc);
-            var len1 = WASM_VECTOR_LEN;
-            var ptr2 = isLikeNone(token_ids) ? 0 : passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
-            var len2 = WASM_VECTOR_LEN;
-            var ptr3 = isLikeNone(cursor) ? 0 : passStringToWasm0(cursor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len3 = WASM_VECTOR_LEN;
-            const ret = wasm.toriiclient_getTokenBalances(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, isLikeNone(limit) ? 0x100000001 : (limit) >>> 0, ptr3, len3);
+        getTokenBalances(query) {
+            const ret = wasm.toriiclient_getTokenBalances(this.__wbg_ptr, query);
             return ret;
         }
         /**
@@ -1336,23 +1349,11 @@ let wasm_bindgen;
          *
          * # Returns
          * Result containing token balances or error
-         * @param {string[] | null} [contract_addresses]
-         * @param {string[] | null} [account_addresses]
-         * @param {WasmU256[] | null} [token_ids]
-         * @param {number | null} [limit]
-         * @param {string | null} [cursor]
+         * @param {TokenBalanceQuery} query
          * @returns {Promise<TokenCollections>}
          */
-        getTokenCollections(contract_addresses, account_addresses, token_ids, limit, cursor) {
-            var ptr0 = isLikeNone(contract_addresses) ? 0 : passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ptr1 = isLikeNone(account_addresses) ? 0 : passArrayJsValueToWasm0(account_addresses, wasm.__wbindgen_malloc);
-            var len1 = WASM_VECTOR_LEN;
-            var ptr2 = isLikeNone(token_ids) ? 0 : passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
-            var len2 = WASM_VECTOR_LEN;
-            var ptr3 = isLikeNone(cursor) ? 0 : passStringToWasm0(cursor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len3 = WASM_VECTOR_LEN;
-            const ret = wasm.toriiclient_getTokenCollections(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, isLikeNone(limit) ? 0x100000001 : (limit) >>> 0, ptr3, len3);
+        getTokenCollections(query) {
+            const ret = wasm.toriiclient_getTokenCollections(this.__wbg_ptr, query);
             return ret;
         }
         /**
@@ -1806,6 +1807,9 @@ let wasm_bindgen;
             getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
             getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         };
+        imports.wbg.__wbg_abort_410ec47a64ac6117 = function(arg0, arg1) {
+            arg0.abort(arg1);
+        };
         imports.wbg.__wbg_abort_775ef1d17fc65868 = function(arg0) {
             arg0.abort();
         };
@@ -1860,6 +1864,10 @@ let wasm_bindgen;
             const ret = clearTimeout(arg0);
             return ret;
         };
+        imports.wbg.__wbg_clearTimeout_6222fede17abcb1a = function(arg0) {
+            const ret = clearTimeout(arg0);
+            return ret;
+        };
         imports.wbg.__wbg_close_304cc1fef3466669 = function() { return handleError(function (arg0) {
             arg0.close();
         }, arguments) };
@@ -1893,7 +1901,7 @@ let wasm_bindgen;
             const ret = fetch(arg0, arg1);
             return ret;
         };
-        imports.wbg.__wbg_fetch_f1856afdb49415d1 = function(arg0) {
+        imports.wbg.__wbg_fetch_f156d10be9a5c88a = function(arg0) {
             const ret = fetch(arg0);
             return ret;
         };
@@ -1997,7 +2005,7 @@ let wasm_bindgen;
                     const a = state0.a;
                     state0.a = 0;
                     try {
-                        return __wbg_adapter_283(a, state0.b, arg0, arg1);
+                        return __wbg_adapter_294(a, state0.b, arg0, arg1);
                     } finally {
                         state0.a = a;
                     }
@@ -2060,6 +2068,10 @@ let wasm_bindgen;
             const ret = arg0.node;
             return ret;
         };
+        imports.wbg.__wbg_parse_def2e24ef1252aff = function() { return handleError(function (arg0, arg1) {
+            const ret = JSON.parse(getStringFromWasm0(arg0, arg1));
+            return ret;
+        }, arguments) };
         imports.wbg.__wbg_process_dc0fbacc7c1c06f7 = function(arg0) {
             const ret = arg0.process;
             return ret;
@@ -2096,6 +2108,10 @@ let wasm_bindgen;
         imports.wbg.__wbg_respond_1f279fa9f8edcb1c = function() { return handleError(function (arg0, arg1) {
             arg0.respond(arg1 >>> 0);
         }, arguments) };
+        imports.wbg.__wbg_setTimeout_2b339866a2aa3789 = function(arg0, arg1) {
+            const ret = setTimeout(arg0, arg1);
+            return ret;
+        };
         imports.wbg.__wbg_setTimeout_db2dbaeefb6f39c7 = function() { return handleError(function (arg0, arg1) {
             const ret = setTimeout(arg0, arg1);
             return ret;
@@ -2264,12 +2280,16 @@ let wasm_bindgen;
             const ret = false;
             return ret;
         };
-        imports.wbg.__wbindgen_closure_wrapper1651 = function(arg0, arg1, arg2) {
-            const ret = makeMutClosure(arg0, arg1, 531, __wbg_adapter_56);
+        imports.wbg.__wbindgen_closure_wrapper1969 = function(arg0, arg1, arg2) {
+            const ret = makeMutClosure(arg0, arg1, 621, __wbg_adapter_56);
             return ret;
         };
-        imports.wbg.__wbindgen_closure_wrapper2564 = function(arg0, arg1, arg2) {
-            const ret = makeMutClosure(arg0, arg1, 933, __wbg_adapter_59);
+        imports.wbg.__wbindgen_closure_wrapper2757 = function(arg0, arg1, arg2) {
+            const ret = makeMutClosure(arg0, arg1, 944, __wbg_adapter_59);
+            return ret;
+        };
+        imports.wbg.__wbindgen_closure_wrapper2818 = function(arg0, arg1, arg2) {
+            const ret = makeMutClosure(arg0, arg1, 966, __wbg_adapter_62);
             return ret;
         };
         imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {

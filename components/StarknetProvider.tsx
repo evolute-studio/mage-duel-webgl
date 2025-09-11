@@ -12,50 +12,43 @@ import ControllerConnector from "@cartridge/connector/controller";
 import { shortString, num, RpcProvider } from "starknet";
 
 const EVOLUTE_DUEL_GAME_ADDRESS = process.env.NEXT_PUBLIC_GAME_ADDRESS || "";
-const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS =
-  process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || "";
-const EVOLUTE_DUEL_ACCOUNT_MIGRATION_ADDRESS =
-  process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS || "";
+const EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS = process.env.NEXT_PUBLIC_PLAYER_PROFILE_ADDRESS || "";
+const EVOLUTE_DUEL_ACCOUNT_MIGRATION_ADDRESS = process.env.NEXT_PUBLIC_ACCOUNT_MIGRATION_ADDRESS || "";
+const EVOLUTE_DUEL_TUTORIAL_ADDRESS = process.env.NEXT_PUBLIC_TUTORIAL_ADDRESS || "";
+const EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_EVOLUTE_TOKEN_ADDRESS || "";
+const EVOLUTE_DUEL_TOURNAMENT_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_ADDRESS || "";
+const EVOLUTE_DUEL_TOURNAMENT_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOURNAMENT_TOKEN_ADDRESS || "";
+const EVOLUTE_DUEL_MATCHMAKING_ADDRESS = process.env.NEXT_PUBLIC_MATCHMAKING_ADDRESS || "";
+const EVOLUTE_DUEL_WORLD_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ADDRESS || "";
+
 
 // Define session policiesAdd commentMore actions
 const policies = {
   contracts: {
+    [EVOLUTE_DUEL_ACCOUNT_MIGRATION_ADDRESS]: {
+      methods: [
+        {
+          name: "confirm_migration",
+          entrypoint: "confirm_migration",
+          description: "confirm_migration",
+        },
+      ],
+    },
+    [EVOLUTE_DUEL_EVOLUTE_TOKEN_ADDRESS]: {
+      methods: [
+        {
+          name: "approve",
+          entrypoint: "approve",
+          description: "approve",
+        },
+      ],
+    },
     [EVOLUTE_DUEL_GAME_ADDRESS]: {
       methods: [
         {
-          name: "create_game",
-          entrypoint: "create_game",
-          description: "create_game",
-        },
-        {
-          name: "create_snapshot",
-          entrypoint: "create_snapshot",
-          description: "create_snapshot",
-        },
-        {
-          name: "create_game_from_snapshot",
-          entrypoint: "create_game_from_snapshot",
-          description: "create_game_from_snapshot",
-        },
-        {
-          name: "cancel_game",
-          entrypoint: "cancel_game",
-          description: "cancel_game",
-        },
-        {
-          name: "join_game",
-          entrypoint: "join_game",
-          description: "join_game",
-        },
-        {
-          name: "make_move",
-          entrypoint: "make_move",
-          description: "make_move",
-        },
-        {
-          name: "skip_move",
-          entrypoint: "skip_move",
-          description: "skip_move",
+          name: "commit_tiles",
+          entrypoint: "commit_tiles",
+          description: "Commits initial tile hashes from the deck",
         },
         {
           name: "finish_game",
@@ -63,9 +56,14 @@ const policies = {
           description: "finish_game",
         },
         {
-          name: "commit_tiles",
-          entrypoint: "commit_tiles",
-          description: "Commits initial tile hashes from the deck",
+          name: "make_move",
+          entrypoint: "make_move",
+          description: "make_move",
+        },
+        {
+          name: "request_next_tile",
+          entrypoint: "request_next_tile",
+          description: "Request next tile",
         },
         {
           name: "reveal_tile",
@@ -73,12 +71,38 @@ const policies = {
           description: "Reveal tile for everyone",
         },
         {
-          name: "request_next_tile",
-          entrypoint: "request_next_tile",
-          description: "Request next tile",
+          name: "skip_move",
+          entrypoint: "skip_move",
+          description: "skip_move",
         },
       ],
     },
+    [EVOLUTE_DUEL_MATCHMAKING_ADDRESS]: {
+      methods: [
+        {
+          name: "auto_match",
+          entrypoint: "auto_match",
+          description: "auto_match",
+        },
+        {
+          name: "cancel_game",
+          entrypoint: "cancel_game",
+          description: "cancel_game",
+        },
+        {
+          name: "create_game",
+          entrypoint: "create_game",
+          description: "create_game",
+        },
+        {
+          name: "join_game",
+          entrypoint: "join_game",
+          description: "join_game",
+        },
+      ],
+      
+    },
+
     [EVOLUTE_DUEL_PLAYER_PROFILE_ACTIONS_ADDRESS]: {
       methods: [
         {
@@ -123,15 +147,50 @@ const policies = {
         },
       ],
     },
-    [EVOLUTE_DUEL_ACCOUNT_MIGRATION_ADDRESS]: {
+    [EVOLUTE_DUEL_TOURNAMENT_ADDRESS]: {
       methods: [
         {
-          name: "confirm_migration",
-          entrypoint: "confirm_migration",
-          description: "confirm_migration",
+          name: "enter_tournament",
+          entrypoint: "enter_tournament",
+          description: "enter_tournament",
+        },
+        {
+          name: "submit_score",
+          entrypoint: "submit_score",
+          description: "submit_score",
+        },
+      ],
+      
+    },
+    [EVOLUTE_DUEL_TOURNAMENT_TOKEN_ADDRESS]: {
+      methods: [
+        {
+          name: "enlist_duelist",
+          entrypoint: "enlist_duelist",
+          description: "enlist_duelist",
+        },
+        {
+          name: "join_duel",
+          entrypoint: "join_duel",
+          description: "join_duel",
         },
       ],
     },
+    [EVOLUTE_DUEL_TUTORIAL_ADDRESS]: {
+      methods: [
+        {
+          name: "make_move",
+          entrypoint: "make_move",
+          description: "make_move",
+        },
+        {
+          name: "skip_move",
+          entrypoint: "skip_move",
+          description: "skip_move",
+        },
+      ],
+    },
+    
   },
 };
 
