@@ -88,7 +88,7 @@ export default function UnityPlayer({
 
     // Initial check
     checkWalletStatus();
-
+    console.log("Wallet status:", address);
     // Set a timeout as fallback to prevent infinite waiting
     const timeoutId = setTimeout(() => {
       console.log("Wallet initialization timeout - proceeding with game load");
