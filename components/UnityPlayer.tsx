@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { GameLoaded } from "../lib/events";
 import { GameVersion } from "@/lib/version-checker";
+import { useAccount } from "@starknet-react/core";
 
 interface UnityInstance {
   SendMessage: (
@@ -50,7 +51,9 @@ export default function UnityPlayer({
   const [gameLoaded, setGameLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [, setUnityBuildReady] = useState(false);
+  const [walletInitialized, setWalletInitialized] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { address, status } = useAccount();
 
   const buildUrl = "Build";
 
@@ -71,7 +74,33 @@ export default function UnityPlayer({
     productVersion: version,
   };
 
+  // Check wallet initialization status
   useEffect(() => {
+    const checkWalletStatus = () => {
+      // Wallet is considered initialized when:
+      // 1. Connection status is determined (connected, disconnected, or connecting finished)
+      // 2. We have a definitive state from StarkNet
+      if (status === "connected" || status === "disconnected") {
+        console.log("Wallet initialization completed. Status:", status);
+        setWalletInitialized(true);
+      }
+    };
+
+    // Initial check
+    checkWalletStatus();
+
+    // Set a timeout as fallback to prevent infinite waiting
+    const timeoutId = setTimeout(() => {
+      console.log("Wallet initialization timeout - proceeding with game load");
+      setWalletInitialized(true);
+    }, 5000); // 5 seconds timeout
+
+    return () => clearTimeout(timeoutId);
+  }, [status]);
+
+  useEffect(() => {
+    if (!walletInitialized) return;
+
     onUnityContainerMounted?.();
 
     const connector = new UnityConnector();
@@ -125,9 +154,11 @@ export default function UnityPlayer({
         clearInterval(progressIntervalRef.current);
       }
     };
-  }, []);
+  }, [walletInitialized]);
 
   useEffect(() => {
+    if (!walletInitialized) return;
+
     const loadUnity = async () => {
       const loaderScript = document.createElement("script");
       loaderScript.src = config.loaderUrl;
@@ -166,7 +197,7 @@ export default function UnityPlayer({
         window.gameInstance.Quit().then();
       }
     };
-  }, []);
+  }, [walletInitialized]);
 
   return (
     <>
