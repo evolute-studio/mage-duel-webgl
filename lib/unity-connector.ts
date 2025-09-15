@@ -8,6 +8,7 @@ import { IsNewVersion } from "./version-checker";
 import { CairoOption, CairoOptionVariant, RpcProvider, shortString } from "starknet";
 import { getSlotChain } from "@/utils/slot";
 import { ChainProviderFactory } from "@starknet-react/core";
+import { hexToUlong } from "./utils";
 
 const unityReciver = "WrapperConnector";
 const tournament_id = process.env.NEXT_PUBLIC_CURRENT_TOURNAMENT || "0x1";
@@ -98,7 +99,7 @@ export default class UnityConnector {
       toriiUrl: process.env.NEXT_PUBLIC_TORII,
       slotDataVersion: process.env.NEXT_PUBLIC_SLOT_DATA_VERSION,
 
-      currentTournamentId: tournament_id,
+      currentTournamentId: hexToUlong(tournament_id),
 
       worldAddress: process.env.NEXT_PUBLIC_WORLD_ADDRESS,
       gameAddress: process.env.NEXT_PUBLIC_GAME_ADDRESS,
