@@ -1,0 +1,10 @@
+evolute_duel-account_migration      | Synced | true           | 0x05973cb679305763a898bdcefb7b8699346093ad050ef1ad9e6c89c4ed6da1f3 | 0x022f35632c4fecfa90c67037236729f70a63f72c9373b3fb605adde0be066dc4
+ evolute_duel-evlt_token             | Synced | true           | 0x04b4f8fc3cb27eb854a6c6473d652ec91691beb5c97797357ac7faf4ed85386d | 0x06f8ef267edb3274b042698bab6ca7d4850d5025cc0aa4cd666446a28f68e5f5
+ evolute_duel-evlt_topup             | Synced | true           | 0x012d81e487802993615193a5778814bfe6e8c9efb6c1153720d79b5a478ed8ff | 0x00bf243a33e1a84e3a93ad8f39ade6451bc7872dd98afb82c9e879540a19582c
+ evolute_duel-game                   | Synced | true           | 0x02b4049d066282ff61972bb48825bbc8e659093daca9c85ab956befe2feaa91b | 0x0791cee4a8ecf5551d0a293ae7d376042876a573c487cf812aee3e66c476d7f9
+ evolute_duel-grnd_token             | Synced | true           | 0x063f272df1d90e70b29a629dc21fda1ac3b2cf5651499a915b7620c3dcf417fe | 0x04ee6324a062bf0f512746858465778df52ec907872958f5cf03b09b1e1f557c
+ evolute_duel-matchmaking            | Synced | true           | 0x033a3b3e17aa3c1b699ebb3b27276ea0d47eb0c5c23070415ae1f9a72013b28e | 0x0198d81fc78567bc19ac1add3ca9107ace6c795d5fd414593d391b5e258d38c0
+ evolute_duel-player_profile_actions | Synced | true           | 0x02fe51480cb4bcea87b911f6a9be5f5a1a39ee57c9aabb0617792aa4e03370e0 | 0x03cc2ea9860412d4eadeae8f67777e9812ba399bafbd87448b2eae37276f7d5c
+ evolute_duel-tournament             | Synced | true           | 0x07b2e1c46d0049be7cac0c4faa6d6fea9143d88b1717aaab7e458716aefea6de | 0x044d569ab5c5fd52923115f73c53b7f2008677a7a41292a87c4269365c16b6e7
+ evolute_duel-tournament_token       | Synced | true           | 0x028906ae73499b532da933055f1f936ac9b8ce095f225a39a3c3d9665c8e109b | 0x04ff3746e9d075fa0eb6088cef60bc945d9d9aecf0cdc15c9d4f8b1d80c7b835
+ evolute_duel-tutorial               | Synced | true           | 0x00c1459904776212c8b7de02dc2bf94a023a77dcf3991d61aab18980d0aded3c | 0x03577c1b6139c3636c4bc58814164f0cdd1aa26226c941276733ce2fe6346ad1
