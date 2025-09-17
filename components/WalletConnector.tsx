@@ -13,6 +13,7 @@ import { useStarknetProvider } from "./StarknetProvider";
 const IFRAME_ORIGINAL_HEIGHT = 600;
 const RETRY_DELAY = 100;
 const AUTO_CONNECT_DELAY = 1000;
+const HAS_LOGGED_IN_BEFORE_KEY = 'hasLoggedInBefore';
 const IFRAME_IDS = {
   KEYCHAIN: "controller-keychain",
   PROFILE: "controller-profile",
@@ -38,6 +39,24 @@ export function ConnectWallet() {
   const controller = connectors[0] as ControllerConnector;
   const [, setUsername] = useState<string>();
   const [isRetrying, setIsRetrying] = useState(false);
+  
+  // Helper functions for localStorage management
+  const hasLoggedInBefore = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(HAS_LOGGED_IN_BEFORE_KEY) === 'true';
+  };
+  
+  const setHasLoggedInBefore = (): void => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(HAS_LOGGED_IN_BEFORE_KEY, 'true');
+    }
+  };
+  
+  const clearHasLoggedInBefore = (): void => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(HAS_LOGGED_IN_BEFORE_KEY);
+    }
+  };
 
   console.log("[Wallet] Component render - connectors:", connectors.length, "controller:", controller?.name);
 
@@ -154,6 +173,9 @@ export function ConnectWallet() {
       unityWindow.unityConnector.OnControllerLogin(username, walletAddress);
       unityWindow.unityConnector.BecomeController();
       controllerLoginEvent();
+      
+      // Mark that user has logged in successfully
+      setHasLoggedInBefore();
       console.log("[Wallet] Unity connection established and controller login event triggered");
     };
 
@@ -188,6 +210,8 @@ export function ConnectWallet() {
       console.log("[Wallet] Attempting to connect with controller");
       await connect({ connector: controller });
       setControllerInstance(controller);
+      // Mark that user has logged in successfully
+      setHasLoggedInBefore();
       console.log("[Wallet] Controller connection successful");
       return true;
     } catch (error: unknown) {
@@ -226,7 +250,9 @@ export function ConnectWallet() {
   const handleDisconnect = useCallback(() => {
     console.log("[Wallet] handleDisconnect called");
     disconnect();
-    console.log("[Wallet] Wallet disconnected");
+    // Clear login history so user won't get auto-reconnected
+    clearHasLoggedInBefore();
+    console.log("[Wallet] Wallet disconnected and login history cleared");
   }, [disconnect]);
 
   // Expose wallet methods to window for Unity integration
@@ -257,7 +283,8 @@ export function ConnectWallet() {
     };
 
     const shouldAutoConnect = (): boolean => {
-      return !address && !account && controller?.available() && !isRetrying;
+      // Only auto-connect if user has logged in before
+      return !address && !account && controller?.available() && !isRetrying && hasLoggedInBefore();
     };
 
     const autoConnect = async () => {
@@ -274,11 +301,13 @@ export function ConnectWallet() {
 
     if (shouldAutoConnect()) {
       console.log("[Wallet] WARNING: Controller is available but no wallet connection detected");
-      console.log("[Wallet] Attempting auto-connect to resolve the connection issue");
+      console.log("[Wallet] User has logged in before - attempting auto-connect to resolve the connection issue");
 
       // Delay auto-connect to avoid rapid retries
       const timeoutId = setTimeout(autoConnect, AUTO_CONNECT_DELAY);
       return () => clearTimeout(timeoutId);
+    } else if (!address && !account && controller?.available() && !isRetrying && !hasLoggedInBefore()) {
+      console.log("[Wallet] Controller is available but user hasn't logged in before - skipping auto-connect");
     }
   }, [address, account, controller, isRetrying, connect]);
 
