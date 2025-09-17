@@ -9,6 +9,16 @@ import { controllerLoginEvent } from "@/lib/events";
 import { IsNewVersion } from "@/lib/version-checker";
 import { useStarknetProvider } from "./StarknetProvider";
 
+// Constants
+const IFRAME_ORIGINAL_HEIGHT = 600;
+const RETRY_DELAY = 100;
+const AUTO_CONNECT_DELAY = 1000;
+const IFRAME_IDS = {
+  KEYCHAIN: "controller-keychain",
+  PROFILE: "controller-profile",
+  CONTROLLER: "controller"
+} as const;
+
 export interface ControllerWindow extends Window {
   controllerInstance: ControllerConnector & {
     disconnect: () => void;
@@ -29,245 +39,312 @@ export function ConnectWallet() {
   const [, setUsername] = useState<string>();
   const [isRetrying, setIsRetrying] = useState(false);
 
-  console.log("[Wallet fix] Component render - connectors:", connectors.length, "controller:", controller?.name);
+  console.log("[Wallet] Component render - connectors:", connectors.length, "controller:", controller?.name);
 
   // Monitor connector initialization
   useEffect(() => {
-    console.log("[Wallet fix] Connectors changed:", {
-      count: connectors.length,
-      controllers: connectors.map(c => ({ id: c.id, name: c.name, available: c.available() }))
-    });
-
-    if (connectors.length === 0) {
-      console.log("[Wallet fix] WARNING: No connectors available - this might prevent wallet connection");
-    } else if (!controller) {
-      console.log("[Wallet fix] WARNING: Controller not found in connectors array");
-    } else {
-      console.log("[Wallet fix] Controller found:", controller.name, "available:", controller.available());
-
-      // Check if controller might already have a session
-      if (controller.available()) {
-        console.log("[Wallet fix] Controller is available, checking for existing session...");
-        // Try to get controller state without connecting
-        try {
-          if (typeof controller.account === 'function') {
-            const existingAccount = controller.account();
-            console.log("[Wallet fix] Existing controller account:", existingAccount ? 'found' : 'none');
-          }
-        } catch (e) {
-          console.log("[Wallet fix] Could not check existing controller account:", e);
-        }
+    // Handle version updates
+      if (IsNewVersion()) {
+        console.log("[Wallet] New version found, clearing data and reloading");
+        disconnect();
+        window.location.reload();
       }
-    }
+
+    const logConnectorState = () => {
+      console.log("[Wallet] Connectors changed:", {
+        count: connectors.length,
+        controllers: connectors.map(c => ({ 
+          id: c.id, 
+          name: c.name, 
+          available: c.available() 
+        }))
+      });
+    };
+
+    const checkConnectorAvailability = () => {
+      if (connectors.length === 0) {
+        console.log("[Wallet] WARNING: No connectors available - this might prevent wallet connection");
+        return;
+      }
+      
+      if (!controller) {
+        console.log("[Wallet] WARNING: Controller not found in connectors array");
+        return;
+      }
+
+      console.log("[Wallet] Controller found:", controller.name, "available:", controller.available());
+      checkExistingSession();
+    };
+
+    const checkExistingSession = () => {
+      if (!controller?.available()) return;
+      
+      console.log("[Wallet] Controller is available, checking for existing session...");
+      try {
+        if (typeof controller.account === 'function') {
+          const existingAccount = controller.account();
+          console.log("[Wallet] Existing controller account:", existingAccount ? 'found' : 'none');
+        }
+      } catch (error) {
+        console.log("[Wallet] Could not check existing controller account:", error);
+      }
+    };
+
+    logConnectorState();
+    checkConnectorAvailability();
   }, [connectors, controller]);
 
+  // Handle wallet connection state and setup Unity integration
   useEffect(() => {
-    console.log("[Wallet fix] useEffect triggered with address:", address, "account:", account);
-    console.log("[Wallet fix] Controller state:", {
-      isConnected: controller?.available(),
-      id: controller?.id,
-      name: controller?.name
-    });
+    const logConnectionState = () => {
+      console.log("[Wallet] Connection state - address:", address, "account:", !!account);
+      console.log("[Wallet] Controller state:", {
+        isConnected: controller?.available(),
+        id: controller?.id,
+        name: controller?.name
+      });
+    };
 
-    if (!address) {
-      console.log("[Wallet fix] No address found, checking if controller is available for connection");
+    const handleNoAddress = () => {
+      console.log("[Wallet] No address found, checking controller availability");
       if (controller?.available()) {
-        console.log("[Wallet fix] Controller is available but no address - this might indicate a connection issue");
+        console.log("[Wallet] Controller is available but no address - possible connection issue");
       } else {
-        console.log("[Wallet fix] Controller is not available, skipping wallet initialization");
+        console.log("[Wallet] Controller is not available, skipping wallet initialization");
       }
+    };
+
+    const setupWalletConnection = async () => {
+      try {
+        console.log("[Wallet] Starting controller username retrieval");
+        const username = await controller.username?.();
+        
+        if (!username) {
+          console.warn("[Wallet] No username retrieved from controller");
+          return;
+        }
+
+        console.log("[Wallet] Username retrieved:", username);
+        setUsername(username);
+        setControllerInstance(controller);
+        
+        // Set up window globals
+        const controllerWindow = window as ControllerWindow;
+        controllerWindow.username = username;
+        controllerWindow.provider = starknetProvider.provider;
+        console.log("[Wallet] Set username and provider on window");
+
+        // Setup Unity connection if account is available
+        if (account && address) {
+          setupUnityConnection(username, address, account);
+        } else {
+          console.log("[Wallet] No account found, skipping Unity connection");
+        }
+      } catch (error) {
+        console.error("[Wallet] Error retrieving username:", error);
+      }
+    };
+
+    const setupUnityConnection = (username: string, walletAddress: string, account: AccountInterface) => {
+      console.log("[Wallet] Account found, setting up Unity connection");
+      const controllerWindow = window as ControllerWindow;
+      const unityWindow = window as UnityWindow;
+      
+      controllerWindow.account = account;
+      unityWindow.unityConnector.OnControllerLogin(username, walletAddress);
+      unityWindow.unityConnector.BecomeController();
+      controllerLoginEvent();
+      console.log("[Wallet] Unity connection established and controller login event triggered");
+    };
+
+    logConnectionState();
+    
+    if (!address) {
+      handleNoAddress();
       return;
     }
 
-    console.log("[Wallet fix] Starting controller username retrieval");
-    controller.username()?.then((n) => {
-      console.log("[Wallet fix] Username retrieved:", n);
-      setUsername(n);
-      setControllerInstance(controller);
-      (window as ControllerWindow).username = n;
-      (window as ControllerWindow).provider = starknetProvider.provider;
-      console.log("[Wallet fix] Set username and provider on window");
-
-      if (account) {
-        console.log("[Wallet fix] Account found, setting up Unity connection");
-        (window as ControllerWindow).account = account;
-        (window as UnityWindow).unityConnector.OnControllerLogin(n, address);
-        (window as UnityWindow).unityConnector.BecomeController();
-        controllerLoginEvent();
-        console.log("[Wallet fix] Unity connection established and controller login event triggered");
-      } else {
-        console.log("[Wallet fix] No account found, skipping Unity connection");
-      }
-    }).catch((error) => {
-      console.error("[Wallet fix] Error retrieving username:", error);
-    });
+    setupWalletConnection();
   }, [address, account, controller, starknetProvider]);
 
-  const handleConnect = useCallback(async () => {
-    console.log("[Wallet fix] handleConnect called, current state - address:", address, "account:", account);
+  const handleConnect = useCallback(async (): Promise<boolean> => {
+    console.log("[Wallet] handleConnect called, current state - address:", address, "account:", !!account);
 
+    // Check if already connected
     if (address || account) {
-      console.log("[Wallet fix] Controller already connected");
-      if(IsNewVersion()) {
-        console.log("[Wallet fix] New version found, clearing data and reloading");
-        disconnect();
-        window.location.reload();
-        return false;
-      }
-      console.log("[Wallet fix] Using existing connection");
+      console.log("[Wallet] Controller already connected");
+      
+      console.log("[Wallet] Using existing connection");
       return true;
     }
 
-    console.log("[Wallet fix] Starting new wallet connection");
+    return await attemptNewConnection();
+  }, [connect, controller, isRetrying, address, account, disconnect]);
+
+  const attemptNewConnection = useCallback(async (): Promise<boolean> => {
+    console.log("[Wallet] Starting new wallet connection");
+    
     try {
-      console.log("[Wallet fix] Attempting to connect with controller");
+      console.log("[Wallet] Attempting to connect with controller");
       await connect({ connector: controller });
       setControllerInstance(controller);
-      console.log("[Wallet fix] Controller connection successful");
+      console.log("[Wallet] Controller connection successful");
       return true;
     } catch (error: unknown) {
-      console.error("[Wallet fix] Connection error:", error);
-      if (
-        error instanceof Error &&
-        error.message.includes("WebAuthn") &&
-        !isRetrying
-      ) {
-        console.log("[Wallet fix] WebAuthn error detected, retrying connection");
-        setIsRetrying(true);
-        setTimeout(() => {
-          console.log("[Wallet fix] Executing retry connection");
-          connect({ connector: controller });
-          setIsRetrying(false);
-        }, 100);
+      console.error("[Wallet] Connection error:", error);
+      
+      if (shouldRetryConnection(error)) {
+        handleRetryConnection();
       } else {
-        console.error("[Wallet fix] Non-WebAuthn error or already retrying:", error);
+        console.error("[Wallet] Non-WebAuthn error or already retrying:", error);
       }
     }
-    console.log("[Wallet fix] Connection attempt completed with failure");
+    
+    console.log("[Wallet] Connection attempt completed with failure");
     return false;
-  }, [connect, controller, isRetrying, address, account]);
+  }, [connect, controller, isRetrying]);
+
+  const shouldRetryConnection = (error: unknown): boolean => {
+    return (
+      error instanceof Error &&
+      error.message.includes("WebAuthn") &&
+      !isRetrying
+    );
+  };
+
+  const handleRetryConnection = () => {
+    console.log("[Wallet] WebAuthn error detected, retrying connection");
+    setIsRetrying(true);
+    
+    setTimeout(() => {
+      console.log("[Wallet] Executing retry connection");
+      connect({ connector: controller });
+      setIsRetrying(false);
+    }, RETRY_DELAY);
+  };
 
   const handleDisconnect = useCallback(() => {
-    console.log("[Wallet fix] handleDisconnect called");
+    console.log("[Wallet] handleDisconnect called");
     disconnect();
-    console.log("[Wallet fix] Wallet disconnected");
+    console.log("[Wallet] Wallet disconnected");
   }, [disconnect]);
 
+  // Expose wallet methods to window for Unity integration
   useEffect(() => {
-    console.log("[Wallet fix] Setting up window methods for handleConnect and handleDisconnect");
-    console.log("[Wallet fix] Current wallet state before window setup:", {
+    console.log("[Wallet] Setting up window methods for handleConnect and handleDisconnect");
+    console.log("[Wallet] Current wallet state before window setup:", {
       hasAddress: !!address,
       hasAccount: !!account,
       controllerAvailable: controller?.available(),
       isRetrying
     });
-    (window as ControllerWindow).handleConnect = handleConnect;
-    (window as ControllerWindow).handleDisconnect = handleDisconnect;
-    console.log("[Wallet fix] Window methods configured successfully");
+    
+    const controllerWindow = window as ControllerWindow;
+    controllerWindow.handleConnect = handleConnect;
+    controllerWindow.handleDisconnect = handleDisconnect;
+    
+    console.log("[Wallet] Window methods configured successfully");
   }, [handleConnect, handleDisconnect, address, account, controller, isRetrying]);
 
   // Monitor connection state changes and auto-connect when possible
   useEffect(() => {
-    console.log("[Wallet fix] Connection state change detected:");
-    console.log("[Wallet fix] - Address:", address);
-    console.log("[Wallet fix] - Account:", !!account);
-    console.log("[Wallet fix] - Controller available:", controller?.available());
-    console.log("[Wallet fix] - Is retrying:", isRetrying);
+    const logConnectionState = () => {
+      console.log("[Wallet] Connection state change detected:");
+      console.log("[Wallet] - Address:", address);
+      console.log("[Wallet] - Account:", !!account);
+      console.log("[Wallet] - Controller available:", controller?.available());
+      console.log("[Wallet] - Is retrying:", isRetrying);
+    };
 
-    if (!address && !account && controller?.available() && !isRetrying) {
-      console.log("[Wallet fix] WARNING: Controller is available but no wallet connection detected");
-      console.log("[Wallet fix] Attempting auto-connect to resolve the connection issue");
+    const shouldAutoConnect = (): boolean => {
+      return !address && !account && controller?.available() && !isRetrying;
+    };
 
-      // Try to auto-connect when controller is available but no address/account
-      const autoConnect = async () => {
-        try {
-          console.log("[Wallet fix] Auto-connect: Starting connection attempt");
-          await connect({ connector: controller });
-          console.log("[Wallet fix] Auto-connect: Connection successful");
-        } catch (error) {
-          console.log("[Wallet fix] Auto-connect: Connection failed", error);
-        }
-      };
+    const autoConnect = async () => {
+      try {
+        console.log("[Wallet] Auto-connect: Starting connection attempt");
+        await connect({ connector: controller });
+        console.log("[Wallet] Auto-connect: Connection successful");
+      } catch (error) {
+        console.log("[Wallet] Auto-connect: Connection failed", error);
+      }
+    };
+
+    logConnectionState();
+
+    if (shouldAutoConnect()) {
+      console.log("[Wallet] WARNING: Controller is available but no wallet connection detected");
+      console.log("[Wallet] Attempting auto-connect to resolve the connection issue");
 
       // Delay auto-connect to avoid rapid retries
-      const timeoutId = setTimeout(autoConnect, 1000);
+      const timeoutId = setTimeout(autoConnect, AUTO_CONNECT_DELAY);
       return () => clearTimeout(timeoutId);
     }
   }, [address, account, controller, isRetrying, connect]);
 
-  // Add iframe scaling for landscape mode
+  // Handle iframe scaling and display synchronization
   useEffect(() => {
-    const scaleControllerIframe = (elementId: string) => {
+    const scaleControllerIframe = (elementId: string): void => {
       const iframe = document.getElementById(elementId) as HTMLIFrameElement;
       if (!iframe) return;
 
       const viewportHeight = window.innerHeight;
+      const shouldScale = viewportHeight < IFRAME_ORIGINAL_HEIGHT;
 
-      // Original iframe height
-      const originalHeight = 600;
-
-      // Calculate scale factor only if viewport height is less than iframe height
-      if (viewportHeight < originalHeight) {
-        // Calculate scale factor (with a small margin for safety)
-        const scaleFactor = viewportHeight / originalHeight;
-
-        // Apply transform - the iframe will maintain its centered position
+      if (shouldScale) {
+        const scaleFactor = viewportHeight / IFRAME_ORIGINAL_HEIGHT;
         iframe.style.transform = `scale(${scaleFactor})`;
         iframe.style.transformOrigin = "center center";
       } else {
-        // Reset transform if no scaling needed
         iframe.style.transform = "none";
       }
     };
 
-    // Initial scaling
-    scaleControllerIframe("controller-keychain");
-    scaleControllerIframe("controller-profile");
-
-    // Add event listeners with proper event typing
-    const handleResize = () => {
-      scaleControllerIframe("controller-keychain");
-      scaleControllerIframe("controller-profile");
+    const handleViewportChange = (): void => {
+      scaleControllerIframe(IFRAME_IDS.KEYCHAIN);
+      scaleControllerIframe(IFRAME_IDS.PROFILE);
     };
 
-    const handleOrientationChange = () => {
-      scaleControllerIframe("controller-keychain");
-      scaleControllerIframe("controller-profile");
+    const setupDisplaySync = (): MutationObserver | null => {
+      const iframe = document.getElementById(IFRAME_IDS.CONTROLLER) as HTMLIFrameElement;
+      if (!iframe) return null;
+
+      const syncDisplay = (): void => {
+        const visibility = getComputedStyle(iframe).visibility;
+        iframe.style.display = visibility === "visible" ? "flex" : "none";
+      };
+
+      const observer = new MutationObserver(syncDisplay);
+      observer.observe(iframe, {
+        attributes: true,
+        attributeFilter: ["style", "class"],
+      });
+
+      syncDisplay();
+      return observer;
     };
 
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleOrientationChange);
+    // Initial setup
+    handleViewportChange();
+    const observer = setupDisplaySync();
 
-    const iframe = document.getElementById("controller") as HTMLIFrameElement;
-    if (!iframe) return;
+    // Event listeners
+    window.addEventListener("resize", handleViewportChange);
+    window.addEventListener("orientationchange", handleViewportChange);
 
-    const sync = () => {
-      const vis = getComputedStyle(iframe).visibility;
-      iframe.style.display = vis === "visible" ? "flex" : "none";
-    };
-
-    // watch for style or class changes
-    const observer = new MutationObserver(sync);
-    observer.observe(iframe, {
-      attributes: true,
-      attributeFilter: ["style", "class"],
-    });
-
-    sync();
-
-    // Clean up
+    // Cleanup
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleOrientationChange);
-      observer.disconnect();
+      window.removeEventListener("resize", handleViewportChange);
+      window.removeEventListener("orientationchange", handleViewportChange);
+      observer?.disconnect();
     };
   }, [address, account, controller]);
 
   return <> </>;
 }
 
-export function setControllerInstance(controller: ControllerConnector) {
-  console.log("[Wallet fix] Setting controller instance on window");
+export function setControllerInstance(controller: ControllerConnector): void {
+  console.log("[Wallet] Setting controller instance on window");
   (window as ControllerWindow).controllerInstance = controller;
-  console.log("[Wallet fix] Controller instance set successfully");
+  console.log("[Wallet] Controller instance set successfully");
 }
