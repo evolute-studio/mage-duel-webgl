@@ -101,7 +101,7 @@ export function ConnectWallet() {
       console.log("[Wallet] Controller is available, checking for existing session...");
       try {
         if (typeof controller.account === 'function') {
-          const existingAccount = controller.account();
+          const existingAccount = account;
           console.log("[Wallet] Existing controller account:", existingAccount ? 'found' : 'none');
         }
       } catch (error) {
