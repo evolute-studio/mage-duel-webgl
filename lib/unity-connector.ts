@@ -231,6 +231,16 @@ export default class UnityConnector {
     }
   };
 
+  public ControllerLogout = async () => {
+    const win = window as ControllerWindow;
+    const handleDisconnect = win.handleDisconnect;
+    if (!handleDisconnect) {
+      throw new Error("Handle disconnect not initialized");
+    }
+    handleDisconnect();
+    this.OnControllerNotLoggedIn();
+  }
+
   public IsControllerLoggedIn = (): boolean => {
     const win = window as ControllerWindow;
     const account = win.account;
