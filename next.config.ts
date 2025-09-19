@@ -115,7 +115,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "frame-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg",
-              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com https://aisenseapi.com/services/v1/microtimestamp",
+              "connect-src 'self' https://x.cartridge.gg https://cartridge.gg https://*.cartridge.gg wss: https://discord.com https://aisenseapi.com/services/v1/microtimestamp https://socket.evolute.network",
               "frame-ancestors 'self' https://x.cartridge.gg https://cartridge.gg", // Added for iframe support
               "worker-src 'self'", // Added for service workers
               "manifest-src 'self'", // Added for PWA manifest
