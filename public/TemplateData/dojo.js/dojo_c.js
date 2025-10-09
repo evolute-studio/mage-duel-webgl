@@ -183,22 +183,11 @@ let wasm_bindgen;
         return className;
     }
 
-    function getArrayJsValueFromWasm0(ptr, len) {
-        ptr = ptr >>> 0;
-        const mem = getDataViewMemory0();
-        const result = [];
-        for (let i = ptr; i < ptr + 4 * len; i += 4) {
-            result.push(wasm.__wbindgen_export_4.get(mem.getUint32(i, true)));
-        }
-        wasm.__externref_drop_slice(ptr, len);
-        return result;
-    }
-
     const CLOSURE_DTORS = (typeof FinalizationRegistry === 'undefined')
         ? { register: () => {}, unregister: () => {} }
         : new FinalizationRegistry(
     state => {
-        wasm.__wbindgen_export_7.get(state.dtor)(state.a, state.b);
+        wasm.__wbindgen_export_5.get(state.dtor)(state.a, state.b);
     }
     );
 
@@ -216,7 +205,7 @@ let wasm_bindgen;
                 return f(a, state.b, ...args);
             } finally {
                 if (--state.cnt === 0) {
-                    wasm.__wbindgen_export_7.get(state.dtor)(a, state.b);
+                    wasm.__wbindgen_export_5.get(state.dtor)(a, state.b);
                     CLOSURE_DTORS.unregister(state);
                 } else {
                     state.a = a;
@@ -226,6 +215,17 @@ let wasm_bindgen;
         real.original = state;
         CLOSURE_DTORS.register(real, state, state);
         return real;
+    }
+
+    function getArrayJsValueFromWasm0(ptr, len) {
+        ptr = ptr >>> 0;
+        const mem = getDataViewMemory0();
+        const result = [];
+        for (let i = ptr; i < ptr + 4 * len; i += 4) {
+            result.push(wasm.__wbindgen_export_4.get(mem.getUint32(i, true)));
+        }
+        wasm.__externref_drop_slice(ptr, len);
+        return result;
     }
 
     function takeFromExternrefTable0(idx) {
@@ -477,20 +477,20 @@ let wasm_bindgen;
         }
     };
 
-    function __wbg_adapter_12(arg0, arg1, arg2) {
-        wasm.closure974_externref_shim(arg0, arg1, arg2);
-    }
-
-    function __wbg_adapter_17(arg0, arg1) {
-        wasm.wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f(arg0, arg1);
-    }
-
-    function __wbg_adapter_22(arg0, arg1) {
+    function __wbg_adapter_6(arg0, arg1) {
         wasm.wasm_bindgen__convert__closures_____invoke__ha650cbf29b909d89(arg0, arg1);
     }
 
-    function __wbg_adapter_259(arg0, arg1, arg2, arg3) {
-        wasm.closure1148_externref_shim(arg0, arg1, arg2, arg3);
+    function __wbg_adapter_15(arg0, arg1, arg2) {
+        wasm.closure977_externref_shim(arg0, arg1, arg2);
+    }
+
+    function __wbg_adapter_24(arg0, arg1) {
+        wasm.wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f(arg0, arg1);
+    }
+
+    function __wbg_adapter_262(arg0, arg1, arg2, arg3) {
+        wasm.closure1151_externref_shim(arg0, arg1, arg2, arg3);
     }
 
     const __wbindgen_enum_ReadableStreamType = ["bytes"];
@@ -1182,6 +1182,13 @@ let wasm_bindgen;
             wasm.__wbg_subscription_free(ptr, 0);
         }
         /**
+         * Cancels an active subscription
+         */
+        cancel() {
+            const ptr = this.__destroy_into_raw();
+            wasm.subscription_cancel(ptr);
+        }
+        /**
          * @returns {bigint}
          */
         get id() {
@@ -1193,13 +1200,6 @@ let wasm_bindgen;
          */
         set id(arg0) {
             wasm.__wbg_set_subscription_id(this.__wbg_ptr, arg0);
-        }
-        /**
-         * Cancels an active subscription
-         */
-        cancel() {
-            const ptr = this.__destroy_into_raw();
-            wasm.subscription_cancel(ptr);
         }
     }
     __exports.Subscription = Subscription;
@@ -1382,6 +1382,21 @@ let wasm_bindgen;
          */
         getTokenContracts(query) {
             const ret = wasm.toriiclient_getTokenContracts(this.__wbg_ptr, query);
+            return ret;
+        }
+        /**
+         * Gets token transfers for given accounts and contracts
+         *
+         * # Parameters
+         * * `query` - TokenTransferQuery parameters
+         *
+         * # Returns
+         * Result containing token transfers or error
+         * @param {TokenTransferQuery} query
+         * @returns {Promise<TokenTransfers>}
+         */
+        getTokenTransfers(query) {
+            const ret = wasm.toriiclient_getTokenTransfers(this.__wbg_ptr, query);
             return ret;
         }
         /**
@@ -1592,6 +1607,61 @@ let wasm_bindgen;
             const ptr2 = passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
             const len2 = WASM_VECTOR_LEN;
             const ret = wasm.toriiclient_updateTokenBalanceSubscription(this.__wbg_ptr, subscription.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2);
+            return ret;
+        }
+        /**
+         * Subscribes to token transfer updates
+         *
+         * # Parameters
+         * * `contract_addresses` - Array of contract addresses to filter (empty for all)
+         * * `account_addresses` - Array of account addresses to filter (empty for all)
+         * * `token_ids` - Array of token IDs to filter (empty for all)
+         * * `callback` - JavaScript function to call on updates
+         *
+         * # Returns
+         * Result containing subscription handle or error
+         * @param {string[] | null | undefined} contract_addresses
+         * @param {string[] | null | undefined} account_addresses
+         * @param {WasmU256[] | null | undefined} token_ids
+         * @param {Function} callback
+         * @returns {Promise<Subscription>}
+         */
+        onTokenTransferUpdated(contract_addresses, account_addresses, token_ids, callback) {
+            var ptr0 = isLikeNone(contract_addresses) ? 0 : passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
+            var len0 = WASM_VECTOR_LEN;
+            var ptr1 = isLikeNone(account_addresses) ? 0 : passArrayJsValueToWasm0(account_addresses, wasm.__wbindgen_malloc);
+            var len1 = WASM_VECTOR_LEN;
+            var ptr2 = isLikeNone(token_ids) ? 0 : passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
+            var len2 = WASM_VECTOR_LEN;
+            const ret = wasm.toriiclient_onTokenTransferUpdated(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, callback);
+            return ret;
+        }
+        /**
+         * Updates an existing token transfer subscription
+         *
+         * # Parameters
+         * * `subscription` - Existing subscription to update
+         * * `contract_addresses` - New array of contract addresses to filter
+         * * `account_addresses` - New array of account addresses to filter
+         * * `token_ids` - New array of token IDs to filter
+         *
+         * # Returns
+         * Result containing unit or error
+         * @param {Subscription} subscription
+         * @param {string[]} contract_addresses
+         * @param {string[]} account_addresses
+         * @param {WasmU256[]} token_ids
+         * @returns {Promise<void>}
+         */
+        updateTokenTransferSubscription(subscription, contract_addresses, account_addresses, token_ids) {
+            _assertClass(subscription, Subscription);
+            const ptr0 = passArrayJsValueToWasm0(contract_addresses, wasm.__wbindgen_malloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ptr1 = passArrayJsValueToWasm0(account_addresses, wasm.__wbindgen_malloc);
+            const len1 = WASM_VECTOR_LEN;
+            const ptr2 = passArrayJsValueToWasm0(token_ids, wasm.__wbindgen_malloc);
+            const len2 = WASM_VECTOR_LEN;
+            const ret = wasm.toriiclient_updateTokenTransferSubscription(this.__wbg_ptr, subscription.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2);
             return ret;
         }
         /**
@@ -2061,7 +2131,7 @@ let wasm_bindgen;
                     const a = state0.a;
                     state0.a = 0;
                     try {
-                        return __wbg_adapter_259(a, state0.b, arg0, arg1);
+                        return __wbg_adapter_262(a, state0.b, arg0, arg1);
                     } finally {
                         state0.a = a;
                     }
@@ -2361,6 +2431,11 @@ let wasm_bindgen;
         imports.wbg.__wbg_wbindgenthrow_4c11a24fca429ccf = function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         };
+        imports.wbg.__wbindgen_cast_1a1ff73627f08aaf = function(arg0, arg1) {
+            // Cast intrinsic for `Closure(Closure { dtor_idx: 956, function: Function { arguments: [], shim_idx: 957, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, 956, __wbg_adapter_6);
+            return ret;
+        };
         imports.wbg.__wbindgen_cast_2241b6af4c4b2941 = function(arg0, arg1) {
             // Cast intrinsic for `Ref(String) -> Externref`.
             const ret = getStringFromWasm0(arg0, arg1);
@@ -2373,9 +2448,9 @@ let wasm_bindgen;
             const ret = v0;
             return ret;
         };
-        imports.wbg.__wbindgen_cast_3f095b8139316065 = function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { dtor_idx: 625, function: Function { arguments: [], shim_idx: 626, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, 625, __wbg_adapter_17);
+        imports.wbg.__wbindgen_cast_3d4845779a48527b = function(arg0, arg1) {
+            // Cast intrinsic for `Closure(Closure { dtor_idx: 628, function: Function { arguments: [], shim_idx: 629, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, 628, __wbg_adapter_24);
             return ret;
         };
         imports.wbg.__wbindgen_cast_4625c577ab2ec9ee = function(arg0) {
@@ -2383,14 +2458,9 @@ let wasm_bindgen;
             const ret = BigInt.asUintN(64, arg0);
             return ret;
         };
-        imports.wbg.__wbindgen_cast_571913e56af74cc3 = function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { dtor_idx: 953, function: Function { arguments: [], shim_idx: 954, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, 953, __wbg_adapter_22);
-            return ret;
-        };
-        imports.wbg.__wbindgen_cast_708ec70d61ede8c8 = function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { dtor_idx: 973, function: Function { arguments: [Externref], shim_idx: 974, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, 973, __wbg_adapter_12);
+        imports.wbg.__wbindgen_cast_8aa97f9ea9f3fa56 = function(arg0, arg1) {
+            // Cast intrinsic for `Closure(Closure { dtor_idx: 976, function: Function { arguments: [Externref], shim_idx: 977, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, 976, __wbg_adapter_15);
             return ret;
         };
         imports.wbg.__wbindgen_cast_9ae0607507abb057 = function(arg0) {

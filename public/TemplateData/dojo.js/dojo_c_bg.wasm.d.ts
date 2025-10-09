@@ -1,13 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export const __wbg_toriiclient_free: (a: number, b: number) => void;
-export const __wbg_provider_free: (a: number, b: number) => void;
-export const __wbg_account_free: (a: number, b: number) => void;
-export const __wbg_controlleraccount_free: (a: number, b: number) => void;
-export const __wbg_subscription_free: (a: number, b: number) => void;
-export const __wbg_get_subscription_id: (a: number) => bigint;
-export const __wbg_set_subscription_id: (a: number, b: bigint) => void;
 export const __wbg_signingkey_free: (a: number, b: number) => void;
 export const __wbg_verifyingkey_free: (a: number, b: number) => void;
 export const __wbg_typeddata_free: (a: number, b: number) => void;
@@ -54,6 +47,7 @@ export const toriiclient_getTokens: (a: number, b: any) => any;
 export const toriiclient_onTokenUpdated: (a: number, b: number, c: number, d: number, e: number, f: any) => any;
 export const toriiclient_getTokenBalances: (a: number, b: any) => any;
 export const toriiclient_getTokenContracts: (a: number, b: any) => any;
+export const toriiclient_getTokenTransfers: (a: number, b: any) => any;
 export const toriiclient_getEntities: (a: number, b: any) => any;
 export const toriiclient_getAllEntities: (a: number, b: number, c: number, d: number) => any;
 export const toriiclient_getEventMessages: (a: number, b: any) => any;
@@ -65,9 +59,18 @@ export const toriiclient_onStarknetEvent: (a: number, b: number, c: number, d: a
 export const toriiclient_onIndexerUpdated: (a: number, b: number, c: number, d: any) => any;
 export const toriiclient_onTokenBalanceUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => any;
 export const toriiclient_updateTokenBalanceSubscription: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
+export const toriiclient_onTokenTransferUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => any;
+export const toriiclient_updateTokenTransferSubscription: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
 export const toriiclient_publishMessage: (a: number, b: any) => any;
 export const toriiclient_publishMessageBatch: (a: number, b: number, c: number) => any;
 export const subscription_cancel: (a: number) => void;
+export const __wbg_toriiclient_free: (a: number, b: number) => void;
+export const __wbg_provider_free: (a: number, b: number) => void;
+export const __wbg_account_free: (a: number, b: number) => void;
+export const __wbg_controlleraccount_free: (a: number, b: number) => void;
+export const __wbg_subscription_free: (a: number, b: number) => void;
+export const __wbg_get_subscription_id: (a: number) => bigint;
+export const __wbg_set_subscription_id: (a: number, b: bigint) => void;
 export const __wbg_intounderlyingbytesource_free: (a: number, b: number) => void;
 export const intounderlyingbytesource_type: (a: number) => number;
 export const intounderlyingbytesource_autoAllocateChunkSize: (a: number) => number;
@@ -86,12 +89,12 @@ export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) =>
 export const __wbindgen_exn_store: (a: number) => void;
 export const __externref_table_alloc: () => number;
 export const __wbindgen_export_4: WebAssembly.Table;
+export const __wbindgen_export_5: WebAssembly.Table;
 export const __externref_drop_slice: (a: number, b: number) => void;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;
-export const __wbindgen_export_7: WebAssembly.Table;
 export const __externref_table_dealloc: (a: number) => void;
-export const closure974_externref_shim: (a: number, b: number, c: any) => void;
-export const wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f: (a: number, b: number) => void;
 export const wasm_bindgen__convert__closures_____invoke__ha650cbf29b909d89: (a: number, b: number) => void;
-export const closure1148_externref_shim: (a: number, b: number, c: any, d: any) => void;
+export const closure977_externref_shim: (a: number, b: number, c: any) => void;
+export const wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f: (a: number, b: number) => void;
+export const closure1151_externref_shim: (a: number, b: number, c: any, d: any) => void;
 export const __wbindgen_start: () => void;

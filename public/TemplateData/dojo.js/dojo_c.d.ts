@@ -103,12 +103,7 @@ declare namespace wasm_bindgen {
 	
 	export type TokenContracts = Page<TokenContract>;
 	
-	export interface TokenTransferQuery {
-	    contract_addresses: string[];
-	    account_addresses: string[];
-	    token_ids: string[];
-	    pagination: Pagination;
-	}
+	export type TokenTransfers = Page<TokenTransfer>;
 	
 	export interface Token {
 	    contract_address: string;
@@ -126,6 +121,7 @@ declare namespace wasm_bindgen {
 	    symbol: string;
 	    decimals: number;
 	    metadata: string;
+	    token_metadata: string;
 	    total_supply: string | undefined;
 	}
 	
@@ -134,6 +130,24 @@ declare namespace wasm_bindgen {
 	    account_address: string;
 	    contract_address: string;
 	    token_id: string | undefined;
+	}
+	
+	export interface TokenTransfer {
+	    id: string;
+	    contract_address: string;
+	    from_address: string;
+	    to_address: string;
+	    amount: string;
+	    token_id: string | undefined;
+	    executed_at: number;
+	    event_id: string | undefined;
+	}
+	
+	export interface TokenTransferQuery {
+	    contract_addresses: string[];
+	    account_addresses: string[];
+	    token_ids: string[];
+	    pagination: Pagination;
 	}
 	
 	export interface TransactionFilter {
@@ -689,6 +703,16 @@ declare namespace wasm_bindgen {
 	   */
 	  getTokenContracts(query: TokenContractQuery): Promise<TokenContracts>;
 	  /**
+	   * Gets token transfers for given accounts and contracts
+	   *
+	   * # Parameters
+	   * * `query` - TokenTransferQuery parameters
+	   *
+	   * # Returns
+	   * Result containing token transfers or error
+	   */
+	  getTokenTransfers(query: TokenTransferQuery): Promise<TokenTransfers>;
+	  /**
 	   * Queries entities based on the provided query parameters
 	   *
 	   * # Parameters
@@ -810,6 +834,32 @@ declare namespace wasm_bindgen {
 	   */
 	  updateTokenBalanceSubscription(subscription: Subscription, contract_addresses: string[], account_addresses: string[], token_ids: WasmU256[]): Promise<void>;
 	  /**
+	   * Subscribes to token transfer updates
+	   *
+	   * # Parameters
+	   * * `contract_addresses` - Array of contract addresses to filter (empty for all)
+	   * * `account_addresses` - Array of account addresses to filter (empty for all)
+	   * * `token_ids` - Array of token IDs to filter (empty for all)
+	   * * `callback` - JavaScript function to call on updates
+	   *
+	   * # Returns
+	   * Result containing subscription handle or error
+	   */
+	  onTokenTransferUpdated(contract_addresses: string[] | null | undefined, account_addresses: string[] | null | undefined, token_ids: WasmU256[] | null | undefined, callback: Function): Promise<Subscription>;
+	  /**
+	   * Updates an existing token transfer subscription
+	   *
+	   * # Parameters
+	   * * `subscription` - Existing subscription to update
+	   * * `contract_addresses` - New array of contract addresses to filter
+	   * * `account_addresses` - New array of account addresses to filter
+	   * * `token_ids` - New array of token IDs to filter
+	   *
+	   * # Returns
+	   * Result containing unit or error
+	   */
+	  updateTokenTransferSubscription(subscription: Subscription, contract_addresses: string[], account_addresses: string[], token_ids: WasmU256[]): Promise<void>;
+	  /**
 	   * Publishes a message to the network
 	   *
 	   * # Parameters
@@ -885,13 +935,6 @@ declare type InitInput = RequestInfo | URL | Response | BufferSource | WebAssemb
 
 declare interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly __wbg_toriiclient_free: (a: number, b: number) => void;
-  readonly __wbg_provider_free: (a: number, b: number) => void;
-  readonly __wbg_account_free: (a: number, b: number) => void;
-  readonly __wbg_controlleraccount_free: (a: number, b: number) => void;
-  readonly __wbg_subscription_free: (a: number, b: number) => void;
-  readonly __wbg_get_subscription_id: (a: number) => bigint;
-  readonly __wbg_set_subscription_id: (a: number, b: bigint) => void;
   readonly __wbg_signingkey_free: (a: number, b: number) => void;
   readonly __wbg_verifyingkey_free: (a: number, b: number) => void;
   readonly __wbg_typeddata_free: (a: number, b: number) => void;
@@ -938,6 +981,7 @@ declare interface InitOutput {
   readonly toriiclient_onTokenUpdated: (a: number, b: number, c: number, d: number, e: number, f: any) => any;
   readonly toriiclient_getTokenBalances: (a: number, b: any) => any;
   readonly toriiclient_getTokenContracts: (a: number, b: any) => any;
+  readonly toriiclient_getTokenTransfers: (a: number, b: any) => any;
   readonly toriiclient_getEntities: (a: number, b: any) => any;
   readonly toriiclient_getAllEntities: (a: number, b: number, c: number, d: number) => any;
   readonly toriiclient_getEventMessages: (a: number, b: any) => any;
@@ -949,9 +993,18 @@ declare interface InitOutput {
   readonly toriiclient_onIndexerUpdated: (a: number, b: number, c: number, d: any) => any;
   readonly toriiclient_onTokenBalanceUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => any;
   readonly toriiclient_updateTokenBalanceSubscription: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
+  readonly toriiclient_onTokenTransferUpdated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => any;
+  readonly toriiclient_updateTokenTransferSubscription: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
   readonly toriiclient_publishMessage: (a: number, b: any) => any;
   readonly toriiclient_publishMessageBatch: (a: number, b: number, c: number) => any;
   readonly subscription_cancel: (a: number) => void;
+  readonly __wbg_toriiclient_free: (a: number, b: number) => void;
+  readonly __wbg_provider_free: (a: number, b: number) => void;
+  readonly __wbg_account_free: (a: number, b: number) => void;
+  readonly __wbg_controlleraccount_free: (a: number, b: number) => void;
+  readonly __wbg_subscription_free: (a: number, b: number) => void;
+  readonly __wbg_get_subscription_id: (a: number) => bigint;
+  readonly __wbg_set_subscription_id: (a: number, b: bigint) => void;
   readonly __wbg_intounderlyingbytesource_free: (a: number, b: number) => void;
   readonly intounderlyingbytesource_type: (a: number) => number;
   readonly intounderlyingbytesource_autoAllocateChunkSize: (a: number) => number;
@@ -970,14 +1023,14 @@ declare interface InitOutput {
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_export_4: WebAssembly.Table;
+  readonly __wbindgen_export_5: WebAssembly.Table;
   readonly __externref_drop_slice: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-  readonly __wbindgen_export_7: WebAssembly.Table;
   readonly __externref_table_dealloc: (a: number) => void;
-  readonly closure974_externref_shim: (a: number, b: number, c: any) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f: (a: number, b: number) => void;
   readonly wasm_bindgen__convert__closures_____invoke__ha650cbf29b909d89: (a: number, b: number) => void;
-  readonly closure1148_externref_shim: (a: number, b: number, c: any, d: any) => void;
+  readonly closure977_externref_shim: (a: number, b: number, c: any) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__h48c1f7f6b2e7507f: (a: number, b: number) => void;
+  readonly closure1151_externref_shim: (a: number, b: number, c: any, d: any) => void;
   readonly __wbindgen_start: () => void;
 }
 
