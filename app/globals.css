@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 @font-face {
   font-family: "Exo2";
   src: url("/fonts/Exo2-SemiBold.ttf") format("truetype");
@@ -32,143 +31,6 @@ body {
   font-family: "Exo2", sans-serif;
 }
 
-#unity-container {
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  overflow: hidden;
-  background-color: #000000;
-}
-
-#unity-container.unity-mobile {
-  position: fixed;
-  width: 100vw !important;
-  height: 100vh !important;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-}
-
-#unity-canvas {
-  width: 100% !important;
-  height: 100% !important;
-  background-color: #000000;
-  z-index: -1;
-}
-
-.unity-mobile #unity-canvas {
-  width: 100vw !important;
-  height: 100vh !important;
-}
-
-#unity-loading-bar {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-#unity-logo {
-  display: none;
-}
-
-#unity-progress-bar-empty {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-#unity-progress-bar-full {
-  width: 0%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  transition: width 0.3s ease;
-}
-
-#portrait-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  z-index: 1000;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-align: center;
-}
-
-#portrait-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-  animation: rotate 2s ease-in-out infinite;
-}
-
-#portrait-message {
-  font-size: 18px;
-  font-weight: bold;
-  padding: 0 20px;
-}
-
-.phone-rotate {
-  animation: phone-rotate 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-  display: block;
-  width: 140px;
-  height: auto;
-}
-
-.phone-container {
-  animation: phone-pulse 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
-  position: relative;
-  width: 140px;
-  height: 140px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Removed orientation indicator */
-
-@keyframes phone-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-90deg);
-  }
-  50% {
-    transform: rotate(-90deg);
-  }
-  75% {
-    transform: rotate(-90deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-/* Add pulse effect to phone to draw attention */
-@keyframes phone-pulse {
-  0% {
-  }
-  50% {
-  }
-  100% {
-  }
-}
-
 @keyframes scaleAnimation {
   0%,
   100% {
@@ -179,20 +41,24 @@ body {
   }
 }
 
-/* Text outline for better visibility */
-.text-outline {
-  text-shadow:
-    /* corners 2 px out */
-    -2px -2px 0 #000,
-    2px -2px 0 #000,
-    -2px 2px 0 #000,
-    2px 2px 0 #000,
-    /* edges 2 px out */ -2px 0 0 #000,
-    2px 0 0 #000,
-    0 -2px 0 #000,
-    0 2px 0 #000;
+.pulse-button {
+  animation: scaleAnimation 2s ease-in-out infinite !important;
+  transform-origin: center;
+  will-change: transform;
 }
 
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.75);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Text outline for better visibility */
 .text-outline-sm {
   text-shadow:
     -1px -1px 0 #000,
@@ -202,26 +68,48 @@ body {
     0 2px 2px rgba(0, 0, 0, 0.6);
 }
 
-#portrait-blocker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  display: none;
+/* Liquid glass border effect */
+.liquid-glass-border {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.4),
+    0 0 40px rgba(255, 255, 255, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
-#controller-keychain,
-#controller-profile {
-  padding-top: 25px;
-  padding-bottom: 25px;
-  min-width: 480px;
+.liquid-glass-border::before {
+  content: '';
+  position: absolute;
+  inset: -2.5px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.5)
+  );
+  background-size: 200% 200%;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 2.5px;
+  animation: liquidFlow 3s ease-in-out infinite;
 }
 
-@media screen and (max-width: 768px) {
-  #controller-keychain,
-  #controller-profile {
-    padding-top: 60px;
-    background: #000;
+@keyframes liquidFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
