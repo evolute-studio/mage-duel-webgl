@@ -25,12 +25,12 @@ const SPACING = {
 // Component: Background Image
 const BackgroundImage = () => (
   <div className="absolute inset-0 overflow-hidden">
-    <div className="w-full h-full md:scale-100">
+    <div className="w-full h-full scale-[1.20] md:scale-100">
       <Image
         src="/bg.png"
         alt="Background"
         fill
-        className="object-cover object-[35%_bottom] md:object-center "
+        className="object-cover object-[35%_bottom] md:object-center"
         priority
         quality={100}
         sizes="100vw"
@@ -230,12 +230,13 @@ export default function Home() {
     setTimeout(() => setIsReady(true), 0);
   }, []);
 
+  // Download link based on platform - design is based on screen size (Tailwind media queries)
   const downloadLink =
     platform === "ios"
       ? "https://apps.apple.com/ua/app/mage-duel/id6745639584"
       : platform === "android"
         ? "/MageDuelAndroid.apk"
-        : null;
+        : "https://apps.apple.com/ua/app/mage-duel/id6745639584"; // Default to App Store for desktop
 
   return (
     <div className="w-screen h-screen relative overflow-hidden">
