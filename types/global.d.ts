@@ -1,17 +1,3 @@
-declare global {
-    interface Window {
-        gameInstance: any;
-        createUnityInstance: any;
-        stopUnityLoading: boolean;
-        
-        // Controller
-        controllerInstance: any;
-        username: string;
-        account: any;
-        unityConnector: UnityConnector;
-        handleConnect: () => Promise<boolean>;
-        handleDisconnect: () => void;
-    }
-}
+// Global type declarations
 
-export {}; 
+export {};
