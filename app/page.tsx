@@ -6,8 +6,8 @@ import { AppleLogo } from "@/components/AppleLogo";
 
 // Background shift constants for easy modification
 const BACKGROUND_SHIFT = {
-  position1: "73%", // First background position
-  position2: "70%", // Second background position
+  position1: "70%", // First background position
+  position2: "66%", // Second background position
 };
 
 // Spacing constants for easy modification
@@ -53,7 +53,7 @@ const BackgroundImage = () => (
 
 // Component: Logo
 const Logo = ({ className = "" }: { className?: string }) => (
-  <div className={`flex justify-center animate-[scaleIn_0.2s_ease-out] ${className}`}>
+  <div className={`flex justify-center animate-[scaleIn_0.2s_ease-out] ${className} mt-4`}>
     <Image
       src="/logo.png"
       alt="Logo"
@@ -127,7 +127,7 @@ const DownloadButton = ({
       download={download}
       target={isExternalLink ? "_blank" : undefined}
       rel={isExternalLink ? "noopener noreferrer" : undefined}
-      className={`${baseClasses} ${activeClasses} ${SPACING.button.padding} ${className}`}
+      className={`${baseClasses} ${activeClasses} ${SPACING.button.padding} pulse-button ${className}`}
       style={{ display: 'inline-block' }}
     >
       Download
@@ -224,7 +224,7 @@ const Popup = ({
         bottom: 'calc(7dvh + env(safe-area-inset-bottom, 0px))',
       }}
     >
-      <div className="liquid-glass-border p-1 bg-[#08226a]/30 popup-blur-animated rounded-xl shadow-2xl animate-[scaleIn_0.2s_ease-out]">
+      <div className="rounded-xl animate-[scaleIn_0.2s_ease-out]">
         <PopupContent downloadLink={downloadLink} platform={platform} />
       </div>
     </div>

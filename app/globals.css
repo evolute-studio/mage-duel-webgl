@@ -140,7 +140,7 @@ body {
 }
 
 .bg-bounce {
-  animation: bgBounce 8s ease-in-out infinite;
+  animation: bgBounce 10s ease-in-out infinite;
 }
 
 @media (min-width: 768px) {
@@ -150,9 +150,10 @@ body {
 }
 
 /* Animated blur for popup - synced with background movement */
-/* Less blur when picture moves left (73%), more blur when right (75%) */
+/* Less blur (3px) when picture moves left (70%), more blur (8px) when right (73%) */
 @keyframes blurPulse {
   0% {
+    /* Right position (73%) - more blur */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
@@ -161,6 +162,7 @@ body {
     -webkit-backdrop-filter: blur(5.5px);
   }
   50% {
+    /* Left position (70%) - less blur */
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
   }
@@ -169,6 +171,7 @@ body {
     -webkit-backdrop-filter: blur(5.5px);
   }
   100% {
+    /* Right position (73%) - more blur */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
