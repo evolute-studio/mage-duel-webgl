@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { AppleLogo } from "@/components/AppleLogo";
 
 // Background shift constants for easy modification
 const BACKGROUND_SHIFT = {
@@ -76,7 +75,10 @@ const LogoTop = ({ isMobileLayout }: { isMobileLayout: boolean }) => (
 const LogoAndButtonBottom = ({ isMobileLayout }: { isMobileLayout: boolean }) => (
   <div className={`${isMobileLayout ? 'hidden' : 'flex'} absolute bottom-0 left-0 right-0 flex-col items-center z-20 pb-[5%]`}>
     <Logo />
-    <AppStoreButton className="mt-2" />
+    <div className="flex flex-row items-center gap-4 mt-2">
+      <GooglePlayButton />
+      <AppStoreButton />
+    </div>
   </div>
 );
 
@@ -143,28 +145,32 @@ const AppStoreButton = ({ className = "" }: { className?: string }) => (
     rel="noopener noreferrer"
     className={`inline-block hover:opacity-90 transition-opacity ${className}`}
   >
-    <div className="bg-black border-white rounded-lg px-5 border-1 py-2 flex items-center gap-3 shadow-lg">
-      <AppleLogo width={36} height={36} />
-      <div className="flex flex-col leading-tight">
-        <span
-          className="text-xs text-white opacity-90"
-          style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif',
-          }}
-        >
-          Download on the
-        </span>
-        <span
-          className="text-xl text-white font-semibold"
-          style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif',
-            letterSpacing: "0.2px",
-          }}
-        >
-          App Store
-        </span>
-      </div>
-    </div>
+    <Image
+      src="/apple-button.png"
+      alt="Download on the App Store"
+      width={200}
+      height={60}
+      className="object-contain"
+      priority
+    />
+  </a>
+);
+
+// Component: Google Play Button (Desktop)
+const GooglePlayButton = ({ className = "" }: { className?: string }) => (
+  <a
+    href="/MageDuelAndroid.apk"
+    download="MageDuelAndroid.apk"
+    className={`inline-block hover:opacity-90 transition-opacity ${className}`}
+  >
+    <Image
+      src="/google-button.png"
+      alt="Download APK"
+      width={200}
+      height={60}
+      className="object-contain"
+      priority
+    />
   </a>
 );
 
