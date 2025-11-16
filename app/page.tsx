@@ -234,8 +234,10 @@ const Popup = ({
 export default function Home() {
   const [isReady, setIsReady] = useState(false);
   const [platform, setPlatform] = useState<"ios" | "android" | "desktop">("desktop");
+  const [isMobileWidth, setIsMobileWidth] = useState(true); // Default to mobile for SSR
 
   useEffect(() => {
+    // Detect platform for download link only (not for layout)
     const userAgent = navigator.userAgent.toLowerCase();
     const isIOS =
       /iphone|ipad|ipod/i.test(userAgent) ||
@@ -243,7 +245,20 @@ export default function Home() {
     const isAndroid = /android/i.test(userAgent);
 
     setPlatform(isIOS ? "ios" : isAndroid ? "android" : "desktop");
-    setTimeout(() => setIsReady(true), 0);
+
+    // Detect window width for responsive layout (works even if desktop site is forced)
+    const checkWidth = () => {
+      // Tailwind's md breakpoint is 768px
+      setIsMobileWidth(window.innerWidth < 768);
+    };
+
+    // Check on mount
+    checkWidth();
+    setIsReady(true);
+
+    // Listen for resize events
+    window.addEventListener("resize", checkWidth);
+    return () => window.removeEventListener("resize", checkWidth);
   }, []);
 
   // Download link based on platform - design is based on screen size (Tailwind media queries)
