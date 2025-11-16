@@ -6,8 +6,8 @@ import { AppleLogo } from "@/components/AppleLogo";
 
 // Background shift constants for easy modification
 const BACKGROUND_SHIFT = {
-  position1: "70%", // First background position
-  position2: "66%", // Second background position
+  position1: "75%", // First background position
+  position2: "72%", // Second background position
 };
 
 // Spacing constants for easy modification
