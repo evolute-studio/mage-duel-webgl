@@ -178,38 +178,52 @@ const GooglePlayButton = ({ className = "" }: { className?: string }) => (
 const PopupContent = ({
   downloadLink,
   platform,
+  isDesktopForced,
 }: {
   downloadLink: string | null;
   platform: "ios" | "android" | "desktop";
-}) => (
-  <div className={`flex flex-col items-center ${SPACING.content.gap} ${SPACING.content.padding} relative z-10`}>
-    {downloadLink ? (
-      <a
-        href={downloadLink}
-        download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
-        target={platform === "ios" ? "_blank" : undefined}
-        rel={platform === "ios" ? "noopener noreferrer" : undefined}
-        className={`flex flex-col items-center ${SPACING.iconTitle.gap} cursor-pointer hover:opacity-90 transition-opacity`}
-      >
-        <IconWithBorder />
-        <GameTitle />
-      </a>
-    ) : (
-      <div className={`flex flex-col items-center ${SPACING.iconTitle.gap}`}>
-        <IconWithBorder />
-        <GameTitle />
-      </div>
-    )}
+  isDesktopForced: boolean;
+}) => {
+  // Show 2 buttons if desktop site is forced on Android
+  const showTwoButtons = isDesktopForced && platform === "android";
 
-    <div className="w-full">
-      <DownloadButton
-        href={downloadLink}
-        download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
-        platform={platform}
-      />
+  return (
+    <div className={`flex flex-col items-center ${SPACING.content.gap} ${SPACING.content.padding} relative z-10`}>
+      {downloadLink ? (
+        <a
+          href={downloadLink}
+          download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
+          target={platform === "ios" ? "_blank" : undefined}
+          rel={platform === "ios" ? "noopener noreferrer" : undefined}
+          className={`flex flex-col items-center ${SPACING.iconTitle.gap} cursor-pointer hover:opacity-90 transition-opacity`}
+        >
+          <IconWithBorder />
+          <GameTitle />
+        </a>
+      ) : (
+        <div className={`flex flex-col items-center ${SPACING.iconTitle.gap}`}>
+          <IconWithBorder />
+          <GameTitle />
+        </div>
+      )}
+
+      {showTwoButtons ? (
+        <div className="flex flex-row items-center gap-4 w-full justify-center">
+          <GooglePlayButton />
+          <AppStoreButton />
+        </div>
+      ) : (
+        <div className="w-full">
+          <DownloadButton
+            href={downloadLink}
+            download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
+            platform={platform}
+          />
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 // Component: Popup Container (Mobile only - hidden on desktop)
 const Popup = ({
@@ -217,11 +231,13 @@ const Popup = ({
   downloadLink,
   platform,
   isMobileLayout,
+  isDesktopForced,
 }: {
   isReady: boolean;
   downloadLink: string | null;
   platform: "ios" | "android" | "desktop";
   isMobileLayout: boolean;
+  isDesktopForced: boolean;
 }) => {
   if (!isReady || !isMobileLayout) return null;
 
@@ -233,7 +249,7 @@ const Popup = ({
       }}
     >
       <div className="rounded-xl animate-[scaleIn_0.2s_ease-out]">
-        <PopupContent downloadLink={downloadLink} platform={platform} />
+        <PopupContent downloadLink={downloadLink} platform={platform} isDesktopForced={isDesktopForced} />
       </div>
     </div>
   );
@@ -243,6 +259,7 @@ export default function Home() {
   const [isReady, setIsReady] = useState(false);
   const [platform, setPlatform] = useState<"ios" | "android" | "desktop">("desktop");
   const [isMobileLayout, setIsMobileLayout] = useState(true); // Default to mobile for SSR
+  const [isDesktopForced, setIsDesktopForced] = useState(false);
 
   useEffect(() => {
     // Detect platform for download link only (not for layout)
@@ -261,6 +278,10 @@ export default function Home() {
       const screenWidth = window.screen.width || window.screen.availWidth;
       // Check viewport width (changes when desktop site is requested)
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      
+      // Detect if desktop site is forced (viewport much larger than screen on mobile device)
+      const desktopForced = screenWidth < 768 && viewportWidth > screenWidth * 1.5;
+      setIsDesktopForced(desktopForced);
       
       // If actual screen is mobile-sized (< 768px), always use mobile layout
       // Otherwise, use viewport width to allow responsive behavior on desktop
@@ -305,6 +326,7 @@ export default function Home() {
             downloadLink={downloadLink}
             platform={platform}
             isMobileLayout={isMobileLayout}
+            isDesktopForced={isDesktopForced}
           />
           <LogoAndButtonBottom isMobileLayout={isMobileLayout} />
         </>
