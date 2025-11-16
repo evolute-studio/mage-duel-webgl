@@ -127,7 +127,7 @@ const DownloadButton = ({
       download={download}
       target={isExternalLink ? "_blank" : undefined}
       rel={isExternalLink ? "noopener noreferrer" : undefined}
-      className={`${baseClasses} ${activeClasses} ${SPACING.button.padding} pulse-button ${className}`}
+      className={`${baseClasses} ${activeClasses} ${SPACING.button.padding} ${className}`}
       style={{ display: 'inline-block' }}
     >
       Download
