@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AppleLogo } from "@/components/AppleLogo";
 
+// Background shift constants for easy modification
+const BACKGROUND_SHIFT = {
+  position1: "75%", // First background position
+  position2: "73%", // Second background position
+};
+
 // Spacing constants for easy modification
 const SPACING = {
   popup: {
@@ -25,12 +31,17 @@ const SPACING = {
 // Component: Background Image
 const BackgroundImage = () => (
   <div className="absolute inset-0 overflow-hidden">
-    <div className="w-full h-full scale-[1.20] md:scale-100">
+    <div className="w-full h-full">
       <Image
         src="/bg.png"
         alt="Background"
         fill
-        className="object-cover object-[35%_bottom] md:object-center"
+        className="object-cover object-[75%_top] md:object-center bg-bounce"
+        style={{
+          objectPosition: `${BACKGROUND_SHIFT.position1} top`,
+          '--bg-position1': BACKGROUND_SHIFT.position1,
+          '--bg-position2': BACKGROUND_SHIFT.position2,
+        } as React.CSSProperties}
         priority
         quality={100}
         sizes="100vw"
@@ -56,7 +67,7 @@ const Logo = ({ className = "" }: { className?: string }) => (
 
 // Component: Logo at Top (Mobile only - hidden on desktop)
 const LogoTop = () => (
-  <div className="absolute top-0 left-0 right-0 flex justify-center z-20 pt-4 md:pt-6 md:hidden">
+  <div className="absolute top-0 left-0 right-0 flex justify-center z-20 md:hidden">
     <Logo />
   </div>
 );
@@ -207,8 +218,13 @@ const Popup = ({
   if (!isReady) return null;
 
   return (
-    <div className="absolute left-0 right-0 bottom-[7%] flex justify-center z-10 md:hidden">
-      <div className="liquid-glass-border p-1 bg-[#08226a]/30 backdrop-blur-sm rounded-xl shadow-2xl animate-[scaleIn_0.2s_ease-out]">
+    <div 
+      className="absolute left-0 right-0 flex justify-center z-10 md:hidden"
+      style={{
+        bottom: 'calc(7dvh + env(safe-area-inset-bottom, 0px))',
+      }}
+    >
+      <div className="liquid-glass-border p-1 bg-[#08226a]/30 popup-blur-animated rounded-xl shadow-2xl animate-[scaleIn_0.2s_ease-out]">
         <PopupContent downloadLink={downloadLink} platform={platform} />
       </div>
     </div>
@@ -239,7 +255,7 @@ export default function Home() {
         : "https://apps.apple.com/ua/app/mage-duel/id6745639584"; // Default to App Store for desktop
 
   return (
-    <div className="w-screen h-screen relative overflow-hidden">
+    <div className="w-screen h-[100dvh] relative overflow-hidden">
       <BackgroundImage />
       {isReady && (
         <>

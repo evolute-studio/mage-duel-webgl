@@ -4,6 +4,10 @@ import type { Metadata, Viewport } from "next";
 export const metadata: Metadata = {
   title: "Mage Duel",
   description: "Mage Duel - Download Now",
+  other: {
+    "screen-orientation": "portrait",
+    "orientation": "portrait",
+  },
 };
 
 export const viewport: Viewport = {
