@@ -43,6 +43,7 @@ body {
   font-family: "Exo2", sans-serif;
 }
 
+
 @keyframes scaleAnimation {
   0%,
   100% {
@@ -163,4 +164,10 @@ body {
 
 .popup-blur-animated {
   animation: blurPulse 8s ease-in-out infinite;
+  /* Initial blur value - ensures blur is applied even if animation doesn't start immediately */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* Force hardware acceleration */
+  will-change: backdrop-filter;
+  transform: translateZ(0);
 }
