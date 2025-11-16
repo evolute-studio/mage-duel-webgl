@@ -66,15 +66,15 @@ const Logo = ({ className = "" }: { className?: string }) => (
 );
 
 // Component: Logo at Top (Mobile only - hidden on desktop)
-const LogoTop = () => (
-  <div className="absolute top-0 left-0 right-0 flex justify-center z-20 md:hidden">
+const LogoTop = ({ isMobileLayout }: { isMobileLayout: boolean }) => (
+  <div className={`absolute top-0 left-0 right-0 flex justify-center z-20 ${isMobileLayout ? 'flex' : 'hidden'}`}>
     <Logo />
   </div>
 );
 
 // Component: Logo and Button at Bottom (Desktop only - hidden on mobile)
-const LogoAndButtonBottom = () => (
-  <div className="hidden md:flex absolute bottom-0 left-0 right-0 flex-col items-center z-20 pb-[5%]">
+const LogoAndButtonBottom = ({ isMobileLayout }: { isMobileLayout: boolean }) => (
+  <div className={`${isMobileLayout ? 'hidden' : 'flex'} absolute bottom-0 left-0 right-0 flex-col items-center z-20 pb-[5%]`}>
     <Logo />
     <AppStoreButton className="mt-2" />
   </div>
@@ -210,16 +210,18 @@ const Popup = ({
   isReady,
   downloadLink,
   platform,
+  isMobileLayout,
 }: {
   isReady: boolean;
   downloadLink: string | null;
   platform: "ios" | "android" | "desktop";
+  isMobileLayout: boolean;
 }) => {
-  if (!isReady) return null;
+  if (!isReady || !isMobileLayout) return null;
 
   return (
     <div 
-      className="absolute left-0 right-0 flex justify-center z-10 md:hidden"
+      className="absolute left-0 right-0 flex justify-center z-10"
       style={{
         bottom: 'calc(7dvh + env(safe-area-inset-bottom, 0px))',
       }}
@@ -234,11 +236,10 @@ const Popup = ({
 export default function Home() {
   const [isReady, setIsReady] = useState(false);
   const [platform, setPlatform] = useState<"ios" | "android" | "desktop">("desktop");
+  const [isMobileLayout, setIsMobileLayout] = useState(true); // Default to mobile for SSR
 
   useEffect(() => {
     // Detect platform for download link only (not for layout)
-    // Layout is controlled by Tailwind's md: breakpoint (768px) which uses CSS media queries
-    // This works based on viewport width, not user agent, so it works even if desktop site is forced
     const userAgent = navigator.userAgent.toLowerCase();
     const isIOS =
       /iphone|ipad|ipod/i.test(userAgent) ||
@@ -246,7 +247,37 @@ export default function Home() {
     const isAndroid = /android/i.test(userAgent);
 
     setPlatform(isIOS ? "ios" : isAndroid ? "android" : "desktop");
-    setTimeout(() => setIsReady(true), 0);
+
+    // Detect actual screen width for layout (works even if desktop site is forced)
+    // When desktop site is requested, viewport width changes but screen.width stays the same
+    const checkLayout = () => {
+      // Check actual physical screen width (doesn't change when desktop site is requested)
+      const screenWidth = window.screen.width || window.screen.availWidth;
+      // Check viewport width (changes when desktop site is requested)
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      
+      // If actual screen is mobile-sized (< 768px), always use mobile layout
+      // Otherwise, use viewport width to allow responsive behavior on desktop
+      if (screenWidth < 768) {
+        setIsMobileLayout(true);
+      } else {
+        // Real desktop device - use viewport width for responsive behavior
+        setIsMobileLayout(viewportWidth < 768);
+      }
+    };
+
+    // Check on mount
+    checkLayout();
+    setIsReady(true);
+
+    // Listen for resize and orientation changes
+    window.addEventListener("resize", checkLayout);
+    window.addEventListener("orientationchange", checkLayout);
+    
+    return () => {
+      window.removeEventListener("resize", checkLayout);
+      window.removeEventListener("orientationchange", checkLayout);
+    };
   }, []);
 
   // Download link based on platform - design is based on screen size (Tailwind media queries)
@@ -262,13 +293,14 @@ export default function Home() {
       <BackgroundImage />
       {isReady && (
         <>
-          <LogoTop />
+          <LogoTop isMobileLayout={isMobileLayout} />
           <Popup
             isReady={isReady}
             downloadLink={downloadLink}
             platform={platform}
+            isMobileLayout={isMobileLayout}
           />
-          <LogoAndButtonBottom />
+          <LogoAndButtonBottom isMobileLayout={isMobileLayout} />
         </>
       )}
     </div>
