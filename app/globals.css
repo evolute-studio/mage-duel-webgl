@@ -116,6 +116,8 @@ body {
   mask-composite: exclude;
   padding: 2.5px;
   animation: liquidFlow 3s ease-in-out infinite;
+  pointer-events: none; /* Allow clicks to pass through */
+  z-index: -1; /* Ensure it's behind content */
 }
 
 @keyframes liquidFlow {
@@ -150,24 +152,36 @@ body {
 /* Animated blur for popup - synced with background movement */
 /* Less blur when picture moves left (73%), more blur when right (75%) */
 @keyframes blurPulse {
-  0%, 100% {
-    /* Right position (75%) - more blur */
+  0% {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
+  25% {
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+  }
   50% {
-    /* Left position (73%) - less blur */
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+  }
+  75% {
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+  }
+  100% {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 }
 
 .popup-blur-animated {
-  animation: blurPulse 8s ease-in-out infinite;
-  /* Initial blur value - ensures blur is applied even if animation doesn't start immediately */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  animation: blurPulse 8s ease-in-out infinite !important;
+  /* Initial blur value - critical for production */
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   /* Force hardware acceleration */
-  will-change: backdrop-filter;
+  will-change: backdrop-filter, -webkit-backdrop-filter;
   transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }

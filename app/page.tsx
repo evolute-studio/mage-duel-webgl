@@ -6,8 +6,8 @@ import { AppleLogo } from "@/components/AppleLogo";
 
 // Background shift constants for easy modification
 const BACKGROUND_SHIFT = {
-  position1: "75%", // First background position
-  position2: "73%", // Second background position
+  position1: "73%", // First background position
+  position2: "70%", // Second background position
 };
 
 // Spacing constants for easy modification
@@ -176,7 +176,7 @@ const PopupContent = ({
   downloadLink: string | null;
   platform: "ios" | "android" | "desktop";
 }) => (
-  <div className={`flex flex-col items-center ${SPACING.content.gap} ${SPACING.content.padding}`}>
+  <div className={`flex flex-col items-center ${SPACING.content.gap} ${SPACING.content.padding} relative z-10`}>
     {downloadLink ? (
       <a
         href={downloadLink}
