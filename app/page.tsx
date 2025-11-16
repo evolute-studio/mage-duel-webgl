@@ -79,6 +79,7 @@ const LogoAndButtonBottom = ({ isMobileLayout }: { isMobileLayout: boolean }) =>
       <GooglePlayButton />
       <AppStoreButton />
     </div>
+    <SocialLinks className="mt-3" />
   </div>
 );
 
@@ -101,6 +102,63 @@ const GameTitle = ({ className = "" }: { className?: string }) => (
   <h2 className={`text-2xl font-bold text-white text-center text-outline-sm ${className}`}>
     Mage Duel
   </h2>
+);
+
+// Component: X (Twitter) Icon
+const XIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+      fill="white"
+    />
+  </svg>
+);
+
+// Component: Discord Icon
+const DiscordIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 -28.5 256 256"
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z"
+      fill="white"
+      fillRule="nonzero"
+    />
+  </svg>
+);
+
+// Component: Social Links
+const SocialLinks = ({ className = "" }: { className?: string }) => (
+  <div className={`flex flex-row items-center gap-4 justify-center ${className}`}>
+    <a
+      href="https://x.com/evolute_studio"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:opacity-75 transition-opacity"
+    >
+      <XIcon />
+    </a>
+    <a
+      href="https://discord.gg/WJqjpEFhm3"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:opacity-75 transition-opacity"
+    >
+      <DiscordIcon />
+    </a>
+  </div>
 );
 
 // Component: Download Button
@@ -208,18 +266,24 @@ const PopupContent = ({
       )}
 
       {showTwoButtons ? (
-        <div className="flex flex-row items-center gap-4 w-full justify-center">
-          <GooglePlayButton />
-          <AppStoreButton />
-        </div>
+        <>
+          <div className="flex flex-row items-center gap-4 w-full justify-center">
+            <GooglePlayButton />
+            <AppStoreButton />
+          </div>
+          <SocialLinks className="mt-2" />
+        </>
       ) : (
-        <div className="w-full">
-          <DownloadButton
-            href={downloadLink}
-            download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
-            platform={platform}
-          />
-        </div>
+        <>
+          <div className="w-full">
+            <DownloadButton
+              href={downloadLink}
+              download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
+              platform={platform}
+            />
+          </div>
+          <SocialLinks className="mt-2" />
+        </>
       )}
     </div>
   );
@@ -245,7 +309,7 @@ const Popup = ({
     <div 
       className="absolute left-0 right-0 flex justify-center z-10"
       style={{
-        bottom: 'calc(7dvh + env(safe-area-inset-bottom, 0px))',
+        bottom: 'calc(2dvh + env(safe-area-inset-bottom, 0px))',
       }}
     >
       <div className="rounded-xl animate-[scaleIn_0.2s_ease-out]">
@@ -262,12 +326,29 @@ export default function Home() {
   const [isDesktopForced, setIsDesktopForced] = useState(false);
 
   useEffect(() => {
-    // Detect platform for download link only (not for layout)
+    // Detect platform for download link (works even when desktop site is forced)
+    // Check multiple methods since user agent can be modified
     const userAgent = navigator.userAgent.toLowerCase();
+    const platformStr = navigator.platform?.toLowerCase() || "";
+    const vendor = navigator.vendor?.toLowerCase() || "";
+    
+    // Check for iOS
     const isIOS =
       /iphone|ipad|ipod/i.test(userAgent) ||
-      (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
-    const isAndroid = /android/i.test(userAgent);
+      /iPad|iPhone|iPod/.test(platformStr) ||
+      (vendor.includes("apple") && /mobile/i.test(userAgent));
+    
+    // Check for Android - use multiple detection methods
+    // When desktop site is forced, user agent might be modified, so check other indicators
+    const screenWidth = window.screen.width || window.screen.availWidth;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const isAndroid =
+      /android/i.test(userAgent) ||
+      /android/i.test(platformStr) ||
+      // Check if it's a mobile device with Android-like characteristics
+      (screenWidth < 768 && /linux/i.test(platformStr) && 'ontouchstart' in window && !isIOS) ||
+      // If mobile screen but desktop viewport and not iOS, likely Android with desktop mode
+      (screenWidth < 768 && viewportWidth > 700 && !isIOS && 'ontouchstart' in window);
 
     setPlatform(isIOS ? "ios" : isAndroid ? "android" : "desktop");
 
@@ -275,17 +356,18 @@ export default function Home() {
     // When desktop site is requested, viewport width changes but screen.width stays the same
     const checkLayout = () => {
       // Check actual physical screen width (doesn't change when desktop site is requested)
-      const screenWidth = window.screen.width || window.screen.availWidth;
+      const actualScreenWidth = window.screen.width || window.screen.availWidth;
       // Check viewport width (changes when desktop site is requested)
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
       
       // Detect if desktop site is forced (viewport much larger than screen on mobile device)
-      const desktopForced = screenWidth < 768 && viewportWidth > screenWidth * 1.5;
+      // Use a lower threshold (1.2x) to catch desktop mode more reliably
+      const desktopForced = actualScreenWidth < 768 && viewportWidth > Math.max(actualScreenWidth * 1.2, 600);
       setIsDesktopForced(desktopForced);
       
       // If actual screen is mobile-sized (< 768px), always use mobile layout
       // Otherwise, use viewport width to allow responsive behavior on desktop
-      if (screenWidth < 768) {
+      if (actualScreenWidth < 768) {
         setIsMobileLayout(true);
       } else {
         // Real desktop device - use viewport width for responsive behavior
