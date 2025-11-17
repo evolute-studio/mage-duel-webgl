@@ -9,6 +9,9 @@ const BACKGROUND_SHIFT = {
   position2: "72%", // Second background position
 };
 
+// App Store / TestFlight link
+const APPLE_LINK = "https://testflight.apple.com/join/kypR9ywg";
+
 // Spacing constants for easy modification
 const SPACING = {
   popup: {
@@ -177,8 +180,7 @@ const DownloadButton = ({
   const activeClasses = "bg-[#0a0a0a] hover:bg-[#1a1a1a] transition-colors";
   
   // Always use App Store link if no href provided (desktop case)
-  const appStoreLink = "https://apps.apple.com/ua/app/mage-duel/id6745639584";
-  const finalHref = href || appStoreLink;
+  const finalHref = href || APPLE_LINK;
   const isExternalLink = !href || platform === "ios" || platform === "desktop";
 
   return (
@@ -198,7 +200,7 @@ const DownloadButton = ({
 // Component: App Store Button (Desktop)
 const AppStoreButton = ({ className = "" }: { className?: string }) => (
   <a
-    href="https://apps.apple.com/ua/app/mage-duel/id6745639584"
+    href={APPLE_LINK}
     target="_blank"
     rel="noopener noreferrer"
     className={`inline-block hover:opacity-90 transition-opacity ${className}`}
@@ -392,10 +394,10 @@ export default function Home() {
   // Download link based on platform - design is based on screen size (Tailwind media queries)
   const downloadLink =
     platform === "ios"
-      ? "https://apps.apple.com/ua/app/mage-duel/id6745639584"
+      ? APPLE_LINK
       : platform === "android"
         ? "/MageDuelAndroid.apk"
-        : "https://apps.apple.com/ua/app/mage-duel/id6745639584"; // Default to App Store for desktop
+        : APPLE_LINK; // Default to App Store for desktop
 
   return (
     <div className="w-screen h-[100dvh] relative overflow-hidden">
