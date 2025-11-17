@@ -10,7 +10,7 @@ const BACKGROUND_SHIFT = {
 };
 
 // App Store / TestFlight link
-const APPLE_LINK = "https://testflight.apple.com/join/kypR9ywg";
+const APPLE_LINK = "https://apps.apple.com/us/app/mage-duel/id6745639584";
 
 // Spacing constants for easy modification
 const SPACING = {
