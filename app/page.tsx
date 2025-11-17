@@ -5,8 +5,8 @@ import Image from "next/image";
 
 // Background shift constants for easy modification
 const BACKGROUND_SHIFT = {
-  position1: "75%", // First background position
-  position2: "72%", // Second background position
+  position1: "75%", 
+  position2: "72%",
 };
 
 // App Store / TestFlight link
