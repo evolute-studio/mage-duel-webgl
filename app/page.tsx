@@ -12,6 +12,9 @@ const BACKGROUND_SHIFT = {
 // App Store / TestFlight link
 const APPLE_LINK = "https://apps.apple.com/us/app/mage-duel/id6745639584";
 
+// Google Play Store link
+const GOOGLE_PLAY_LINK = "https://play.google.com/store/apps/details?id=com.evolute.mageduel";
+
 // Spacing constants for easy modification
 const SPACING = {
   popup: {
@@ -219,13 +222,14 @@ const AppStoreButton = ({ className = "" }: { className?: string }) => (
 // Component: Google Play Button (Desktop)
 const GooglePlayButton = ({ className = "" }: { className?: string }) => (
   <a
-    href="/MageDuelAndroid.apk"
-    download="MageDuelAndroid.apk"
+    href={GOOGLE_PLAY_LINK}
+    target="_blank"
+    rel="noopener noreferrer"
     className={`inline-block hover:opacity-90 transition-opacity ${className}`}
   >
     <Image
       src="/google-button.png"
-      alt="Download APK"
+      alt="Get it on Google Play"
       width={200}
       height={60}
       className="object-contain"
@@ -252,9 +256,8 @@ const PopupContent = ({
       {downloadLink ? (
         <a
           href={downloadLink}
-          download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
-          target={platform === "ios" ? "_blank" : undefined}
-          rel={platform === "ios" ? "noopener noreferrer" : undefined}
+          target="_blank"
+          rel="noopener noreferrer"
           className={`flex flex-col items-center ${SPACING.iconTitle.gap} cursor-pointer hover:opacity-90 transition-opacity`}
         >
           <IconWithBorder />
@@ -280,7 +283,6 @@ const PopupContent = ({
           <div className="w-full">
             <DownloadButton
               href={downloadLink}
-              download={platform === "android" ? "MageDuelAndroid.apk" : undefined}
               platform={platform}
             />
           </div>
@@ -396,7 +398,7 @@ export default function Home() {
     platform === "ios"
       ? APPLE_LINK
       : platform === "android"
-        ? "/MageDuelAndroid.apk"
+        ? GOOGLE_PLAY_LINK
         : APPLE_LINK; // Default to App Store for desktop
 
   return (
