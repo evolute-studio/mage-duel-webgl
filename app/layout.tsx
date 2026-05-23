@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 
+
 export const metadata: Metadata = {
   title: "Mage Duel",
   description: "Mage Duel - Download Now",
